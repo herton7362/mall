@@ -106,7 +106,6 @@
                                         <td style="text-align: center; width: 40px;"><checkbox :value="row" v-model="selectedRows"></checkbox></td>
                                         <td style="cursor: pointer" @click="expend(row)">
                                             <b>本次消费数据合计：</b>
-                                            <span class="label label-danger margin-r-5">多笔</span>
                                             <i :class="row.expended?'fa fa-angle-double-down':'fa fa-angle-double-up'"></i>
                                         </td>
                                         <td>￥ {{row.cash | price}}</td>
