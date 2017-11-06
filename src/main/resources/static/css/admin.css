@@ -1,0 +1,13 @@
+body.login-page {
+    overflow: hidden;
+    background:url(../image/login-bg.jpg) repeat;
+}
+
+ul.pagination {
+    margin: 2px 0;
+    white-space: nowrap;
+}
+
+.dataTables_info {
+    margin: 6px 0;
+}

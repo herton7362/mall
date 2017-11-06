@@ -1,0 +1,13 @@
+<footer xmlns:th="http://www.thymeleaf.org">
+    <script th:inline="javascript">
+        window._appConf = window._appConf || {};
+        window._appConf = {
+            ctx: window._appConf.ctx || '',
+            loginUrl: window._appConf.loginUrl || '/admin/login',
+            appId: window._appConf.appId || 'tonr',
+            appSecret: window._appConf.appSecret || 'secret'
+        };
+    </script>
+    <script th:src="@{/webjars/require.js}" data-main="main"></script>
+    <script th:src="@{/webjars/plugins/admin/config.js}"></script>
+</footer>

@@ -1,0 +1,14 @@
+<footer xmlns:th="http://www.thymeleaf.org">
+    <script th:inline="javascript">
+        window._appConf = window._appConf || {};
+        window._appConf = {
+            ctx: window._appConf.ctx || '',
+            loginUrl: window._appConf.loginUrl || '/wechat/login',
+            appId: window._appConf.appId || 'tonr',
+            appSecret: window._appConf.appSecret || 'secret'
+        };
+    </script>
+    <script th:src="@{/webjars/require.js}" data-main="main"></script>
+    <script th:src="@{/webjars/plugins/wechat/config.js}"></script>
+    <script th:src="@{/static/js/wechat/menu.js}"></script>
+</footer>
