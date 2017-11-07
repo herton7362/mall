@@ -83,7 +83,7 @@
                     <div class="weui-cell">
                         <div class="weui-cell__hd"><label class="weui-label">买家留言：</label></div>
                         <div class="weui-cell__bd">
-                            <input class="weui-input" type="text" v-model="orderForm.remark" readonly placeholder="点击给商家留言">
+                            <input class="weui-input" type="text" v-model="orderForm.remark" readonly placeholder="无">
                         </div>
                     </div>
                     <div class="weui-cell">
@@ -129,6 +129,25 @@
                         </div>
                         <div class="weui-cell__bd" style="text-align: right">
                             <p> {{orderForm.createdDate | date}}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="weui-cells" v-if="orderForm.status == 'DELIVERED'">
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd">
+                            <p>运单号</p>
+                        </div>
+                        <div class="weui-cell__bd" style="text-align: right">
+                            <p>{{orderForm.shippingCode}}</p>
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd">
+                            <p>发货时间</p>
+                        </div>
+                        <div class="weui-cell__bd" style="text-align: right">
+                            <p> {{orderForm.shippingDate | date}}</p>
                         </div>
                     </div>
                 </div>

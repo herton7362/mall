@@ -34,6 +34,9 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             },
             status: function (val) {
                 var result = '';
+                if(!val) {
+                    return null;
+                }
                 $.each(vue.orderStatus, function () {
                     if(this.id.toUpperCase() === val) {
                         result = this.text;

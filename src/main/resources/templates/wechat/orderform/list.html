@@ -62,7 +62,19 @@
                                                 style="margin-right: 5px; line-height: 26px;"
                                                 v-if="orderForm.status == 'UN_PAY'"
                                                 @click="pay(orderForm)">去支付</button>
-                                        <button type="button" class="weui-btn weui-btn_mini weui-btn_plain-default" @click="orderFormDetail(orderForm)">查看订单</button>
+                                        <button type="button"
+                                                class="weui-btn weui-btn_mini weui-btn_primary"
+                                                style="margin-right: 5px; line-height: 26px;"
+                                                v-if="orderForm.status == 'DELIVERED'"
+                                                @click="receive(orderForm)">确认收货</button>
+                                        <button type="button"
+                                                class="weui-btn weui-btn_mini weui-btn_warn"
+                                                style="margin-right: 5px; line-height: 26px;"
+                                                v-if="orderForm.status == 'PAYED' || orderForm.status == 'DELIVERED' || orderForm.status == 'RECEIVED'"
+                                                @click="applyReject(orderForm)">申请退货</button>
+                                        <button type="button"
+                                                class="weui-btn weui-btn_mini weui-btn_plain-default"
+                                                @click="orderFormDetail(orderForm)">查看订单</button>
                                     </p>
                                 </div>
                             </div>

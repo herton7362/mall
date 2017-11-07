@@ -7,6 +7,9 @@ import com.framework.module.member.service.MemberService;
 import com.framework.module.orderform.domain.OrderForm;
 import com.framework.module.orderform.domain.OrderFormRepository;
 import com.framework.module.orderform.domain.OrderItem;
+import com.framework.module.orderform.web.ApplyRejectParam;
+import com.framework.module.orderform.web.RejectParam;
+import com.framework.module.orderform.web.SendOutParam;
 import com.framework.module.product.domain.Product;
 import com.framework.module.record.domain.OperationRecord;
 import com.framework.module.record.service.OperationRecordService;
@@ -104,6 +107,78 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         final OrderForm newOrderForm = orderFormRepository.save(orderForm);
         modifyMemberAccount(newOrderForm);
         return newOrderForm;
+    }
+
+    @Override
+    public OrderForm saveShippingInfo(SendOutParam sendOutParam) throws Exception {
+        OrderForm orderForm = orderFormRepository.findOne(sendOutParam.getId());
+        if(orderForm == null) {
+            throw new BusinessException("订单未找到");
+        }
+        if(OrderForm.OrderStatus.PAYED != orderForm.getStatus()) {
+            throw new BusinessException("订单状态不正确");
+        }
+        if(!MemberThread.getInstance().get().getId().equals(orderForm.getMember().getId())) {
+            throw new BusinessException("当前会员无权操作此订单");
+        }
+        orderForm.setStatus(OrderForm.OrderStatus.DELIVERED);
+        orderForm.setShippingCode(sendOutParam.getShippingCode());
+        orderForm.setShippingDate(sendOutParam.getShippingDate());
+        orderFormRepository.save(orderForm);
+        return orderForm;
+    }
+
+    @Override
+    public OrderForm receive(String id) throws Exception {
+        OrderForm orderForm = orderFormRepository.findOne(id);
+        if(orderForm == null) {
+            throw new BusinessException("订单未找到");
+        }
+        if(OrderForm.OrderStatus.DELIVERED != orderForm.getStatus()) {
+            throw new BusinessException("订单状态不正确");
+        }
+        if(!MemberThread.getInstance().get().getId().equals(orderForm.getMember().getId())) {
+            throw new BusinessException("当前会员无权操作此订单");
+        }
+        orderForm.setStatus(OrderForm.OrderStatus.RECEIVED);
+        orderFormRepository.save(orderForm);
+        return orderForm;
+    }
+
+    @Override
+    public OrderForm applyReject(ApplyRejectParam applyRejectParam) throws Exception {
+        OrderForm orderForm = orderFormRepository.findOne(applyRejectParam.getId());
+        if(orderForm == null) {
+            throw new BusinessException("订单未找到");
+        }
+        if(OrderForm.OrderStatus.DELIVERED != orderForm.getStatus()
+                && OrderForm.OrderStatus.PAYED != orderForm.getStatus()
+                && OrderForm.OrderStatus.RECEIVED != orderForm.getStatus()) {
+            throw new BusinessException("订单状态不正确");
+        }
+        if(!MemberThread.getInstance().get().getId().equals(orderForm.getMember().getId())) {
+            throw new BusinessException("当前会员无权操作此订单");
+        }
+        orderForm.setStatus(OrderForm.OrderStatus.APPLY_REJECTED);
+        orderForm.setApplyRejectRemark(applyRejectParam.getApplyRejectRemark());
+        orderFormRepository.save(orderForm);
+        return orderForm;
+    }
+
+    @Override
+    public OrderForm reject(RejectParam rejectParam) throws Exception {
+        OrderForm orderForm = orderFormRepository.findOne(rejectParam.getId());
+        if(orderForm == null) {
+            throw new BusinessException("订单未找到");
+        }
+        if(OrderForm.OrderStatus.APPLY_REJECTED != orderForm.getStatus()) {
+            throw new BusinessException("订单状态不正确");
+        }
+        orderForm.setStatus(OrderForm.OrderStatus.REJECTED);
+        orderForm.setReturnedMoney(rejectParam.getReturnedMoney());
+        orderForm.setApplyRejectRemark(rejectParam.getReturnedRemark());
+        orderFormRepository.save(orderForm);
+        return orderForm;
     }
 
     /**

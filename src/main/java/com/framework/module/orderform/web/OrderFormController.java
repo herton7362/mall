@@ -71,6 +71,42 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    /**
+     * 发货
+     */
+    @ApiOperation(value="发货")
+    @RequestMapping(value = "/sendOut", method = RequestMethod.POST)
+    public ResponseEntity<OrderForm> sendOut(@RequestBody SendOutParam sendOutParam) throws Exception {
+        return new ResponseEntity<>(orderFormService.saveShippingInfo(sendOutParam), HttpStatus.OK);
+    }
+
+    /**
+     * 确认收货
+     */
+    @ApiOperation(value="确认收货")
+    @RequestMapping(value = "/receive/{id}", method = RequestMethod.POST)
+    public ResponseEntity<OrderForm> receive(@PathVariable String id) throws Exception {
+        return new ResponseEntity<>(orderFormService.receive(id), HttpStatus.OK);
+    }
+
+    /**
+     * 申请退货
+     */
+    @ApiOperation(value="申请退货")
+    @RequestMapping(value = "/applyReject", method = RequestMethod.POST)
+    public ResponseEntity<OrderForm> applyReject(@RequestBody ApplyRejectParam applyRejectParam) throws Exception {
+        return new ResponseEntity<>(orderFormService.applyReject(applyRejectParam), HttpStatus.OK);
+    }
+
+    /**
+     * 申请退货
+     */
+    @ApiOperation(value="申请退货")
+    @RequestMapping(value = "/reject", method = RequestMethod.POST)
+    public ResponseEntity<OrderForm> reject(@RequestBody RejectParam rejectParam) throws Exception {
+        return new ResponseEntity<>(orderFormService.reject(rejectParam), HttpStatus.OK);
+    }
+
     @Autowired
     public OrderFormController(OrderFormService orderFormService) {
         this.orderFormService = orderFormService;

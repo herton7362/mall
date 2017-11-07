@@ -88,6 +88,24 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             },
             pay: function (orderForm) {
                 window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/un_pay?id=' + orderForm.id);
+            },
+            receive: function (orderForm) {
+                messager.alert('是否确认收货？', function () {
+                    $.ajax({
+                        url: utils.patchUrl('/api/orderForm/receive/' + orderForm.id),
+                        contentType: 'application/json',
+                        type: 'POST',
+                        success: function() {
+                            messager.bubble("操作成功");
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 500)
+                        }
+                    })
+                })
+            },
+            applyReject: function (orderForm) {
+                window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/applyReject?id=' + orderForm.id);
             }
         },
         mounted: function () {

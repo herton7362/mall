@@ -61,6 +61,15 @@ public class OrderForm extends BaseEntity {
     @ApiModelProperty(value = "支付状态")
     @Column(length = 20)
     private PaymentStatus paymentStatus;
+    @ApiModelProperty(value = "退款金额")
+    @Column(length = 11, precision = 2)
+    private Double returnedMoney;
+    @ApiModelProperty(value = "退款备注")
+    @Column(length = 500)
+    private String returnedRemark;
+    @ApiModelProperty(value = "申请退款备注")
+    @Column(length = 500)
+    private String applyRejectRemark;
 
     public Member getMember() {
         return member;
@@ -182,6 +191,30 @@ public class OrderForm extends BaseEntity {
         this.paymentStatus = paymentStatus;
     }
 
+    public Double getReturnedMoney() {
+        return returnedMoney;
+    }
+
+    public void setReturnedMoney(Double returnedMoney) {
+        this.returnedMoney = returnedMoney;
+    }
+
+    public String getReturnedRemark() {
+        return returnedRemark;
+    }
+
+    public void setReturnedRemark(String returnedRemark) {
+        this.returnedRemark = returnedRemark;
+    }
+
+    public String getApplyRejectRemark() {
+        return applyRejectRemark;
+    }
+
+    public void setApplyRejectRemark(String applyRejectRemark) {
+        this.applyRejectRemark = applyRejectRemark;
+    }
+
     public void addItem(OrderItem item) {
         if(items == null) {
             items = new ArrayList<>();
@@ -208,6 +241,7 @@ public class OrderForm extends BaseEntity {
         DELIVERED("已发货"),
         RECEIVED("已收货"),
         APPLY_REJECTED("申请退货"),
+        REJECTED("已退货"),
         CANCEL("已取消");
         private String displayName;
         OrderStatus(String displayName) {

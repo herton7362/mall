@@ -9,14 +9,35 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             count: 0,
             checkAll: false,
             selectedRows: [],
-            orderStatus: []
+            orderStatus: [],
+            shippingInfo: {
+                modal: {
+                    $instance: {}
+                },
+                form: {},
+                validator: {
+                    $instance: {}
+                }
+            },
+            returnMoney: {
+                modal: {
+                    $instance: {}
+                },
+                form: {},
+                validator: {
+                    $instance: {}
+                }
+            }
         },
         filters: {
             coverPath: function (val) {
                 return utils.patchUrl('/attachment/download/' + val);
             },
             price: function (val) {
-                return utils.formatMoney(val);
+                if(!val) {
+                    return '无';
+                }
+                return '￥' + utils.formatMoney(val);
             },
             date: function (val) {
                 return new Date(val).format("yyyy-MM-dd HH:mm:ss");
@@ -32,6 +53,15 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             }
         },
         methods: {
+            getStatusClass: function (status) {
+                if('UN_PAY' === status) {
+                    return 'label-info';
+                } else if('APPLY_REJECTED' === status) {
+                    return 'label-danger';
+                } else {
+                    return 'label-success';
+                }
+            },
             load: function () {
                 var self = this;
                 $.ajax({
@@ -77,6 +107,48 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 } else {
                     this.clearSelected();
                 }
+            },
+            shipModalOpen: function (row) {
+                this.shippingInfo.form = {
+                    id: row.id
+                };
+                this.shippingInfo.modal.$instance.open();
+            },
+            shippingInfoSave: function () {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/api/orderForm/sendOut'),
+                    contentType: 'application/json',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: JSON.stringify(this.shippingInfo.form),
+                    success: function () {
+                        messager.bubble('操作成功');
+                        self.shippingInfo.modal.$instance.close();
+                        self.load();
+                    }
+                })
+            },
+            rejectModalOpen: function (row) {
+                this.returnMoney.form = {
+                    id: row.id
+                };
+                this.returnMoney.modal.$instance.open();
+            },
+            returnMoneySave: function () {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/api/orderForm/reject'),
+                    contentType: 'application/json',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: JSON.stringify(this.returnMoney.form),
+                    success: function () {
+                        messager.bubble('操作成功');
+                        self.returnMoney.modal.$instance.close();
+                        self.load();
+                    }
+                })
             }
         },
         mounted: function() {

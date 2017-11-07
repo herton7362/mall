@@ -169,6 +169,9 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             submit: function () {
                 var self = this;
                 function makeOrder() {
+                    $.each(self.orderForm.items,function () {
+                        this.id = null;
+                    });
                     $.ajax({
                         url: utils.patchUrl('/api/orderForm/makeOrder'),
                         contentType: 'application/json',
