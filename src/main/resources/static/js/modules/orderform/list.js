@@ -3,6 +3,10 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
         el: '#content',
         data: {
             data: [],
+            queryParams: {
+                createdDate: [new Date().getTime() -24*60*60*1000, new Date().getTime()],
+                createdDateRadio: 1
+            },
             currentPage: 1,
             pagerSize: 7,
             pageSize: 15,
@@ -26,6 +30,19 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 form: {},
                 validator: {
                     $instance: {}
+                }
+            }
+        },
+        watch: {
+            'queryParams.createdDateRadio': function (val) {
+                if(val === 0) {
+                    this.queryParams.createdDate = [];
+                } else if(val === 1) {
+                    this.queryParams.createdDate = [new Date().getTime() -24*60*60*1000, new Date().getTime()];
+                } else if(val === 2) {
+                    this.queryParams.createdDate = [new Date().getTime() -24*60*60*1000*7, new Date().getTime()];
+                } else if(val === 3) {
+                    this.queryParams.createdDate = [new Date().getTime() -24*60*60*1000*30, new Date().getTime()];
                 }
             }
         },
@@ -64,14 +81,17 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             },
             load: function () {
                 var self = this;
+                if(!this.queryParams.status) {
+                    delete this.queryParams.status;
+                }
                 $.ajax({
                     url: utils.patchUrl('/api/orderForm'),
-                    data: {
+                    data: $.extend({
                         sort: 'updatedDate',
                         order: 'desc',
                         currentPage: this.currentPage,
                         pageSize: this.pageSize
-                    },
+                    }, this.queryParams),
                     success: function(data) {
                         self.data = data.content;
                         self.count = data.totalElements;
@@ -158,6 +178,9 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 url: utils.patchUrl('/api/orderForm/status'),
                 success: function (data) {
                     self.orderStatus = data;
+                    $.each(self.orderStatus, function () {
+                        this.id = this.id.toUpperCase()
+                    })
                 }
             })
         }
