@@ -141,6 +141,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             throw new BusinessException("当前会员无权操作此订单");
         }
         orderForm.setStatus(OrderForm.OrderStatus.RECEIVED);
+        orderForm.setFinishedDate(new Date().getTime());
         orderFormRepository.save(orderForm);
         return orderForm;
     }

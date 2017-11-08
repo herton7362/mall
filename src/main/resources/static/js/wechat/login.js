@@ -18,7 +18,7 @@ require(['jquery', 'vue', 'utils', 'messager'], function ($, Vue, utils, message
                 }
                 $.ajax({
                     url: utils.patchUrlPrefixUrl('/user/mobile/' + this.username),
-                    async: false,
+                    cache: false,
                     success: function (data) {
                         if(data) {
                             self.pageType = '使用手机号密码登录';
@@ -91,7 +91,7 @@ require(['jquery', 'vue', 'utils', 'messager'], function ($, Vue, utils, message
                 }
                 $.ajax({
                     url: utils.patchUrlPrefixUrl('/verifyCode'),
-                    async: false,
+                    cache: false,
                     data: {
                         mobile: this.username
                     }

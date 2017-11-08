@@ -28,7 +28,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 var self = this;
                 $.ajax({
                     url: utils.patchUrl('/api/orderForm/count/' + memberId),
-                    async: false,
+                    cache: false,
                     success: function (data) {
                         self.formCount = data;
                     }

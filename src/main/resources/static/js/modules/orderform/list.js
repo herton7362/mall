@@ -4,7 +4,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
         data: {
             data: [],
             queryParams: {
-                createdDate: [new Date().getTime() -24*60*60*1000, new Date().getTime()],
+                createdDate: [new Date(new Date().format('yyyy-MM-dd')).getTime(), new Date().getTime()],
                 createdDateRadio: 1
             },
             currentPage: 1,
@@ -31,6 +31,16 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 validator: {
                     $instance: {}
                 }
+            },
+            formDetail: {
+                modal: {
+                    $instance: {}
+                },
+                form: {
+                    deliverToAddress: {},
+                    member: {},
+                    items: []
+                }
             }
         },
         watch: {
@@ -38,7 +48,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 if(val === 0) {
                     this.queryParams.createdDate = [];
                 } else if(val === 1) {
-                    this.queryParams.createdDate = [new Date().getTime() -24*60*60*1000, new Date().getTime()];
+                    this.queryParams.createdDate = [new Date(new Date().format('yyyy-MM-dd')).getTime(), new Date().getTime()];
                 } else if(val === 2) {
                     this.queryParams.createdDate = [new Date().getTime() -24*60*60*1000*7, new Date().getTime()];
                 } else if(val === 3) {
@@ -52,15 +62,31 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             },
             price: function (val) {
                 if(!val) {
-                    return '无';
+                    return '￥0.00';
                 }
                 return '￥' + utils.formatMoney(val);
             },
             date: function (val) {
                 return new Date(val).format("yyyy-MM-dd HH:mm:ss");
             },
+            addressName: function (val) {
+                if(!val) {
+                    return '';
+                }
+                var name = val.name;
+                if(val.parent) {
+                    name = val.parent.name + name;
+                    if(val.parent.parent) {
+                        name = val.parent.parent.name + name;
+                    }
+                }
+                return name;
+            },
             status: function (val) {
                 var result = '';
+                if(!val) {
+                    return '';
+                }
                 $.each(vue.orderStatus, function () {
                     if(this.id.toUpperCase() === val) {
                         result = this.text;
@@ -110,6 +136,20 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 var total = 0;
                 $.each(row.items, function () {
                     total += this.count;
+                });
+                return total;
+            },
+            getProductPoint: function (row) {
+                var total = 0;
+                $.each(row.items, function () {
+                    total += this.count * this.product.points;
+                });
+                return total;
+            },
+            getReceivable: function (row) {
+                var total = 0;
+                $.each(row.items, function () {
+                    total += this.count * this.product.price;
                 });
                 return total;
             },
@@ -167,6 +207,17 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                         messager.bubble('操作成功');
                         self.returnMoney.modal.$instance.close();
                         self.load();
+                    }
+                })
+            },
+            detailModalOpen: function (row) {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/api/orderForm/' + row.id),
+                    cache: false,
+                    success: function (data) {
+                        self.formDetail.form = data;
+                        self.formDetail.modal.$instance.open();
                     }
                 })
             }

@@ -53,13 +53,15 @@
                                 <label>手机：</label>
                                 <input type="text" class="form-control" required v-model="props.form.mobile" placeholder="输入手机">
                             </div>
-                            <div class="radio">
-                                <label>
-                                    <radio value="0" name="gender" v-model="props.form.gender"></radio> 女士
-                                </label>
-                                <label>
-                                    <radio value="1" name="gender" v-model="props.form.gender"></radio> 先生
-                                </label>
+                            <div class="form-group">
+                                <div class="radio">
+                                    <label>
+                                        <radio value="0" name="gender" v-model="props.form.gender"></radio> 女士
+                                    </label>
+                                    <label>
+                                        <radio value="1" name="gender" v-model="props.form.gender"></radio> 先生
+                                    </label>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label>生日：</label>
