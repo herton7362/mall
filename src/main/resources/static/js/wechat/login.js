@@ -42,7 +42,9 @@ require(['jquery', 'vue', 'utils', 'messager'], function ($, Vue, utils, message
                         window.localStorage.accessToken = data['access_token'];
                         window.localStorage.refreshToken = data['refresh_token'];
                         window.localStorage.expiration = new Date().getTime() + ((data['expires_in'] / 2) * 1000);
-                        window.location.href = document.referrer;
+                        setTimeout(function () {
+                            window.location.href = document.referrer;
+                        }, 500);
                     }
                 })
             },

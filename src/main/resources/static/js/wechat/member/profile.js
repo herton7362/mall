@@ -3,7 +3,8 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
         el: '#content',
         data: {
             member: {},
-            formCount: {}
+            formCount: {},
+            couponCount: 0
         },
         filters: {
             coverPath: function (val) {
@@ -33,6 +34,19 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                         self.formCount = data;
                     }
                 })
+            },
+            coupon: function () {
+                window.location.href = utils.patchUrlPrefixUrl('/wechat/coupon/list');
+            },
+            loadCouponCount: function () {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/api/coupon/count/' + this.member.id),
+                    cache: false,
+                    success: function (count) {
+                        self.couponCount = count;
+                    }
+                })
             }
         },
         mounted: function () {
@@ -41,6 +55,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 self.member = member;
                 self.loadFormCount(member.id);
             }, true);
+
         }
     });
 });

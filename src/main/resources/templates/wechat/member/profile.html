@@ -96,12 +96,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="weui-cell weui-cell_access">
+                    <div class="weui-cell weui-cell_access" @click="coupon">
                         <div class="weui-cell__bd">
                             <p>
                                 <i class="iconfont icon-youhuiquan"></i>
                                 优惠券
-                                <span class="weui-badge" style="margin-left: 5px;">8</span>
+                                <span class="weui-badge" style="margin-left: 5px;" v-if="couponCount > 0">{{couponCount}}</span>
                             </p>
                         </div>
                         <div class="weui-cell__ft">

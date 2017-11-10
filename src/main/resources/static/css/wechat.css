@@ -658,3 +658,72 @@
     font-size: 14px;
     border-radius: 3px;
 }
+
+.coupon-list .coupon-card {
+    width: 92%;
+    margin: 0 auto;
+    margin-top: 10px;
+    background-color: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    border-radius: 3px;
+    box-shadow: 0 5px 10px -5px #666;
+}
+
+.coupon-list .expired {
+    color: #999;
+}
+
+.coupon-list .coupon-card .coupon-body {
+    display: flex;
+    border-bottom: 1px #999 dashed;
+    padding: 10px 20px;
+    position: relative;
+}
+
+.coupon-list .coupon-card .coupon-body .description {
+    flex: 1;
+    font-size: 12px;
+    padding: 0 15px;
+}
+
+.coupon-list .coupon-card .coupon-body .title {
+    font-size: 16px;
+}
+
+.coupon-list .coupon-card .coupon-footer {
+    padding: 5px 20px;
+    font-size: 12px;
+    color: #ccc;
+}
+
+.coupon-list .coupon-card .coupon-body .left-circle,
+.coupon-list .coupon-card .coupon-body .right-circle {
+    border-radius: 50%;
+    background-color: #f8f8f8;
+    width: 10px;
+    height: 10px;
+    position: absolute;
+}
+
+.coupon-list .coupon-card .coupon-body .left-circle {
+    bottom: -5px;
+    left: -5px;
+}
+
+.coupon-list .coupon-card .coupon-body .right-circle {
+    bottom: -5px;
+    right: -5px;
+}
+
+.coupon-list .coupon-card .coupon-body .price {
+    font-size: 34px;
+}
+
+.coupon-list .coupon-card .coupon-body small {
+    font-size: 20px;
+}
+
+.coupon-list .coupon-card .coupon-body .status i {
+    font-size: 54px;
+    line-height: 54px;
+}
