@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface CouponService extends CrudService<Coupon> {
     /**
-     * 获取发放类型的优惠券
+     * 获取未获取的优惠券
      * @param memberId 会员id
      * @return 获取到的优惠券
      */
-    List<Coupon> obtainLoginType(String memberId) throws Exception;
+    List<Coupon> getUnClaimed(String memberId) throws Exception;
 
     /**
      * 检验当前优惠券是否可用
@@ -28,4 +28,11 @@ public interface CouponService extends CrudService<Coupon> {
      * @return 优惠后的金额
      */
     Double useCoupon(String couponId, String memberId, Double amount) throws Exception;
+
+    /**
+     * 领取优惠券
+     * @param memberId 会员id
+     * @param coupon 优惠券
+     */
+    void claim(String memberId, Coupon coupon) throws Exception;
 }

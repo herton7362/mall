@@ -103,12 +103,20 @@
                     </div>
                 </div>
                 <div class="weui-cells">
-                    <div class="weui-cell weui-cell_access">
+                    <div class="weui-cell weui-cell_access" @click="selectCoupon">
                         <div class="weui-cell__bd">
-                            <p>优惠</p>
+                            <p>
+                                优惠
+                                <span class="weui-badge" style="margin-left: 5px;" v-if="coupons.length > 0">{{coupons.length}}</span>
+                            </p>
                         </div>
                         <div class="weui-cell__ft">
-                            使用优惠
+                            <template v-if="orderForm.coupon.amount">
+                                - ￥{{orderForm.coupon.amount | price}}
+                            </template>
+                            <template v-if="!orderForm.coupon.amount">
+                                使用优惠
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -194,11 +202,38 @@
                 </div>
             </template>
         </actionsheet>
+        <div class="page coupon-list" :class="{'js_show slideIn':couponSelector.open}">
+            <div class="coupon-card" :class="{expired: coupon.expired}" v-for="coupon in coupons">
+                <div class="coupon-body" >
+                    <div class="price" v-html="priceFormatter(coupon.amount)">
+                    </div>
+                    <div class="description">
+                        <div class="title">
+                            {{coupon.name}}
+                        </div>
+                        每单达到{{coupon.minAmount | price}}元可使用
+                    </div>
+                    <div class="status">
+                        <i class="iconfont icon-expired" v-if="coupon.expired"></i>
+                        <span v-if="!coupon.expired">立即使用</span>
+                        <a href="javascript:void(0)"
+                           class="weui-btn weui-btn_plain-default btn-claim"
+                           v-if="!coupon.expired"
+                           @click="useCoupon(coupon)">使用</a>
+                    </div>
+                    <div class="left-circle"></div>
+                    <div class="right-circle"></div>
+                </div>
+                <div class="coupon-footer">
+                    有效期： {{coupon.startDate | date}} 至 {{coupon.endDate | date}}
+                </div>
+            </div>
+        </div>
     </div>
     <div class="row tabbar">
         <div class="col-xs-8 total">
             <span>合计：</span>
-            <span class="main-text-color">￥{{getTotal() | price}}</span>
+            <span class="main-text-color">￥{{getFinalTotal() | price}}</span>
         </div>
         <div class="col-xs-4 padding-none">
             <button type="button" class="btn btn-flat submit-order main-btn" @click="submit">提交订单</button>

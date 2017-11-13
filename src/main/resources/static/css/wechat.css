@@ -99,6 +99,88 @@
     }
 }
 
+.page {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0
+}
+
+.page {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    display: none;
+    z-index: 700;
+    background-color: #fff;
+}
+
+.page.js_show {
+    display: block;
+}
+
+@-webkit-keyframes slideIn {
+    0% {
+        -webkit-transform: translate3d(100%, 0, 0);
+        transform: translate3d(100%, 0, 0);
+        opacity: 0
+    }
+    to {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        opacity: 1
+    }
+}
+
+@keyframes slideIn {
+    0% {
+        -webkit-transform: translate3d(100%, 0, 0);
+        transform: translate3d(100%, 0, 0);
+        opacity: 0
+    }
+    to {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        opacity: 1
+    }
+}
+
+@-webkit-keyframes slideOut {
+    0% {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        opacity: 1
+    }
+    to {
+        -webkit-transform: translate3d(100%, 0, 0);
+        transform: translate3d(100%, 0, 0);
+        opacity: 0
+    }
+}
+
+@keyframes slideOut {
+    0% {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        opacity: 1
+    }
+    to {
+        -webkit-transform: translate3d(100%, 0, 0);
+        transform: translate3d(100%, 0, 0);
+        opacity: 0
+    }
+}
+
+.page.slideIn {
+    -webkit-animation: slideIn .2s forwards;
+    animation: slideIn .2s forwards
+}
+
+.page.slideOut {
+    -webkit-animation: slideOut .2s forwards;
+    animation: slideOut .2s forwards
+}
+
 
 /********************************************
                  panel
@@ -726,4 +808,43 @@
 .coupon-list .coupon-card .coupon-body .status i {
     font-size: 54px;
     line-height: 54px;
+}
+
+.coupon-list .coupon-card .coupon-body .status .weui-btn {
+    font-size: 14px;
+    padding: 5px 10px;
+    line-height: 14px;
+    margin-top: 10%;
+}
+
+.coupon-list .btn-claim {
+    border-color: #E64340;
+    color: #E64340;
+}
+
+.coupon-list .empty {
+    padding:60px 10px;
+    font-size: 14px;
+    text-align: center;
+    color: #999;
+}
+
+.coupon-list .empty .empty-list-header h4 {
+    color: #666;
+    font-size: 16px;
+}
+
+.coupon-list .empty .empty-list-header span {
+    color: #999;
+}
+
+.coupon-list .empty .empty-list-content {
+    margin-top: 20px;
+}
+
+.coupon-list .empty .weui-btn {
+    width: 100px;
+    line-height: 36px;
+    font-size: 14px;
+    border-radius: 3px;
 }

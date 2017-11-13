@@ -4,6 +4,7 @@ import com.framework.module.auth.MemberThread;
 import com.framework.module.marketing.domain.Coupon;
 import com.framework.module.marketing.service.CouponService;
 import com.framework.module.member.domain.Member;
+import com.framework.module.member.domain.MemberCoupon;
 import com.framework.module.member.service.MemberService;
 import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
@@ -48,12 +49,12 @@ public class CouponController extends AbstractCrudController<Coupon> {
     }
 
     /**
-     * 获取发放类型的优惠券
+     * 获取未获取的优惠券
      */
-    @ApiOperation(value="获取发放类型的优惠券")
-    @RequestMapping(value = "/obtainLoginType", method = RequestMethod.GET)
-    public ResponseEntity<List<Coupon>> obtainLoginType() throws Exception {
-        List<Coupon> coupons = couponService.obtainLoginType(MemberThread.getInstance().get().getId());
+    @ApiOperation(value="获取未获取的优惠券")
+    @RequestMapping(value = "/unClaimed", method = RequestMethod.GET)
+    public ResponseEntity<List<Coupon>> getUnClaimed() throws Exception {
+        List<Coupon> coupons = couponService.getUnClaimed(MemberThread.getInstance().get().getId());
         return new ResponseEntity<>(coupons, HttpStatus.OK);
     }
 
@@ -72,12 +73,19 @@ public class CouponController extends AbstractCrudController<Coupon> {
      */
     @ApiOperation(value="获取当前用户优惠券数量")
     @RequestMapping(value = "/member/{memberId}", method = RequestMethod.GET)
-    public ResponseEntity<List<Coupon>> getMemberCoupons(@PathVariable String memberId) throws Exception {
+    public ResponseEntity<List<MemberCoupon>> getMemberCoupons(@PathVariable String memberId) throws Exception {
         Member member = memberService.findOne(memberId);
-        List<Coupon> coupons = new ArrayList<>();
-        member.getCoupons().forEach(memberCoupon -> coupons.add(memberCoupon.getCoupon()));
+        return new ResponseEntity<>(member.getCoupons(), HttpStatus.OK);
+    }
 
-        return new ResponseEntity<>(coupons, HttpStatus.OK);
+    /**
+     * 领取优惠券
+     */
+    @ApiOperation(value="领取优惠券")
+    @RequestMapping(value = "/claim", method = RequestMethod.POST)
+    public ResponseEntity<?> claim(@RequestBody Coupon coupon) throws Exception {
+        couponService.claim(MemberThread.getInstance().get().getId(), coupon);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Autowired

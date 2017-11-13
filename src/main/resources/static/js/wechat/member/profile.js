@@ -54,6 +54,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             utils.getLoginMember(function (member) {
                 self.member = member;
                 self.loadFormCount(member.id);
+                self.loadCouponCount();
             }, true);
 
         }

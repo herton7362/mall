@@ -49,7 +49,7 @@ public class CouponServiceImpl extends AbstractCrudService<Coupon> implements Co
     }
 
     @Override
-    public List<Coupon> obtainLoginType(String memberId) throws Exception {
+    public List<Coupon> getUnClaimed(String memberId) throws Exception {
         final Member member = memberService.findOne(memberId);
         final List<MemberCoupon> coupons = member.getCoupons();
         final String clientId = MemberThread.getInstance().getClientId();
@@ -75,13 +75,6 @@ public class CouponServiceImpl extends AbstractCrudService<Coupon> implements Co
                     return true;
                 })
                 .collect(Collectors.toList());
-        newCoupons.forEach(coupon -> {
-            MemberCoupon memberCoupon = new MemberCoupon();
-            memberCoupon.setMember(member);
-            memberCoupon.setCoupon(coupon);
-            memberCoupon.setUsed(false);
-            coupons.add(memberCoupon);
-        });
         return newCoupons;
     }
 
@@ -113,6 +106,17 @@ public class CouponServiceImpl extends AbstractCrudService<Coupon> implements Co
             }
         });
         return newAmount.doubleValue();
+    }
+
+    @Override
+    public void claim(String memberId, Coupon coupon) throws Exception {
+        Member member = memberService.findOne(memberId);
+        List<MemberCoupon> memberCoupons = member.getCoupons();
+        MemberCoupon memberCoupon = new MemberCoupon();
+        memberCoupon.setUsed(false);
+        memberCoupon.setMember(member);
+        memberCoupon.setCoupon(coupon);
+        memberCoupons.add(memberCoupon);
     }
 
     @Autowired

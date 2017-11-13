@@ -14,7 +14,8 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 items: [],
                 deliverToAddress: {},
                 remark: null,
-                member: null
+                member: null,
+                coupon: {amount: 0}
             },
             memberAddresses: [],
             memberAddressForm: {
@@ -23,6 +24,10 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 tel: null,
                 address: {},
                 postalCode: null
+            },
+            coupons: [],
+            couponSelector: {
+                open: false
             }
         },
         filters: {
@@ -70,6 +75,10 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                     total += this.product.price * this.count;
                 });
                 return total;
+            },
+            getFinalTotal: function () {
+                var total = this.getTotal();
+                return total - this.orderForm.coupon.amount;
             },
             saveMemberAddress: function () {
                 var self = this;
@@ -195,6 +204,36 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 } else {
                     makeOrder();
                 }
+            },
+            loadCouponCount: function () {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/api/coupon/member/' + self.member.id),
+                    success: function (data) {
+                        $.each(data, function () {
+                            if(!self.ifExpired(this.coupon) && !this.used && this.coupon.minAmount <= self.getTotal()) {
+                                self.coupons.push(this.coupon);
+                            }
+                        });
+                    }
+                })
+            },
+            ifExpired: function (row) {
+                var now = new Date().getTime();
+                return !(row.startDate <= now && now <= row.endDate);
+            },
+            priceFormatter: function (price) {
+                var result = utils.formatMoney(price).split('.');
+                return '<small>￥</small>' + result[0] + '<small>.'+result[1]+'</small>';
+            },
+            selectCoupon: function () {
+                if(this.coupons.length > 0) {
+                    this.couponSelector.open = true;
+                }
+            },
+            useCoupon: function (coupon) {
+                this.orderForm.coupon = coupon;
+                this.couponSelector.open = false;
             }
         },
         mounted: function () {
@@ -204,6 +243,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             utils.getLoginMember(function (member) {
                 self.member = member;
                 self.loadMemberAddress();
+                self.loadCouponCount();
             });
         }
     });
