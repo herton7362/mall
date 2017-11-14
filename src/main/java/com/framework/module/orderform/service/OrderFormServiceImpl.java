@@ -17,6 +17,7 @@ import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
 import com.kratos.exceptions.BusinessException;
 import com.kratos.module.auth.service.OauthClientDetailsService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,8 +48,8 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             throw new BusinessException("下单账户未找到");
         }
         orderForm.setOrderNumber(getOutTradeNo());
+        validAccount(orderForm);
         if(OrderForm.OrderStatus.PAYED == orderForm.getStatus()) {
-            validAccount(orderForm);
             orderForm.setPaymentStatus(OrderForm.PaymentStatus.PAYED);
         } else if(OrderForm.OrderStatus.UN_PAY == orderForm.getStatus()) {
             orderForm.setPaymentStatus(OrderForm.PaymentStatus.UN_PAY);
@@ -205,8 +206,8 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
      * @throws Exception {@link com.kratos.exceptions.BusinessException}逻辑异常
      */
     private void validAccount(OrderForm orderForm) throws Exception {
-        BigDecimal balance = new BigDecimal(orderForm.getBalance());
-        BigDecimal cash = new BigDecimal(orderForm.getCash());
+        BigDecimal balance = new BigDecimal(orderForm.getBalance()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal cash = new BigDecimal(orderForm.getCash()).setScale(2, RoundingMode.HALF_UP);
         BigDecimal point = new BigDecimal(orderForm.getPoint());
         BigDecimal customerPayAmount;
         customerPayAmount = balance.add(cash).add(point.divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
@@ -218,8 +219,10 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             actualTotalAmount = actualTotalAmount.add(new BigDecimal(product.getPrice()).multiply(new BigDecimal(orderItem.getCount())));
         }
 
-        if(orderForm.getCoupon() != null) {
+        if(orderForm.getCoupon() != null && StringUtils.isNotBlank(orderForm.getCoupon().getId())) {
             actualTotalAmount = new BigDecimal(couponService.useCoupon(orderForm.getCoupon().getId(), orderForm.getMember().getId(), actualTotalAmount.doubleValue()));
+        } else {
+            orderForm.setCoupon(null);
         }
 
         if(customerPayAmount.compareTo(actualTotalAmount) != 0) {

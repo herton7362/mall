@@ -65,13 +65,19 @@ public class CouponController extends AbstractCrudController<Coupon> {
     @RequestMapping(value = "/count/{memberId}", method = RequestMethod.GET)
     public ResponseEntity<Integer> count(@PathVariable String memberId) throws Exception {
         Member member = memberService.findOne(memberId);
-        return new ResponseEntity<>(member.getCoupons().size(), HttpStatus.OK);
+        Integer count = 0;
+        for (MemberCoupon memberCoupon : member.getCoupons()) {
+            if(!memberCoupon.getUsed()) {
+                count ++;
+            }
+        }
+        return new ResponseEntity<>(count, HttpStatus.OK);
     }
 
     /**
-     * 获取当前用户优惠券数量
+     * 获取当前用户优惠券
      */
-    @ApiOperation(value="获取当前用户优惠券数量")
+    @ApiOperation(value="获取当前用户优惠券")
     @RequestMapping(value = "/member/{memberId}", method = RequestMethod.GET)
     public ResponseEntity<List<MemberCoupon>> getMemberCoupons(@PathVariable String memberId) throws Exception {
         Member member = memberService.findOne(memberId);

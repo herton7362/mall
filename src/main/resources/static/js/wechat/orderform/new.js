@@ -17,6 +17,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 member: null,
                 coupon: {amount: 0}
             },
+            member: {},
             memberAddresses: [],
             memberAddressForm: {
                 id: null,
@@ -28,6 +29,19 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             coupons: [],
             couponSelector: {
                 open: false
+            },
+            pointSelector: {
+                open: false,
+                other: false
+            },
+            balanceSelector: {
+                open: false,
+                other: false
+            },
+            account: {
+                cash: 0,
+                balance: null,
+                point: null
             }
         },
         filters: {
@@ -78,7 +92,15 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             },
             getFinalTotal: function () {
                 var total = this.getTotal();
-                return total - this.orderForm.coupon.amount;
+                var point = 0;
+                if(this.account.point) {
+                    point = this.account.point / 100;
+                }
+                var balance = 0;
+                if(this.account.balance) {
+                    point = this.account.balance;
+                }
+                return total - this.orderForm.coupon.amount - point - balance;
             },
             saveMemberAddress: function () {
                 var self = this;
@@ -181,12 +203,16 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                     $.each(self.orderForm.items,function () {
                         this.id = null;
                     });
+                    self.account.cash = self.getFinalTotal();
                     $.ajax({
                         url: utils.patchUrl('/api/orderForm/makeOrder'),
                         contentType: 'application/json',
                         data: JSON.stringify($.extend(self.orderForm,{
                             status: 'UN_PAY', // 下单未支付
-                            member: self.member
+                            member: self.member,
+                            cash: self.account.cash,
+                            balance: self.account.balance || 0,
+                            point: self.account.point || 0
                         })),
                         type: 'POST',
                         success: function(orderForm) {
@@ -234,6 +260,60 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             useCoupon: function (coupon) {
                 this.orderForm.coupon = coupon;
                 this.couponSelector.open = false;
+            },
+            selectPoint: function () {
+                this.pointSelector.open = true;
+            },
+            usePoint:function (point) {
+                this.account.point = point;
+                this.pointSelector.open = false;
+            },
+            otherPoint: function () {
+                var self = this;
+                this.pointSelector.other = true;
+                setTimeout(function () {
+                    $(self.$refs['pointSelectorInput']).focus();
+                }, 200);
+            },
+            confirmPoint: function () {
+                if(this.account.point < 100) {
+                    messager.bubble('积分最小不能小于100');
+                    this.account.point = null;
+                } else {
+                    this.pointSelector.open = false;
+                }
+            },
+            selectBalance: function () {
+                this.balanceSelector.open = true;
+            },
+            useBalance:function (balance) {
+                if(balance > this.member.balance) {
+                    messager.bubble('余额不足');
+                    return;
+                }
+                if(balance > this.getTotal()) {
+                    balance = this.getTotal();
+                }
+                this.account.balance = balance;
+                this.balanceSelector.open = false;
+            },
+            otherBalance: function () {
+                var self = this;
+                this.balanceSelector.other = true;
+                setTimeout(function () {
+                    $(self.$refs['balanceSelectorInput']).focus();
+                }, 200);
+            },
+            confirmBalance: function () {
+                if(this.account.balance > this.member.balance) {
+                    messager.bubble('余额不足');
+                    this.account.balance = null;
+                    return;
+                }
+                if(this.account.balance > this.getTotal()) {
+                    this.account.balance = this.getTotal();
+                }
+                this.balanceSelector.open = false;
             }
         },
         mounted: function () {

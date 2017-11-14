@@ -4,7 +4,8 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
         data: {
             orderForm: {
                 deliverToAddress: {},
-                items:[]
+                items:[],
+                coupon: {amount: 0}
             },
             account: {
                 cash: 0,
@@ -49,12 +50,26 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 });
                 return total;
             },
+            getFinalTotal: function () {
+                var total = this.getTotal();
+                var point = 0;
+                if(this.account.point) {
+                    point = this.account.point / 100;
+                }
+                var balance = 0;
+                if(this.account.balance) {
+                    point = this.account.balance;
+                }
+                return total - ((this.orderForm.coupon && this.orderForm.coupon.amount)||0) - point - balance;
+            },
             loadOrderForm: function () {
                 var self = this;
                 $.ajax({
                     url: utils.patchUrl('/api/orderForm/' + utils.getQueryString('id')),
                     success: function(data) {
                         self.orderForm = data;
+                        self.account.point = data.point;
+                        self.account.balance = data.balance;
                     }
                 })
             },
@@ -67,7 +82,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                         id: this.product.id
                     })
                 });
-                this.account.cash = this.getTotal();
+                this.account.cash = this.getFinalTotal();
                 $.ajax({
                     url: utils.patchUrl('/api/orderForm/pay'),
                     contentType: 'application/json',
@@ -78,8 +93,10 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                     })),
                     type: 'POST',
                     success: function() {
-                        messager.bubble("操作成功");
-                        window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/list?page=all');
+                        messager.bubble("支付成功", 'success');
+                        setTimeout(function () {
+                            window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/list?page=all');
+                        }, 1000);
                     }
                 })
             }

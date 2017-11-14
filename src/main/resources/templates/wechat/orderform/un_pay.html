@@ -90,10 +90,45 @@
                 <div class="weui-cells">
                     <div class="weui-cell">
                         <div class="weui-cell__bd">
-                            <p>优惠</p>
+                            <p>优惠券</p>
                         </div>
                         <div class="weui-cell__ft">
-                            使用优惠
+                            <template v-if="orderForm.coupon && orderForm.coupon.amount">
+                                - ￥{{orderForm.coupon.amount | price}}
+                            </template>
+                            <template v-if="!orderForm.coupon || !orderForm.coupon.amount">
+                                无
+                            </template>
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <p>
+                                积分抵扣
+                            </p>
+                        </div>
+                        <div class="weui-cell__ft">
+                            <template v-if="account.point">
+                                - ￥{{account.point/100}}（{{account.point}}）
+                            </template>
+                            <template v-if="!account.point">
+                                无
+                            </template>
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <p>
+                                余额支付
+                            </p>
+                        </div>
+                        <div class="weui-cell__ft">
+                            <template v-if="account.balance">
+                                - ￥{{account.balance}}
+                            </template>
+                            <template v-if="!account.balance">
+                                无
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -123,7 +158,7 @@
     <div class="row tabbar">
         <div class="col-xs-8 total">
             <span>合计：</span>
-            <span class="main-text-color">￥{{getTotal() | price}}</span>
+            <span class="main-text-color">￥{{getFinalTotal() | price}}</span>
         </div>
         <div class="col-xs-4 padding-none">
             <button type="button" class="btn btn-flat submit-order main-btn" @click="pay">支付</button>
