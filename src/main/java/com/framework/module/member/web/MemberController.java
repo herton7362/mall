@@ -73,6 +73,15 @@ public class MemberController extends AbstractCrudController<Member> {
         return new ResponseEntity<>(coupons, HttpStatus.OK);
     }
 
+    /**
+     * 查询总数
+     */
+    @ApiOperation(value="查询总数")
+    @RequestMapping(value = "/count", method = RequestMethod.GET)
+    public ResponseEntity<Long> count() throws Exception {
+        return new ResponseEntity<>(memberService.count(), HttpStatus.OK);
+    }
+
     @Autowired
     public MemberController(MemberService memberService) {
         this.memberService = memberService;

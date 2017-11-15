@@ -98,7 +98,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 }
                 var balance = 0;
                 if(this.account.balance) {
-                    point = this.account.balance;
+                    balance = this.account.balance;
                 }
                 return total - this.orderForm.coupon.amount - point - balance;
             },
@@ -217,19 +217,23 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                         type: 'POST',
                         success: function(orderForm) {
                             messager.bubble("操作成功");
-                            window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/un_pay?id=' + orderForm.id);
+                            setTimeout(function () {
+                                if(utils.getQueryString("id")) {
+                                    $.ajax({
+                                        url: utils.patchUrl('/api/cart/' + utils.getQueryString("id")),
+                                        type: 'DELETE',
+                                        success: function () {
+                                            window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/un_pay?id=' + orderForm.id);
+                                        }
+                                    })
+                                } else {
+                                    window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/un_pay?id=' + orderForm.id);
+                                }
+                            }, 1000);
                         }
                     })
                 }
-                if(utils.getQueryString("id")) {
-                    $.ajax({
-                        url: utils.patchUrl('/api/cart/' + utils.getQueryString("id")),
-                        type: 'DELETE',
-                        success: makeOrder
-                    })
-                } else {
-                    makeOrder();
-                }
+                makeOrder();
             },
             loadCouponCount: function () {
                 var self = this;

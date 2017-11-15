@@ -151,6 +151,52 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="weui-cells">
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <p>优惠券</p>
+                        </div>
+                        <div class="weui-cell__ft">
+                            <template v-if="orderForm.coupon && orderForm.coupon.amount">
+                                - ￥{{orderForm.coupon.amount | price}}
+                            </template>
+                            <template v-if="!orderForm.coupon || !orderForm.coupon.amount">
+                                无
+                            </template>
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <p>
+                                积分抵扣
+                            </p>
+                        </div>
+                        <div class="weui-cell__ft">
+                            <template v-if="orderForm.point">
+                                - ￥{{orderForm.point/100}}（{{orderForm.point}}）
+                            </template>
+                            <template v-if="!orderForm.point">
+                                无
+                            </template>
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <p>
+                                余额支付
+                            </p>
+                        </div>
+                        <div class="weui-cell__ft">
+                            <template v-if="orderForm.balance">
+                                - ￥{{orderForm.balance}}
+                            </template>
+                            <template v-if="!orderForm.balance">
+                                无
+                            </template>
+                        </div>
+                    </div>
+                </div>
             </section>
             <!-- /.content -->
         </div>

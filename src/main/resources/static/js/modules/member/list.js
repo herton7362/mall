@@ -8,6 +8,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 },
                 columns: [
                     {field:'cardNo', title:'会员卡'},
+                    {field:'loginName', title:'登录名'},
                     {field:'name', title:'姓名'},
                     {field:'mobile', title:'手机'},
                     {field:'gender', title:'性别', formatter: function(value) {

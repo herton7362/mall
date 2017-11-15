@@ -16,6 +16,13 @@
                 <div class="weui-cells" style="margin-top: 0">
                     <div class="weui-cell">
                         <div class="weui-cell__bd">
+                            <p>
+                                注：优惠券不予返还。积分，余额按原路返还。
+                            </p>
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
                             <textarea class="weui-textarea" maxlength="200" placeholder="请输入退货原因" v-model="applyRejectRemark" rows="3"></textarea>
                             <div class="weui-textarea-counter"><span>{{applyRejectRemark.length}}</span>/200</div>
                         </div>
@@ -36,6 +43,52 @@
                         </div>
                         <div class="weui-cell__bd" style="text-align: right">
                             <p> + ￥0.00</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="weui-cells">
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <p>优惠券</p>
+                        </div>
+                        <div class="weui-cell__ft">
+                            <template v-if="orderForm.coupon && orderForm.coupon.amount">
+                                - ￥{{orderForm.coupon.amount | price}}
+                            </template>
+                            <template v-if="!orderForm.coupon || !orderForm.coupon.amount">
+                                无
+                            </template>
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <p>
+                                积分抵扣
+                            </p>
+                        </div>
+                        <div class="weui-cell__ft">
+                            <template v-if="orderForm.point">
+                                - ￥{{orderForm.point/100}}（{{orderForm.point}}）
+                            </template>
+                            <template v-if="!orderForm.point">
+                                无
+                            </template>
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <p>
+                                余额支付
+                            </p>
+                        </div>
+                        <div class="weui-cell__ft">
+                            <template v-if="orderForm.balance">
+                                - ￥{{orderForm.balance}}
+                            </template>
+                            <template v-if="!orderForm.balance">
+                                无
+                            </template>
                         </div>
                     </div>
                 </div>

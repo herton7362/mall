@@ -61,6 +61,20 @@
                             进入店铺
                         </div>
                     </a>
+                    <div class="weui-cell" v-if="product.points">
+                        <div class="weui-cell__bd">
+                            <p>
+                                <a href="javascript:;" class="weui-btn weui-btn_plain-primary btn-point">积分</a>
+                                购买可获得 {{product.points}} 积分
+                            </p>
+                        </div>
+                    </div>
+                    <div class="weui-cell statement">
+                        <div class="weui-cell__bd">
+                            <span class="margin-r-5"><i class="iconfont icon-success margin-r-5"></i> 企业认证</span>
+                            <span><i class="iconfont icon-success margin-r-5"></i> 担保交易</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="weui-cells" >
                     <p>

@@ -58,7 +58,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 }
                 var balance = 0;
                 if(this.account.balance) {
-                    point = this.account.balance;
+                    balance = this.account.balance;
                 }
                 return total - ((this.orderForm.coupon && this.orderForm.coupon.amount)||0) - point - balance;
             },

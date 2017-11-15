@@ -205,6 +205,14 @@
                                 <input type="number" class="form-control" required v-model="returnMoney.form.returnedMoney" placeholder="输入退款金额">
                             </div>
                             <div class="form-group">
+                                <label>退回余额（如果换货则为 0）：</label>
+                                <input type="number" class="form-control" required v-model="returnMoney.form.returnedBalance" placeholder="输入退回余额">
+                            </div>
+                            <div class="form-group">
+                                <label>退回积分（如果换货则为 0）：</label>
+                                <input type="number" class="form-control" required v-model="returnMoney.form.returnedPoint" placeholder="输入退回积分">
+                            </div>
+                            <div class="form-group">
                                 <label>备注：</label>
                                 <textarea class="form-control" rows="3" required v-model="returnMoney.form.returnedRemark" placeholder="输入备注"></textarea>
                             </div>
@@ -295,8 +303,16 @@
                         <input type="text" class="form-control" :value="formDetail.form.applyRejectRemark" placeholder="-">
                     </div>
                     <div class="form-group" v-if="formDetail.form.status == 'REJECTED'">
-                        <label>退款金额：</label>
+                        <label>退回金额：</label>
                         <input type="text" class="form-control" :value="formDetail.form.returnedMoney | price" placeholder="-">
+                    </div>
+                    <div class="form-group" v-if="formDetail.form.status == 'REJECTED'">
+                        <label>退回余额：</label>
+                        <input type="text" class="form-control" :value="formDetail.form.returnedBalance | price" placeholder="-">
+                    </div>
+                    <div class="form-group" v-if="formDetail.form.status == 'REJECTED'">
+                        <label>退回积分：</label>
+                        <input type="text" class="form-control" :value="formDetail.form.returnedPoint" placeholder="-">
                     </div>
                     <div class="form-group" v-if="formDetail.form.status == 'REJECTED'">
                         <label>退款备注：</label>

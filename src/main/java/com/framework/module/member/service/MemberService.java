@@ -37,4 +37,10 @@ public interface MemberService extends CrudService<Member> {
      * @param amount 扣除的余额
      */
     void deductBalance(String memberId, Double amount) throws Exception;
+
+    /**
+     * 查询总数
+     * @return 会员总数
+     */
+    Long count();
 }

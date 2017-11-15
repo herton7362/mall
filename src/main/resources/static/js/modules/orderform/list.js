@@ -191,7 +191,10 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             },
             rejectModalOpen: function (row) {
                 this.returnMoney.form = {
-                    id: row.id
+                    id: row.id,
+                    returnedMoney: row.cash,
+                    returnedBalance: row.balance,
+                    returnedPoint: row.point
                 };
                 this.returnMoney.modal.$instance.open();
             },

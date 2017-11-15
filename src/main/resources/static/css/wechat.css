@@ -423,6 +423,26 @@
     font-size: 12px;
 }
 
+.product-detail .statement {
+    font-size: 14px;
+}
+
+.product-detail .btn-point {
+    line-height: 0;
+    color: #f60;
+    border: 1px solid #f60;
+    width: 60px;
+    font-size: 12px;
+    display: inline;
+    margin-right: 5px;
+    padding: 0 4px;
+}
+
+.product-detail .statement i {
+    font-size: 12px;
+    color: #09BB07;
+}
+
 .product-detail .carousel-indicators li {
     background-color: #999;
     margin: 0 0 0 5px;

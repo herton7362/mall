@@ -64,6 +64,11 @@ public class OrderForm extends BaseEntity {
     @ApiModelProperty(value = "退款金额")
     @Column(length = 11, precision = 2)
     private Double returnedMoney;
+    @ApiModelProperty(value = "退款余额")
+    @Column(length = 11, precision = 2)
+    private Double returnedBalance;
+    @ApiModelProperty(value = "退款积分")
+    private Integer returnedPoint;
     @ApiModelProperty(value = "退款备注")
     @Column(length = 500)
     private String returnedRemark;
@@ -197,6 +202,22 @@ public class OrderForm extends BaseEntity {
 
     public void setReturnedMoney(Double returnedMoney) {
         this.returnedMoney = returnedMoney;
+    }
+
+    public Double getReturnedBalance() {
+        return returnedBalance;
+    }
+
+    public void setReturnedBalance(Double returnedBalance) {
+        this.returnedBalance = returnedBalance;
+    }
+
+    public Integer getReturnedPoint() {
+        return returnedPoint;
+    }
+
+    public void setReturnedPoint(Integer returnedPoint) {
+        this.returnedPoint = returnedPoint;
     }
 
     public String getReturnedRemark() {

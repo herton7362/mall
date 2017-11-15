@@ -9,6 +9,10 @@ public class RejectParam {
     private String id;
     @ApiModelProperty("退款金额")
     private Double returnedMoney;
+    @ApiModelProperty("退款余额")
+    private Double returnedBalance;
+    @ApiModelProperty(value = "退款积分")
+    private Integer returnedPoint;
     @ApiModelProperty("退款备注")
     private String returnedRemark;
 
@@ -26,6 +30,22 @@ public class RejectParam {
 
     public void setReturnedMoney(Double returnedMoney) {
         this.returnedMoney = returnedMoney;
+    }
+
+    public Double getReturnedBalance() {
+        return returnedBalance;
+    }
+
+    public void setReturnedBalance(Double returnedBalance) {
+        this.returnedBalance = returnedBalance;
+    }
+
+    public Integer getReturnedPoint() {
+        return returnedPoint;
+    }
+
+    public void setReturnedPoint(Integer returnedPoint) {
+        this.returnedPoint = returnedPoint;
     }
 
     public String getReturnedRemark() {

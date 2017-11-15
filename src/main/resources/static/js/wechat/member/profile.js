@@ -4,6 +4,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
         data: {
             member: {},
             formCount: {},
+            memberLevel: {},
             couponCount: 0
         },
         filters: {
@@ -47,6 +48,16 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                         self.couponCount = count;
                     }
                 })
+            },
+            loadMemberLevel: function () {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/api/memberLevel/member/' + this.member.id),
+                    cache: false,
+                    success: function (data) {
+                        self.memberLevel = data;
+                    }
+                })
             }
         },
         mounted: function () {
@@ -55,6 +66,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 self.member = member;
                 self.loadFormCount(member.id);
                 self.loadCouponCount();
+                self.loadMemberLevel();
             }, true);
 
         }

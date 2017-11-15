@@ -16,8 +16,11 @@
                 <div class="box box-widget widget-user">
                     <!-- Add the bg color to the header using any of the bg-* classes -->
                     <div class="widget-user-header bg-black">
-                        <h3 class="widget-user-username">{{member.name}}</h3>
-                        <i class="widget-user-config fa fa-cog"></i>
+                        <h3 class="widget-user-username">
+                            {{member.name}}
+                            <span class="weui-badge" style="margin-left: 5px;vertical-align: middle">{{memberLevel.name}}</span>
+                        </h3>
+                        <!--<i class="widget-user-config fa fa-cog">资料修改</i>-->
                     </div>
                     <div class="widget-user-image">
                         <img class="img-circle" :src="getHeadPhoto()" :alt="member.name">
@@ -34,7 +37,7 @@
                             <!-- /.col -->
                             <div class="col-xs-4 border-right">
                                 <div class="description-block">
-                                    <h5 class="description-header">{{member.point | price}}</h5>
+                                    <h5 class="description-header">{{member.point}}</h5>
                                     <span class="description-text"><i class="iconfont icon-jifen"></i> 总积分</span>
                                 </div>
                                 <!-- /.description-block -->
@@ -42,7 +45,7 @@
                             <!-- /.col -->
                             <div class="col-xs-4 border-right">
                                 <div class="description-block">
-                                    <h5 class="description-header">{{member.salePoint | price}}</h5>
+                                    <h5 class="description-header">{{member.salePoint}}</h5>
                                     <span class="description-text"><i class="iconfont icon-jifen2"></i> 可消费积分</span>
                                 </div>
                                 <!-- /.description-block -->

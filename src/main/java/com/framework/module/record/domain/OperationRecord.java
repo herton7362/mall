@@ -84,6 +84,7 @@ public class OperationRecord extends BaseEntity {
         FAST_INCREASE_POINT,
         CONSUME,
         RECHARGE,
-        DEDUCT_BALANCE
+        DEDUCT_BALANCE,
+        REJECT
     }
 }

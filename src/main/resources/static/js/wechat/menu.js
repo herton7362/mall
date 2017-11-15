@@ -17,17 +17,17 @@ require(['jquery', 'vue', 'utils'], function ($, Vue, utils) {
                 {
                     name: '首页',
                     url: utils.patchUrlPrefixUrl('/'),
-                    icon: 'fa fa-home',
+                    icon: 'iconfont icon-all',
                     active: false
                 }, {
                     name: '全部商品',
                     url: utils.patchUrlPrefixUrl('/wechat/product/all'),
-                    icon: 'fa fa-list-ul',
+                    icon: 'iconfont icon-navlist',
                     active: false
                 }, {
                     name: '购物车',
                     url: utils.patchUrlPrefixUrl('/wechat/cart/list'),
-                    icon: 'fa fa-shopping-cart',
+                    icon: 'iconfont icon-cart',
                     active: false
                 }, {
                     name: '个人中心',

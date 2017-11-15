@@ -11,10 +11,17 @@ import com.framework.module.member.service.MemberService;
 import com.framework.module.record.domain.OperationRecord;
 import com.framework.module.record.service.OperationRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @Transactional
@@ -95,6 +102,17 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
         save(member);
 
         record(member, String.format("储值消费 %s 元", amount), OperationRecord.BusinessType.DEDUCT_BALANCE);
+    }
+
+    @Override
+    public Long count() {
+        return repository.count(
+            (Root<Member> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder)-> {
+                List<Predicate> predicate = new ArrayList<>();
+                predicate.add(criteriaBuilder.equal(root.get("logicallyDeleted"), false));
+                return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
+            }
+        );
     }
 
     private Integer increaseNumber(Integer sourcePoint, Integer point) {

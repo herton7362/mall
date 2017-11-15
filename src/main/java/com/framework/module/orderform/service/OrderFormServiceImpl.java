@@ -61,27 +61,46 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         items.forEach(newOrderForm::addItem);
         // 修改账户余额
         if(OrderForm.OrderStatus.PAYED == orderForm.getStatus()) {
-            modifyMemberAccount(orderForm);
+            consumeModifyMemberAccount(orderForm);
         }
         return orderForm;
     }
 
     /**
-     * 修改账户余额
+     * 消费修改账户余额
      * @param orderForm 订单
      */
-    private void modifyMemberAccount(OrderForm orderForm) throws Exception {
+    private void consumeModifyMemberAccount(OrderForm orderForm) throws Exception {
         Member member = orderForm.getMember();
         Integer productPoints = 0;
         for (OrderItem orderItem : orderForm.getItems()) {
             productPoints += orderItem.getProduct().getPoints();
         }
-        member.setPoint(subtractNumber(member.getPoint(), orderForm.getPoint()));
+        member.setSalePoint(subtractNumber(member.getSalePoint(), orderForm.getPoint()));
         member.setPoint(increaseNumber(member.getPoint(), productPoints));
+        member.setSalePoint(increaseNumber(member.getSalePoint(), productPoints));
         member.setBalance(subtractMoney(member.getBalance(), orderForm.getBalance()));
         memberService.save(member);
-        record(member, orderForm.getCash(), orderForm.getBalance(), orderForm.getPoint(), orderForm.getItems());
+        recordConsume(member, orderForm.getCash(), orderForm.getBalance(), orderForm.getPoint(), orderForm.getItems());
     }
+
+    /**
+     * 退款修改账户余额
+     * @param orderForm 订单
+     */
+    private void rejectModifyMemberAccount(OrderForm orderForm) throws Exception {
+        Member member = orderForm.getMember();
+        Integer productPoints = 0;
+        for (OrderItem orderItem : orderForm.getItems()) {
+            productPoints += orderItem.getProduct().getPoints();
+        }
+        member.setSalePoint(increaseNumber(member.getSalePoint(), orderForm.getReturnedPoint()));
+        member.setSalePoint(subtractNumber(member.getSalePoint(), productPoints));
+        member.setBalance(increaseMoney(member.getBalance(), orderForm.getBalance()));
+        memberService.save(member);
+        recordReject(member, orderForm.getReturnedMoney(), orderForm.getBalance(), orderForm.getPoint(), orderForm);
+    }
+
 
     @Override
     public Map<String, Integer> getOrderCounts(String memberId) throws Exception {
@@ -106,7 +125,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         orderForm.setStatus(OrderForm.OrderStatus.PAYED);
         orderForm.setPaymentStatus(OrderForm.PaymentStatus.PAYED);
         final OrderForm newOrderForm = orderFormRepository.save(orderForm);
-        modifyMemberAccount(newOrderForm);
+        consumeModifyMemberAccount(newOrderForm);
         return newOrderForm;
     }
 
@@ -178,8 +197,12 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         }
         orderForm.setStatus(OrderForm.OrderStatus.REJECTED);
         orderForm.setReturnedMoney(rejectParam.getReturnedMoney());
+        orderForm.setReturnedBalance(rejectParam.getReturnedBalance());
+        orderForm.setReturnedPoint(rejectParam.getReturnedPoint());
         orderForm.setApplyRejectRemark(rejectParam.getReturnedRemark());
         orderFormRepository.save(orderForm);
+        // 修改账户余额
+        rejectModifyMemberAccount(orderForm);
         return orderForm;
     }
 
@@ -235,7 +258,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
      * @param member 会员
      * @param items 消费项
      */
-    private void record(Member member, Double cash, Double balance, Integer point, List<OrderItem> items) throws Exception {
+    private void recordConsume(Member member, Double cash, Double balance, Integer point, List<OrderItem> items) throws Exception {
         OperationRecord rechargeRecord = new OperationRecord();
         rechargeRecord.setMember(member);
         rechargeRecord.setBusinessType(OperationRecord.BusinessType.CONSUME.name());
@@ -256,12 +279,37 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         operationRecordService.save(rechargeRecord);
     }
 
-    private Double subtractMoney(Double sourceMoney, Double point) {
+    /**
+     * 记录退款记录
+     * @param member 会员
+     * @param orderForm 订单实体
+     */
+    private void recordReject(Member member, Double cash, Double balance, Integer point, OrderForm orderForm) throws Exception {
+        OperationRecord rechargeRecord = new OperationRecord();
+        rechargeRecord.setMember(member);
+        rechargeRecord.setBusinessType(OperationRecord.BusinessType.REJECT.name());
+        rechargeRecord.setClient(oauthClientDetailsService.findOneByClientId(MemberThread.getInstance().getClientId()));
+        rechargeRecord.setIpAddress(MemberThread.getInstance().getIpAddress());
+        String content = String.format("现金退款 %s 元，余额退款 %s 元，积分退款 %s 分", cash, balance, point)
+                + String.format("  订单号：%s" , orderForm.getOrderNumber());
+        rechargeRecord.setContent(content);
+        operationRecordService.save(rechargeRecord);
+    }
+
+    private Double subtractMoney(Double sourceMoney, Double money) {
         if(sourceMoney == null) {
             sourceMoney = 0D;
         }
         BigDecimal sp = new BigDecimal(sourceMoney);
-        return sp.subtract(new BigDecimal(point)).doubleValue();
+        return sp.subtract(new BigDecimal(money)).doubleValue();
+    }
+
+    private Double increaseMoney(Double sourceMoney, Double money) {
+        if(sourceMoney == null) {
+            sourceMoney = 0D;
+        }
+        BigDecimal sp = new BigDecimal(sourceMoney);
+        return sp.add(new BigDecimal(money)).doubleValue();
     }
 
     private Integer subtractNumber(Integer sourcePoint, Integer point) {
