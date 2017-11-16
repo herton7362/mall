@@ -43,6 +43,15 @@ public class ProductController extends AbstractCrudController<Product> {
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
+    /**
+     * 查询总数
+     */
+    @ApiOperation(value="查询总数")
+    @RequestMapping(value = "/count", method = RequestMethod.GET)
+    public ResponseEntity<Long> count() throws Exception {
+        return new ResponseEntity<>(productService.count(), HttpStatus.OK);
+    }
+
     @Autowired
     public ProductController(
             ProductService productService,

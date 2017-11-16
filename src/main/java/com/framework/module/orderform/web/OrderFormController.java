@@ -107,6 +107,36 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
         return new ResponseEntity<>(orderFormService.reject(rejectParam), HttpStatus.OK);
     }
 
+    /**
+     * 今日销售额
+     */
+    @ApiOperation(value="今日销售额")
+    @RequestMapping(value = "/todaySale", method = RequestMethod.GET)
+    public ResponseEntity<Double> getTodaySale() throws Exception {
+        Double result = orderFormService.getTodaySale();
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    /**
+     * 本月销售额
+     */
+    @ApiOperation(value="本月销售额")
+    @RequestMapping(value = "/monthSale", method = RequestMethod.GET)
+    public ResponseEntity<Double> getMonthSale() throws Exception {
+        Double result = orderFormService.getMonthSale();
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    /**
+     * 每日销售额
+     */
+    @ApiOperation(value="每日销售额")
+    @RequestMapping(value = "/everydaySale", method = RequestMethod.GET)
+    public ResponseEntity<List<Map<String, Object>>> getEverydaySale() throws Exception {
+        List<Map<String, Object>> result = orderFormService.getEverydaySale();
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @Autowired
     public OrderFormController(OrderFormService orderFormService) {
         this.orderFormService = orderFormService;

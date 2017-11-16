@@ -206,6 +206,42 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         return orderForm;
     }
 
+    @Override
+    public Double getTodaySale() throws Exception {
+        return orderFormRepository.getTodaySale();
+    }
+
+    @Override
+    public Double getMonthSale() throws Exception {
+        return orderFormRepository.getMonthSale();
+    }
+
+    @Override
+    public List<Map<String, Object>> getEverydaySale() throws Exception {
+        List<Map<String, Object>> result = new ArrayList<>();
+        Map<String, Object> map;
+        Calendar startDate = Calendar.getInstance();
+        startDate.setTime(new Date());
+        startDate.set(Calendar.HOUR_OF_DAY, 0);
+        startDate.set(Calendar.MINUTE, 0);
+        startDate.set(Calendar.SECOND, 0);
+        Calendar endDate = Calendar.getInstance();
+        endDate.setTime(startDate.getTime());
+        endDate.add(Calendar.DATE, 1);
+        Double sale;
+        SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+        for (int i = 0; i < 8; i++) {
+            map = new HashMap<>();
+            sale = orderFormRepository.getSaleByDate(startDate.getTime().getTime(), endDate.getTime().getTime());
+            map.put("y", s.format(startDate.getTime()));
+            map.put("item1", sale);
+            startDate.add(Calendar.DATE, -1);
+            endDate.add(Calendar.DATE, -1);
+            result.add(map);
+        }
+        return result;
+    }
+
     /**
      * 要求外部订单号必须唯一。
      * @return 订单号

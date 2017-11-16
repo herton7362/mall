@@ -6,6 +6,7 @@ import com.framework.module.orderform.web.RejectParam;
 import com.framework.module.orderform.web.SendOutParam;
 import com.kratos.common.CrudService;
 
+import java.util.List;
 import java.util.Map;
 
 public interface OrderFormService extends CrudService<OrderForm> {
@@ -51,4 +52,22 @@ public interface OrderFormService extends CrudService<OrderForm> {
      * @param rejectParam 参数
      */
     OrderForm reject(RejectParam rejectParam) throws Exception;
+
+    /**
+     * 获取今日销售额
+     * @return 今日销售额
+     */
+    Double getTodaySale() throws Exception;
+
+    /**
+     * 获取本月销售额
+     * @return 本月销售额
+     */
+    Double getMonthSale() throws Exception;
+
+    /**
+     * 获取每日销售额
+     * @return 每日销售额
+     */
+    List<Map<String, Object>> getEverydaySale() throws Exception;
 }
