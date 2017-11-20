@@ -7,6 +7,9 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     name: ''
                 },
                 columns: [
+                    {field:'coverImage', title:'封面', formatter: function(value) {
+                        return '<img width="50" src="'+utils.patchUrl('/attachment/download/' + value.id)+'">';
+                     }},
                     {field:'productCategory.name', title:'分类'},
                     {field:'name', title:'名称'},
                     {field:'remark', title:'备注'},

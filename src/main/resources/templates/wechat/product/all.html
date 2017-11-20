@@ -16,7 +16,7 @@
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs wechat-tabs" role="tablist">
                     <li role="presentation" :class="{active: row.id === activeId}" v-for="row in productCategories">
-                        <a :href="'#'+row.id" @click="tabClick(row)" :aria-controls="row.id" role="tab" data-toggle="tab">{{row.name}}</a>
+                        <a :href="'#'+row.id" @click="tabClick(row.id)" :aria-controls="row.id" role="tab" data-toggle="tab">{{row.name}}</a>
                     </li>
                 </ul>
 
@@ -30,7 +30,7 @@
                                     <p class="product-title">{{product.name}}</p>
                                     <p>
                                         <em class="product-price">¥ {{product.price | price}}</em>
-                                        <a href="#" class="pull-right add-cart-button" @click.stop="addCart(product)">
+                                        <a href="javascript:void(0)" class="pull-right add-cart-button" @click.stop="addCart(product)">
                                             <i class="iconfont icon-cart"></i>
                                         </a>
                                     </p>
