@@ -2,8 +2,8 @@ require(['jquery', 'vue', 'utils'], function($, Vue, utils) {
     new Vue({
         el: '.login-box',
         data: {
-            username: 'admin',
-            password: '123456',
+            username: null,
+            password: null,
             msg: '用户登录',
             validator: null,
             error: false

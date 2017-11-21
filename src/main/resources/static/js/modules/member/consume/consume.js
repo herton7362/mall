@@ -59,7 +59,7 @@ define([
                 $instance: {},
                 selectedId: null,
                 root: {
-                    id: null,
+                    id: 'isNull',
                     name: '所有类别',
                     open: true,
                     alwaysExpended: true
