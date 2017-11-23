@@ -329,6 +329,14 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 self.loadMemberAddress();
                 self.loadCouponCount();
             });
+            $(window).on('hashchange', function () {
+                var isBackward = location.hash.indexOf('#') < 0;
+                if(isBackward) {
+                    self.couponSelector.open = false;
+                    self.pointSelector.open = false;
+                    self.balanceSelector.open = false;
+                }
+            });
         }
     });
 });

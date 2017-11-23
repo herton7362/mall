@@ -70,7 +70,7 @@ require([
                 window.location.href = utils.patchUrlPrefixUrl('/wechat/product/detail?id=' + row.id);
             },
             addCart: function (product) {
-                productsheet.addCart(product);
+                productsheet.open(product);
             }
         },
         mounted: function () {

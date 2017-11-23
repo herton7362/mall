@@ -41,7 +41,7 @@ require([
                 window.location.href = utils.patchUrlPrefixUrl('/wechat/product/all');
             },
             addCart: function (product) {
-                productsheet.addCart(product);
+                productsheet.open(product);
             }
         },
         mounted: function () {

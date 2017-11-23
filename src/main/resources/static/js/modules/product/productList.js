@@ -22,7 +22,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             sidebar: {
                 $instance: {},
                 root: {
-                    id: 'isNull',
+                    id: null,
                     name: '所有类别',
                     open: true,
                     alwaysExpended: true

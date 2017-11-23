@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * 商品分类
@@ -23,6 +24,10 @@ public class ProductCategory extends BaseEntity {
     @ApiModelProperty(value = "商品分类备注")
     @Column(length = 200)
     private String remark;
+    @ApiModelProperty(value = "商品规格")
+    @ManyToMany
+    @JoinTable(name="product_category_product_standard",joinColumns={@JoinColumn(name="product_category_id")},inverseJoinColumns={@JoinColumn(name="product_standard_id")})
+    private List<ProductStandard> productStandards;
 
     public ProductCategory getParent() {
         return parent;
@@ -46,5 +51,13 @@ public class ProductCategory extends BaseEntity {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public List<ProductStandard> getProductStandards() {
+        return productStandards;
+    }
+
+    public void setProductStandards(List<ProductStandard> productStandards) {
+        this.productStandards = productStandards;
     }
 }

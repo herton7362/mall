@@ -53,6 +53,8 @@ public class Product extends BaseEntity {
     @Lob
     @Type(type="text")
     private String description;
+    @ApiModelProperty(value = "库存数量")
+    private Long stockCount;
 
     public ProductCategory getProductCategory() {
         return productCategory;
@@ -148,5 +150,13 @@ public class Product extends BaseEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Long getStockCount() {
+        return stockCount;
+    }
+
+    public void setStockCount(Long stockCount) {
+        this.stockCount = stockCount;
     }
 }

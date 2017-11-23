@@ -22,10 +22,10 @@ require([
         },
         methods: {
             addCart: function () {
-                productsheet.addCart(this.product);
+                productsheet.open(this.product);
             },
             justBuy: function () {
-                productsheet.justBuy(this.product);
+                productsheet.open(this.product);
             }
         },
         mounted: function () {

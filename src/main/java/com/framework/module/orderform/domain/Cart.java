@@ -21,6 +21,7 @@ public class Cart extends BaseEntity {
     @ApiModelProperty(value = "会员")
     @ManyToOne(fetch = FetchType.EAGER)
     private Member member;
+    @ApiModelProperty(value = "购物车条目")
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cart")
     private List<CartItem> items;
 

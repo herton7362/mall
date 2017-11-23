@@ -43,6 +43,7 @@ public class OrderForm extends BaseEntity {
     @Column(length = 20)
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
+    @ApiModelProperty(value = "订单条目")
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "orderForm")
     private List<OrderItem> items;
     @ApiModelProperty(value = "买家留言")

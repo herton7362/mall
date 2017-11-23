@@ -78,7 +78,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="weui-cell weui-cell_access">
+                    <div class="weui-cell">
                         <div class="weui-cell__bd">
                             <p>配送方式</p>
                         </div>
@@ -103,7 +103,7 @@
                     </div>
                 </div>
                 <div class="weui-cells">
-                    <div class="weui-cell weui-cell_access" @click="selectCoupon">
+                    <a href="#content" class="weui-cell" :class="{'weui-cell_access':coupons.length > 0}" @click="selectCoupon">
                         <div class="weui-cell__bd">
                             <p>
                                 优惠券
@@ -121,8 +121,8 @@
                                 暂无可用优惠券
                             </template>
                         </div>
-                    </div>
-                    <div class="weui-cell weui-cell_access" @click="selectPoint">
+                    </a>
+                    <a href="#content" class="weui-cell" :class="{'weui-cell_access':member.salePoint > 0}" @click="selectPoint">
                         <div class="weui-cell__bd">
                             <p>
                                 积分抵扣
@@ -139,8 +139,8 @@
                                 暂无可用积分
                             </template>
                         </div>
-                    </div>
-                    <div class="weui-cell weui-cell_access" @click="selectBalance">
+                    </a>
+                    <a href="#content" class="weui-cell" :class="{'weui-cell_access':member.balance > 0}" @click="selectBalance">
                         <div class="weui-cell__bd">
                             <p>
                                 余额支付
@@ -157,7 +157,7 @@
                                 暂无可用余额
                             </template>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 <div class="weui-cells">
                     <div class="weui-cell">
@@ -230,6 +230,9 @@
                             <p>{{row.name}}，{{row.tel}}</p>
                             <p class="desc">收货地址：{{row.address | addressName}}{{row.detailAddress}}</p>
                         </div>
+                        <div class="weui-cell__ft" @click="editAddress(row)">
+                            <i class="iconfont icon-edit"></i>
+                        </div>
                     </label>
                 </div>
             </template>
@@ -268,7 +271,7 @@
                 </div>
             </div>
         </div>
-        <div class="page point-selector" :class="{'js_show slideIn':pointSelector.open}">
+        <div class="page point-selector" :class="{'js_show slideIn':pointSelector.open,'js_show slideOut':!pointSelector.open}">
             <div class="weui-panel weui-panel_access">
                 <div class="weui-panel__bd">
                     <div class="weui-media-box weui-media-box_text">
@@ -303,6 +306,7 @@
                                 <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="otherPoint">其他</a>
                             </div>
                             <div class="weui-flex__item">
+                                <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="usePoint(null)">不使用</a>
                             </div>
                             <div class="weui-flex__item">
                             </div>
@@ -321,7 +325,7 @@
                 </div>
             </div>
         </div>
-        <div class="page point-selector" :class="{'js_show slideIn':balanceSelector.open}">
+        <div class="page point-selector" :class="{'js_show slideIn':balanceSelector.open,'js_show slideOut':!balanceSelector.open}">
             <div class="weui-panel weui-panel_access">
                 <div class="weui-panel__bd">
                     <div class="weui-media-box weui-media-box_text">
@@ -356,6 +360,7 @@
                                 <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="otherBalance">其他</a>
                             </div>
                             <div class="weui-flex__item">
+                                <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="useBalance(null)">不使用</a>
                             </div>
                             <div class="weui-flex__item">
                             </div>

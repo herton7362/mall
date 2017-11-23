@@ -37,7 +37,14 @@
             </div>
         </template>
         <template slot="footer">
-            <div class="weui-actionsheet__cell main-btn" @click="buttonClick">{{button.text}}</div>
+            <div class="weui-flex">
+                <div class="weui-flex__item">
+                    <div class="weui-actionsheet__cell second-btn" @click="addCart">加入购物车</div>
+                </div>
+                <div class="weui-flex__item">
+                    <div class="weui-actionsheet__cell main-btn" @click="justBuy">立即购买</div>
+                </div>
+            </div>
         </template>
     </actionsheet>
 </section>

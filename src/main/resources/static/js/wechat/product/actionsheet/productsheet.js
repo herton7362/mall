@@ -35,7 +35,10 @@ define([
             }
         },
         methods: {
-            open: function () {
+            open: function (product) {
+                if(product) {
+                    this.product = product;
+                }
                 this.actionsheet.$instance.open();
             },
             close: function () {
@@ -50,44 +53,29 @@ define([
             buttonClick: function () {
                 this.button.callback.call(this);
             },
-            addCart: function (product) {
+            addCart: function () {
                 var self = this;
-                this.product = product;
-                this.button = {
-                    text: '加入购物车',
-                    callback: function () {
-                        utils.getLoginMember(function(member) {
-                            $.ajax({
-                                url: utils.patchUrl('/api/cart/addProduct'),
-                                contentType: 'application/json',
-                                type: 'POST',
-                                data: JSON.stringify({
-                                    member: member,
-                                    items: [{
-                                        product: self.product,
-                                        count: self.count
-                                    }]
-                                }),
-                                success: function() {
-                                    messager.bubble('成功加入购物车', 'success');
-                                    self.close();
-                                }
-                            });
-                        });
-                    }
-                };
-                this.open();
+                utils.getLoginMember(function(member) {
+                    $.ajax({
+                        url: utils.patchUrl('/api/cart/addProduct'),
+                        contentType: 'application/json',
+                        type: 'POST',
+                        data: JSON.stringify({
+                            member: member,
+                            items: [{
+                                product: self.product,
+                                count: self.count
+                            }]
+                        }),
+                        success: function() {
+                            messager.bubble('成功加入购物车', 'success');
+                            self.close();
+                        }
+                    });
+                });
             },
-            justBuy: function (product) {
-                var self = this;
-                this.product = product;
-                this.button = {
-                    text: '立即购买',
-                    callback: function () {
-                        window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/new?productId=' + self.product.id + '&count=' + self.count)
-                    }
-                };
-                this.open();
+            justBuy: function () {
+                window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/new?productId=' + this.product.id + '&count=' + this.count)
             }
         }
     });
