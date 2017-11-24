@@ -3,6 +3,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
         el: '#content',
         data: {
             crudgrid: {
+                $instance: {},
                 queryParams: {
                     name: ''
                 },
@@ -39,7 +40,9 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 remark: null,
                 points: null,
                 price: null,
-                productCategory: {},
+                productCategory: {
+                    productStandards: []
+                },
                 coverImage: null,
                 styleImages: [],
                 detailImages: []
@@ -82,6 +85,26 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     param = {'productCategory.id': row.id};
                 }
                 this.crudgrid.$instance.load(param);
+            },
+            comboboxChange: function (val) {
+            },
+            hasStandard: function () {
+                var productStandards = this.getSelectedProductStandards();
+                return productStandards && productStandards.length > 0;
+            },
+            getSelectedProductStandards: function () {
+                if(!this.crudgrid.$instance.getForm) {
+                    return false;
+                }
+                var $form = this.crudgrid.$instance.getForm();
+                var val = $form.productCategory.id;
+                var productCategory = {};
+                $.each(this.productCategory.data, function () {
+                    if(this.id === val) {
+                        productCategory = this;
+                    }
+                });
+                return productCategory.productStandards;
             }
         },
         mounted: function() {

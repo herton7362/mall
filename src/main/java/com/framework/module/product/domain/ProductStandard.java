@@ -3,11 +3,10 @@ package com.framework.module.product.domain;
 import com.kratos.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.annotations.Where;
+import org.hibernate.annotations.OrderBy;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 
 /**
@@ -26,6 +25,8 @@ public class ProductStandard extends BaseEntity {
     private String remark;
     @ApiModelProperty(value = "规格条目")
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "productStandard")
+    @Where(clause="logically_deleted=0")
+    @OrderBy(clause="sort_number asc")
     private List<ProductStandardItem> items;
 
     public String getName() {

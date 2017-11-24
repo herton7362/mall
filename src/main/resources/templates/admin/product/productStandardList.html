@@ -55,29 +55,28 @@
                             <div class="dataTables_wrapper">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <table role="grid" aria-describedby="example2_info"
-                                               class="table table-bordered table-hover dataTable">
-                                            <thead class="table-header">
-                                            <tr>
-                                                <th width="100" style="text-align: left;">名称</th>
-                                                <th width="100" style="text-align: left;">封面图片（可为空）</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr v-for="item in props.form.items">
-                                                <td style="text-align: left;">
-                                                    <div class="col-xs-4 cell-title">名称：</div>
-                                                    <div class="form-group" style="margin-bottom: 0">
-                                                        <input type="text" class="form-control" v-model="item.name" placeholder="输入规格条目名称">
+                                        <form class="form-horizontal">
+                                            <draggable v-model="props.form.items" @update="itemSort(props.form.items)" :options="{handle:'.draggable-handler'}">
+                                                <div class="form-group" v-for="item in props.form.items">
+                                                    <div class="col-xs-8">
+                                                        <div class="row">
+                                                            <label class="col-sm-2 control-label">名称</label>
+                                                            <div class="col-sm-10">
+                                                                <input type="text" class="form-control" v-model="item.name" placeholder="输入规格条目名称">
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </td>
-                                                <td style="text-align: left;">
-                                                    <div class="col-xs-4 cell-title">封面：</div>
-                                                    <uploader v-model="item.coverImage"></uploader>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
+                                                    <div class="col-xs-4" style="padding-top: 5px;">
+                                                        <a title="拖拽移动" class="btn btn-xs bg-purple margin-r-5 draggable-handler">
+                                                            <i class="fa fa-arrows"></i>
+                                                        </a>
+                                                        <a title="删除" class="btn btn-xs bg-red" @click="removeItem(item, $event)">
+                                                            <i class="fa fa-trash"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </draggable>
+                                        </form>
                                     </div>
                                 </div>
                             </div>

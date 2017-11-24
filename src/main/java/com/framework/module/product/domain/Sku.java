@@ -1,6 +1,7 @@
 package com.framework.module.product.domain;
 
 import com.kratos.entity.BaseEntity;
+import com.kratos.module.attachment.domain.Attachment;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -15,6 +16,10 @@ import java.util.List;
 @Entity
 @ApiModel("最小库存单位")
 public class Sku extends BaseEntity {
+    @ApiModelProperty(value = "商品规格")
+    @ManyToMany
+    @JoinTable(name="sku_product_standard",joinColumns={@JoinColumn(name="sku_id")},inverseJoinColumns={@JoinColumn(name="product_standard_id")})
+    private List<ProductStandard> productStandards;
     @ApiModelProperty(value = "商品规格条目")
     @ManyToMany
     @JoinTable(name="sku_product_standard_items",joinColumns={@JoinColumn(name="sku_id")},inverseJoinColumns={@JoinColumn(name="product_standard_item_id")})
@@ -27,6 +32,17 @@ public class Sku extends BaseEntity {
     private Double price;
     @ApiModelProperty(value = "库存数量")
     private Long stockCount;
+    @ApiModelProperty(value = "封面图片")
+    @ManyToOne
+    private Attachment coverImage;
+
+    public List<ProductStandard> getProductStandards() {
+        return productStandards;
+    }
+
+    public void setProductStandards(List<ProductStandard> productStandards) {
+        this.productStandards = productStandards;
+    }
 
     public List<ProductStandardItem> getProductStandardItems() {
         return productStandardItems;
@@ -58,5 +74,13 @@ public class Sku extends BaseEntity {
 
     public void setStockCount(Long stockCount) {
         this.stockCount = stockCount;
+    }
+
+    public Attachment getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(Attachment coverImage) {
+        this.coverImage = coverImage;
     }
 }

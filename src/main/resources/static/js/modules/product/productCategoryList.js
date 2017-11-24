@@ -8,6 +8,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     {field:'remark', title:'备注'}
                 ]
             },
+            productStandards: [],
             sidebar: {
                 root: {
                     id: 'isNull',
@@ -23,7 +24,8 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 id: null,
                 parent: {},
                 name: null,
-                remark: null
+                remark: null,
+                productStandards: []
             }
         },
         methods: {
@@ -42,10 +44,24 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                         self.parent.data = data.content;
                     }
                 })
+            },
+            loadProductStandard: function () {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/api/productStandard'),
+                    data: {
+                        sort: 'sortNumber',
+                        order: 'asc'
+                    },
+                    success: function (data) {
+                        self.productStandards = data.content;
+                    }
+                })
             }
         },
         mounted: function() {
             this.loadCombobox();
+            this.loadProductStandard();
         }
     });
 });

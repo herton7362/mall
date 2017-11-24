@@ -26,9 +26,6 @@ public class ProductStandardItem extends BaseEntity {
     @ApiModelProperty(value = "名称")
     @Column(length = 50)
     private String name;
-    @ApiModelProperty(value = "封面图片")
-    @ManyToOne
-    private Attachment coverImage;
 
     public ProductStandard getProductStandard() {
         return productStandard;
@@ -44,13 +41,5 @@ public class ProductStandardItem extends BaseEntity {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Attachment getCoverImage() {
-        return coverImage;
-    }
-
-    public void setCoverImage(Attachment coverImage) {
-        this.coverImage = coverImage;
     }
 }
