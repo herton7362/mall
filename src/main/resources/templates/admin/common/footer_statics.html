@@ -12,7 +12,7 @@
     <script th:src="@{/webjars/require.js}" data-main="main"></script>
     <script>
         requirejs.config({
-            urlArgs: "v=" + new Date().getTime(),
+            urlArgs: "v=" + window._appConf.version,
             baseUrl: (window._appConf.ctx || '') + '/webjars/plugins/admin/',
             waitSeconds: 0,
             paths: {
@@ -55,12 +55,33 @@
             shim: {
                 'vuedraggable':['sortablejs', 'base-vue'],
                 'jquery': ['base-jquery'],
-                'vue': ['base-vue'],
+                'vue': [
+                    'base-vue',
+                    'vuedraggable',
+                    'pagination',
+                    'datagrid',
+                    'datagrid-cell',
+                    'pagination',
+                    'validator',
+                    'sidebar',
+                    'modal',
+                    'crudgrid',
+                    'treegrid',
+                    'datepicker',
+                    'checkbox',
+                    'combobox',
+                    'radio',
+                    'combooption',
+                    'tree',
+                    'sidemodal',
+                    'uploader'
+                ],
                 'messager': ['jquery', 'vue', 'css!../admin/messager/css/messager.css'],
                 'datagrid': ['css!../admin/datagrid/css/datagrid.css'],
                 'bootstrap': ['jquery'],
                 'base-datepicker': ['bootstrap'],
                 'datepicker-cn': ['base-datepicker', 'css!../datepicker/css/bootstrap-datepicker.css'],
+                'datepicker': ['jquery', 'datepicker-cn', 'utils'],
                 'base-adminlte': ['bootstrap'],
                 'adminlte': [
                     'base-adminlte',
@@ -68,14 +89,23 @@
                     'css!../AdminLTE/css/font-awesome/css/font-awesome.min.css',
                     'css!../AdminLTE/css/datatables.net-bs/dataTables.bootstrap.min.css'
                 ],
-                'sidebar': ['css!../admin/sidebar/css/sidebar.css'],
-                'pagination': ['css!../admin/pagination/css/pagination.css'],
+                'utils': ['app'],
+                'validator': ['jquery', 'app'],
+                'sidebar': ['jquery', 'utils', 'css!../admin/sidebar/css/sidebar.css'],
+                'pagination': ['jquery', 'css!../admin/pagination/css/pagination.css'],
+                'crudgrid': ['jquery', 'utils'],
+                'treegrid': ['jquery', 'utils'],
                 'icheck': ['bootstrap', 'css!../iCheck/all.css'],
+                'checkbox': ['jquery','icheck', 'utils'],
+                'radio': ['jquery','icheck', 'utils'],
                 'base-select2': ['bootstrap'],
+                'combobox': ['jquery', 'utils', 'base-select2'],
+                'combooption': [],
                 'modal': ['css!../admin/modal/css/modal.css'],
                 'jstree': ['css!../jstree/themes/default/style.min.css'],
-                'sidemodal': ['css!../admin/sidemodal/sidemodal.css'],
-                'uploader': ['css!../admin/uploader/uploader.css'],
+                'tree': ['jquery', 'jstree'],
+                'sidemodal': ['jquery', 'css!../admin/sidemodal/sidemodal.css'],
+                'uploader': ['jquery', 'utils', 'css!../admin/uploader/uploader.css'],
                 'morris': ['raphael', 'css!../morris.js/morris.css']
             },
             map: {
