@@ -10,6 +10,7 @@ import com.framework.module.member.domain.MemberRepository;
 import com.framework.module.member.service.MemberService;
 import com.framework.module.record.domain.OperationRecord;
 import com.framework.module.record.service.OperationRecordService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,15 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
     private final MemberRepository repository;
     private final OauthClientDetailsService oauthClientDetailsService;
     private final OperationRecordService operationRecordService;
+
+    @Override
+    public Member save(Member member) throws Exception {
+        if(StringUtils.isNotBlank(member.getId())) {
+            Member old = repository.findOne(member.getId());
+            member.setPassword(old.getPassword());
+        }
+        return super.save(member);
+    }
 
     @Override
     protected PageRepository<Member> getRepository() {

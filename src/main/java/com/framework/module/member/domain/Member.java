@@ -2,10 +2,8 @@ package com.framework.module.member.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.framework.module.marketing.domain.Coupon;
 import com.kratos.entity.BaseUser;
 import com.kratos.module.attachment.domain.Attachment;
-import com.kratos.module.auth.domain.Role;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 

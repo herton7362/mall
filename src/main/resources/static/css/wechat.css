@@ -496,6 +496,10 @@
     padding: 20px;
 }
 
+.orderform-new a[href="#content"] {
+    color: #333;
+}
+
 .orderform-new .tabbar {
     background-color: #fff;
 }

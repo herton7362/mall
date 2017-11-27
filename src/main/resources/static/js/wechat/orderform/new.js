@@ -42,7 +42,8 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 cash: 0,
                 balance: null,
                 point: null
-            }
+            },
+            hashchanged: false
         },
         filters: {
             coverPath: function (val) {
@@ -263,14 +264,14 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             },
             useCoupon: function (coupon) {
                 this.orderForm.coupon = coupon;
-                this.couponSelector.open = false;
+                window.history.go(-1);
             },
             selectPoint: function () {
                 this.pointSelector.open = true;
             },
             usePoint:function (point) {
                 this.account.point = point;
-                this.pointSelector.open = false;
+                window.history.go(-1);
             },
             otherPoint: function () {
                 var self = this;
@@ -284,7 +285,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                     messager.bubble('积分最小不能小于100');
                     this.account.point = null;
                 } else {
-                    this.pointSelector.open = false;
+                    window.history.go(-1);
                 }
             },
             selectBalance: function () {
@@ -299,7 +300,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                     balance = this.getTotal();
                 }
                 this.account.balance = balance;
-                this.balanceSelector.open = false;
+                window.history.go(-1);
             },
             otherBalance: function () {
                 var self = this;
@@ -317,7 +318,13 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 if(this.account.balance > this.getTotal()) {
                     this.account.balance = this.getTotal();
                 }
-                this.balanceSelector.open = false;
+                window.history.go(-1);
+            },
+            onActionsheetOpen: function () {
+                $('body').css('position', 'fixed');
+            },
+            onActionsheetClose: function () {
+                $('body').css('position', 'static');
             }
         },
         mounted: function () {
@@ -335,6 +342,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                     self.couponSelector.open = false;
                     self.pointSelector.open = false;
                     self.balanceSelector.open = false;
+                    self.hashchanged = true;
                 }
             });
         }

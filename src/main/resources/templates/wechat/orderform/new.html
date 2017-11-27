@@ -181,7 +181,12 @@
             <!-- /.content -->
         </div>
         <!-- /.container -->
-        <actionsheet class="new-address-form" title="新建收货地址" :instance="newAddressActionsheet" :button="null">
+        <actionsheet class="new-address-form"
+                     title="新建收货地址"
+                     :instance="newAddressActionsheet"
+                     @open="onActionsheetOpen"
+                     @close="onActionsheetClose"
+                     :button="null">
             <template slot="body">
                 <div class="weui-cells" style="margin-top: 0;">
                     <div class="weui-cell">
@@ -218,7 +223,12 @@
                 <div class="weui-actionsheet__cell success-btn" @click="saveMemberAddress">保存</div>
             </template>
         </actionsheet>
-        <actionsheet class="select-address-form" title="选择收货地址" :instance="selectAddressActionsheet" :button="null">
+        <actionsheet class="select-address-form"
+                     title="选择收货地址"
+                     :instance="selectAddressActionsheet"
+                     @open="onActionsheetOpen"
+                     @close="onActionsheetClose"
+                     :button="null">
             <template slot="body">
                 <div class="weui-cells weui-cells_checkbox" style="margin-top: 0;">
                     <label class="weui-cell weui-check__label" v-for="row in memberAddresses" @click="changeDefaultAddress(row)">
@@ -244,7 +254,7 @@
                 </div>
             </template>
         </actionsheet>
-        <div class="page coupon-list" :class="{'js_show slideIn':couponSelector.open}">
+        <div class="page coupon-list" :class="{'js_show slideIn':couponSelector.open,'js_show slideOut':!couponSelector.open && hashchanged}">
             <div class="coupon-card" :class="{expired: coupon.expired}" v-for="coupon in coupons">
                 <div class="coupon-body" >
                     <div class="price" v-html="priceFormatter(coupon.amount)">
@@ -271,7 +281,7 @@
                 </div>
             </div>
         </div>
-        <div class="page point-selector" :class="{'js_show slideIn':pointSelector.open,'js_show slideOut':!pointSelector.open}">
+        <div class="page point-selector" :class="{'js_show slideIn':pointSelector.open,'js_show slideOut':!pointSelector.open && hashchanged}">
             <div class="weui-panel weui-panel_access">
                 <div class="weui-panel__bd">
                     <div class="weui-media-box weui-media-box_text">
@@ -325,7 +335,7 @@
                 </div>
             </div>
         </div>
-        <div class="page point-selector" :class="{'js_show slideIn':balanceSelector.open,'js_show slideOut':!balanceSelector.open}">
+        <div class="page point-selector" :class="{'js_show slideIn':balanceSelector.open,'js_show slideOut':!balanceSelector.open && hashchanged}">
             <div class="weui-panel weui-panel_access">
                 <div class="weui-panel__bd">
                     <div class="weui-media-box weui-media-box_text">
