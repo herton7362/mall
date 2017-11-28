@@ -4,7 +4,9 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
         data: {
             member: {},
             formCount: {},
-            memberLevel: {},
+            memberLevel: {
+                name: '普通会员'
+            },
             couponCount: 0
         },
         filters: {
@@ -12,7 +14,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 return utils.patchUrl('/attachment/download/' + val);
             },
             price: function (val) {
-                return utils.formatMoney(val);
+                return utils.formatMoney(val) || 0;
             }
         },
         methods: {
@@ -55,7 +57,9 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                     url: utils.patchUrl('/api/memberLevel/member/' + this.member.id),
                     cache: false,
                     success: function (data) {
-                        self.memberLevel = data;
+                        if(data) {
+                            self.memberLevel = data;
+                        }
                     }
                 })
             }

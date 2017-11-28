@@ -9,10 +9,11 @@
             appSecret: window._appConf.appSecret || 'secret'
         };
     </script>
-    <script th:src="@{/webjars/require.js}" data-main="main"></script>
+    <script th:src="@{/webjars/require.js}"></script>
+    <script th:src="@{/webjars/plugins/admin/main.js}"></script>
     <script>
         requirejs.config({
-            urlArgs: "v=" + window._appConf.version,
+            urlArgs: "_=" + new Date().getTime(),
             baseUrl: (window._appConf.ctx || '') + '/webjars/plugins/admin/',
             waitSeconds: 0,
             paths: {

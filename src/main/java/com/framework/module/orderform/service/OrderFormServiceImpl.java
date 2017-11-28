@@ -107,7 +107,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         OrderForm.OrderStatus[] orderStatuses = OrderForm.OrderStatus.values();
         Map<String, Integer> result = new HashMap<>();
         for (OrderForm.OrderStatus orderStatus : orderStatuses) {
-            result.put(orderStatus.name(), orderFormRepository.countByStatus(orderStatus));
+            result.put(orderStatus.name(), orderFormRepository.countByStatusAndMemberId(orderStatus, memberId));
         }
         return result;
     }
