@@ -46,6 +46,6 @@
 </footer>
 <!-- /.login-box -->
 <footer th:include="admin/common/footer_statics"></footer>
-<script th:src="@{/static/js/modules/login.js}"></script>
+<script th:src="@{/static/js/modules/login.js(_=${#dates.createNow().time})}"></script>
 </body>
 </html>

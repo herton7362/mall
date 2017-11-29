@@ -122,6 +122,6 @@
 </div>
 <!-- ./wrapper -->
 <footer th:replace="wechat/common/footer_statics"></footer>
-<script th:src="@{/static/js/wechat/member/profile.js}"></script>
+<script th:src="@{/static/js/wechat/member/profile.js(_=${#dates.createNow().time})}"></script>
 </body>
 </html>

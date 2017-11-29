@@ -140,6 +140,6 @@
 </div>
 <!-- ./wrapper -->
 <footer th:replace="wechat/common/footer_statics"></footer>
-<script th:src="@{/static/js/wechat/login.js}"></script>
+<script th:src="@{/static/js/wechat/login.js(_=${#dates.createNow().time})}"></script>
 </body>
 </html>
