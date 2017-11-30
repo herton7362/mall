@@ -30,7 +30,8 @@
                 'app': '../utils/app',
                 'weui': '../weui/weui.min',
                 'actionsheet': 'actionsheet/actionsheet',
-                'modal': 'modal/modal'
+                'modal': 'modal/modal',
+                'sidemodal': 'sidemodal/sidemodal'
             },
             shim: {
                 'jquery': ['base-jquery'],
@@ -53,7 +54,8 @@
                 'weui': ['jquery', 'css!../weui/weui.min.css'],
                 'actionsheet': ['jquery', 'css!../wechat/actionsheet/actionsheet.css'],
                 'modal': ['jquery', 'css!../wechat/modal/modal.css'],
-                'utils': ['app']
+                'utils': ['app'],
+                'sidemodal': ['jquery', 'utils']
             },
             map: {
                 '*': {
@@ -99,12 +101,35 @@
                             icon: 'iconfont icon-gerenzhongxin',
                             active: false
                         }
-                    ]
+                    ],
+                    cartCount: 0
                 },
                 mounted: function () {
+                    var self = this;
                     selectMenu(this);
+                    window.loadCartCount = function() {
+                        $.ajax({
+                            url: utils.patchUrl('/user/info'),
+                            cache: false,
+                            success: function (member) {
+                                if(member && member.userType === 'MEMBER') {
+                                    $.ajax({
+                                        url: utils.patchUrl('/api/cart/count/member/' + member.id),
+                                        cache: false,
+                                        success: function (count) {
+                                            self.cartCount = count;
+                                        }
+                                    })
+                                }
+                            }
+                        })
+                    }
+                    loadCartCount();
+
                 }
             });
-        })
+        });
+
+
     </script>
 </footer>

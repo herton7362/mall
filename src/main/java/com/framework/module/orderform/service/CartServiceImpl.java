@@ -1,5 +1,7 @@
 package com.framework.module.orderform.service;
 
+import com.framework.module.member.domain.Member;
+import com.framework.module.member.service.MemberService;
 import com.framework.module.orderform.domain.Cart;
 import com.framework.module.orderform.domain.CartItem;
 import com.framework.module.orderform.domain.CartItemRepository;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 public class CartServiceImpl extends AbstractCrudService<Cart> implements CartService {
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
+    private final MemberService memberService;
     @Override
     protected PageRepository<Cart> getRepository() {
         return cartRepository;
@@ -91,6 +94,28 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
     }
 
     @Override
+    public Integer getMemberCartCount(String memberId) throws Exception {
+        if(StringUtils.isBlank(memberId)) {
+            throw new BusinessException("会员id为空");
+        }
+        Member member = memberService.findOne(memberId);
+        List<Cart> carts = cartRepository.findAll((Root<Cart> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
+            List<Predicate> predicate = new ArrayList<>();
+            predicate.add(criteriaBuilder.equal(root.get("member"), member));
+            return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
+        });
+        Integer count = 0;
+        if(carts != null && !carts.isEmpty()) {
+            for (Cart cart : carts) {
+                for (CartItem cartItem : cart.getItems()) {
+                    count += cartItem.getCount();
+                }
+            }
+        }
+        return count;
+    }
+
+    @Override
     public void delete(String id) throws Exception {
         cartRepository.delete(id);
     }
@@ -98,9 +123,11 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
     @Autowired
     public CartServiceImpl(
             CartRepository cartRepository,
-            CartItemRepository cartItemRepository
+            CartItemRepository cartItemRepository,
+            MemberService memberService
     ) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
+        this.memberService = memberService;
     }
 }

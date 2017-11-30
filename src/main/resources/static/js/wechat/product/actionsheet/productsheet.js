@@ -70,6 +70,7 @@ define([
                         success: function() {
                             messager.bubble('成功加入购物车', 'success');
                             self.close();
+                            loadCartCount();
                         }
                     });
                 });

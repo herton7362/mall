@@ -28,13 +28,16 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             },
             coupons: [],
             couponSelector: {
+                $instance: {},
                 open: false
             },
             pointSelector: {
+                $instance: {},
                 open: false,
                 other: false
             },
             balanceSelector: {
+                $instance: {},
                 open: false,
                 other: false
             },
@@ -42,8 +45,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 cash: 0,
                 balance: null,
                 point: null
-            },
-            hashchanged: false
+            }
         },
         filters: {
             coverPath: function (val) {
@@ -259,7 +261,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             },
             selectCoupon: function () {
                 if(this.coupons.length > 0) {
-                    this.couponSelector.open = true;
+                    this.couponSelector.$instance.open();
                 }
             },
             useCoupon: function (coupon) {
@@ -267,7 +269,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 window.history.go(-1);
             },
             selectPoint: function () {
-                this.pointSelector.open = true;
+                this.pointSelector.$instance.open();
             },
             usePoint:function (point) {
                 this.account.point = point;
@@ -289,7 +291,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 }
             },
             selectBalance: function () {
-                this.balanceSelector.open = true;
+                this.balanceSelector.$instance.open();
             },
             useBalance:function (balance) {
                 if(balance > this.member.balance) {
@@ -335,15 +337,6 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 self.member = member;
                 self.loadMemberAddress();
                 self.loadCouponCount();
-            });
-            $(window).on('hashchange', function () {
-                var isBackward = location.hash.indexOf('#') < 0;
-                if(isBackward) {
-                    self.couponSelector.open = false;
-                    self.pointSelector.open = false;
-                    self.balanceSelector.open = false;
-                    self.hashchanged = true;
-                }
             });
         }
     });

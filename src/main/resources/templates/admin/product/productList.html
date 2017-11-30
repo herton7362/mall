@@ -92,12 +92,24 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group" v-for="productStandard in getSelectedProductStandards()">
+                            <div class="form-group" v-for="(productStandard, index) in selectedProductStandards.data">
                                 <label>{{productStandard.name}}：</label>
                                 <div class="checkbox">
                                     <label v-for="row in productStandard.items">
-                                        <checkbox :value="row" name="productStandardItem" v-model="props.form.productStandardItem"></checkbox> {{row.name}}
+                                        <checkbox :value="row" :name="'productStandardItem_'+index" v-model="selectedProductStandards.items[index]"></checkbox> {{row.name}}
                                     </label>
+                                </div>
+                            </div>
+                            <div class="dataTables_wrapper form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div v-for="index in getSkuTotalLength(selectedProductStandards)">
+                                            {{index}}
+                                            <template v-for="column in selectedProductStandards.items.length">
+                                                {{selectedProductStandards.items[column - 1].length}}
+                                            </template>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-group">

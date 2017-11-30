@@ -254,141 +254,138 @@
                 </div>
             </template>
         </actionsheet>
-        <div class="page coupon-list" :class="{'js_show slideIn':couponSelector.open,'js_show slideOut':!couponSelector.open && hashchanged}">
-            <div class="coupon-card" :class="{expired: coupon.expired}" v-for="coupon in coupons">
-                <div class="coupon-body" >
-                    <div class="price" v-html="priceFormatter(coupon.amount)">
-                    </div>
-                    <div class="description">
-                        <div class="title">
-                            {{coupon.name}}
+        <sidemodal class="coupon-list" :instance="couponSelector">
+            <template slot="header">
+                我的优惠券
+            </template>
+            <template slot="body">
+                <div class="coupon-card" :class="{expired: coupon.expired}" v-for="coupon in coupons">
+                    <div class="coupon-body" >
+                        <div class="price" v-html="priceFormatter(coupon.amount)">
                         </div>
-                        每单达到{{coupon.minAmount | price}}元可使用
+                        <div class="description">
+                            <div class="title">
+                                {{coupon.name}}
+                            </div>
+                            每单达到{{coupon.minAmount | price}}元可使用
+                        </div>
+                        <div class="status">
+                            <i class="iconfont icon-expired" v-if="coupon.expired"></i>
+                            <span v-if="!coupon.expired">立即使用</span>
+                            <a href="javascript:void(0)"
+                               class="weui-btn weui-btn_plain-default btn-claim"
+                               v-if="!coupon.expired"
+                               @click="useCoupon(coupon)">使用</a>
+                        </div>
+                        <div class="left-circle"></div>
+                        <div class="right-circle"></div>
                     </div>
-                    <div class="status">
-                        <i class="iconfont icon-expired" v-if="coupon.expired"></i>
-                        <span v-if="!coupon.expired">立即使用</span>
-                        <a href="javascript:void(0)"
-                           class="weui-btn weui-btn_plain-default btn-claim"
-                           v-if="!coupon.expired"
-                           @click="useCoupon(coupon)">使用</a>
+                    <div class="coupon-footer">
+                        有效期： {{coupon.startDate | date}} 至 {{coupon.endDate | date}}
                     </div>
-                    <div class="left-circle"></div>
-                    <div class="right-circle"></div>
                 </div>
-                <div class="coupon-footer">
-                    有效期： {{coupon.startDate | date}} 至 {{coupon.endDate | date}}
-                </div>
-            </div>
-        </div>
-        <div class="page point-selector" :class="{'js_show slideIn':pointSelector.open,'js_show slideOut':!pointSelector.open && hashchanged}">
-            <div class="weui-panel weui-panel_access">
-                <div class="weui-panel__bd">
-                    <div class="weui-media-box weui-media-box_text">
-                        <h4 class="weui-media-box__title">我的可用积分：{{member.salePoint}}</h4>
+            </template>
+        </sidemodal>
+        <sidemodal class="point-selector" :instance="pointSelector">
+            <template slot="header">
+                我的可用积分：{{member.salePoint}}
+            </template>
+            <template slot="body">
+                <p class="weui-media-box__desc">请选择要抵扣的积分（100积分 = ￥1.00元）</p>
+                <div class="weui-flex">
+                    <div class="weui-flex__item">
+                        <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="usePoint(100)">100</a>
                     </div>
-                    <div class="weui-media-box weui-media-box_text">
-                        <p class="weui-media-box__desc">请选择要抵扣的积分（100积分 = ￥1.00元）</p>
-                        <div class="weui-flex">
-                            <div class="weui-flex__item">
-                                <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="usePoint(100)">100</a>
-                            </div>
-                            <div class="weui-flex__item">
-                                <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="usePoint(200)">200</a>
-                            </div>
-                            <div class="weui-flex__item">
-                                <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="usePoint(300)">300</a>
-                            </div>
-                        </div>
-                        <div class="weui-flex">
-                            <div class="weui-flex__item">
-                                <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="usePoint(400)">400</a>
-                            </div>
-                            <div class="weui-flex__item">
-                                <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="usePoint(500)">500</a>
-                            </div>
-                            <div class="weui-flex__item">
-                                <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="usePoint(600)">600</a>
-                            </div>
-                        </div>
-                        <div class="weui-flex">
-                            <div class="weui-flex__item">
-                                <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="otherPoint">其他</a>
-                            </div>
-                            <div class="weui-flex__item">
-                                <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="usePoint(null)">不使用</a>
-                            </div>
-                            <div class="weui-flex__item">
-                            </div>
-                        </div>
-                        <div class="weui-cells" v-if="pointSelector.other">
-                            <div class="weui-cell">
-                                <div class="weui-cell__bd">
-                                    <input class="weui-input" type="number" ref="pointSelectorInput" v-model="account.point" placeholder="请输入积分">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="weui-btn-area" v-if="pointSelector.other">
-                            <a class="weui-btn weui-btn_primary" href="javascript:" @click="confirmPoint">确定</a>
+                    <div class="weui-flex__item">
+                        <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="usePoint(200)">200</a>
+                    </div>
+                    <div class="weui-flex__item">
+                        <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="usePoint(300)">300</a>
+                    </div>
+                </div>
+                <div class="weui-flex">
+                    <div class="weui-flex__item">
+                        <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="usePoint(400)">400</a>
+                    </div>
+                    <div class="weui-flex__item">
+                        <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="usePoint(500)">500</a>
+                    </div>
+                    <div class="weui-flex__item">
+                        <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="usePoint(600)">600</a>
+                    </div>
+                </div>
+                <div class="weui-flex">
+                    <div class="weui-flex__item">
+                        <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="otherPoint">其他</a>
+                    </div>
+                    <div class="weui-flex__item">
+                        <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="usePoint(null)">不使用</a>
+                    </div>
+                    <div class="weui-flex__item">
+                    </div>
+                </div>
+                <div class="weui-cells" v-if="pointSelector.other">
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="number" ref="pointSelectorInput" v-model="account.point" placeholder="请输入积分">
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="page point-selector" :class="{'js_show slideIn':balanceSelector.open,'js_show slideOut':!balanceSelector.open && hashchanged}">
-            <div class="weui-panel weui-panel_access">
-                <div class="weui-panel__bd">
-                    <div class="weui-media-box weui-media-box_text">
-                        <h4 class="weui-media-box__title">我的可用余额：{{member.balance}}</h4>
+                <div class="weui-btn-area" v-if="pointSelector.other">
+                    <a class="weui-btn weui-btn_primary" href="javascript:" @click="confirmPoint">确定</a>
+                </div>
+            </template>
+        </sidemodal>
+        <sidemodal class="point-selector" :instance="balanceSelector">
+            <template slot="header">
+                我的可用余额：{{member.balance}}
+            </template>
+            <template slot="body">
+                <p class="weui-media-box__desc">请选择要抵扣的余额</p>
+                <div class="weui-flex">
+                    <div class="weui-flex__item">
+                        <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="useBalance(100)">100</a>
                     </div>
-                    <div class="weui-media-box weui-media-box_text">
-                        <p class="weui-media-box__desc">请选择要抵扣的余额</p>
-                        <div class="weui-flex">
-                            <div class="weui-flex__item">
-                                <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="useBalance(100)">100</a>
-                            </div>
-                            <div class="weui-flex__item">
-                                <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="useBalance(200)">200</a>
-                            </div>
-                            <div class="weui-flex__item">
-                                <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="useBalance(300)">300</a>
-                            </div>
-                        </div>
-                        <div class="weui-flex">
-                            <div class="weui-flex__item">
-                                <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="useBalance(400)">400</a>
-                            </div>
-                            <div class="weui-flex__item">
-                                <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="useBalance(500)">500</a>
-                            </div>
-                            <div class="weui-flex__item">
-                                <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="useBalance(600)">600</a>
-                            </div>
-                        </div>
-                        <div class="weui-flex">
-                            <div class="weui-flex__item">
-                                <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="otherBalance">其他</a>
-                            </div>
-                            <div class="weui-flex__item">
-                                <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="useBalance(null)">不使用</a>
-                            </div>
-                            <div class="weui-flex__item">
-                            </div>
-                        </div>
-                        <div class="weui-cells" v-if="balanceSelector.other">
-                            <div class="weui-cell">
-                                <div class="weui-cell__bd">
-                                    <input class="weui-input" type="number" ref="balanceSelectorInput" v-model="account.balance" placeholder="请输入金额">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="weui-btn-area" v-if="balanceSelector.other">
-                            <a class="weui-btn weui-btn_primary" href="javascript:" @click="confirmBalance">确定</a>
+                    <div class="weui-flex__item">
+                        <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="useBalance(200)">200</a>
+                    </div>
+                    <div class="weui-flex__item">
+                        <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="useBalance(300)">300</a>
+                    </div>
+                </div>
+                <div class="weui-flex">
+                    <div class="weui-flex__item">
+                        <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="useBalance(400)">400</a>
+                    </div>
+                    <div class="weui-flex__item">
+                        <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="useBalance(500)">500</a>
+                    </div>
+                    <div class="weui-flex__item">
+                        <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="useBalance(600)">600</a>
+                    </div>
+                </div>
+                <div class="weui-flex">
+                    <div class="weui-flex__item">
+                        <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="otherBalance">其他</a>
+                    </div>
+                    <div class="weui-flex__item">
+                        <a href="javascript:;" class="weui-btn weui-btn_plain-primary" @click="useBalance(null)">不使用</a>
+                    </div>
+                    <div class="weui-flex__item">
+                    </div>
+                </div>
+                <div class="weui-cells" v-if="balanceSelector.other">
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="number" ref="balanceSelectorInput" v-model="account.balance" placeholder="请输入金额">
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+                <div class="weui-btn-area" v-if="balanceSelector.other">
+                    <a class="weui-btn weui-btn_primary" href="javascript:" @click="confirmBalance()">确定</a>
+                </div>
+            </template>
+        </sidemodal>
     </div>
     <div class="row tabbar">
         <div class="col-xs-8 total">

@@ -46,18 +46,39 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 coverImage: null,
                 styleImages: [],
                 detailImages: []
+            },
+            selectedProductStandards: {
+                data: [],
+                items: [],
+                index: []
             }
+
+        },
+        watch: {
+            'selectedProductStandards.data': function (val) {
+                var self = this;
+                this.selectedProductStandards.items.splice(0);
+                $.each(val, function (i) {
+                    self.selectedProductStandards.items[i] = [];
+                })
+
+            },
+            deep: true
         },
         methods: {
             modalOpen: function() {
                 var $form = this.crudgrid.$instance.getForm();
                 if($form.id) {
+                    this.selectedProductStandards.data = this.getSelectedProductStandards($form.productCategory.id);
                     return;
                 }
-                if(this.sidebar.$instance.getSelectedId()) {
+                var selectedId = this.sidebar.$instance.getSelectedId();
+                if(selectedId) {
                     $form.productCategory = {
-                        id: this.sidebar.$instance.getSelectedId()
-                    }
+                        id: selectedId,
+                        productStandards: this.getSelectedProductStandards(selectedId)
+                    };
+                    this.selectedProductStandards.data = this.getSelectedProductStandards(selectedId);
                 } else {
                     $form.productCategory = {};
                 }
@@ -86,25 +107,32 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 }
                 this.crudgrid.$instance.load(param);
             },
-            comboboxChange: function (val) {
+            comboboxChange: function (selectedId) {
+                this.selectedProductStandards.data = this.getSelectedProductStandards(selectedId);
             },
             hasStandard: function () {
-                var productStandards = this.getSelectedProductStandards();
+                var productStandards = this.selectedProductStandards.data;
                 return productStandards && productStandards.length > 0;
             },
-            getSelectedProductStandards: function () {
-                if(!this.crudgrid.$instance.getForm) {
-                    return false;
-                }
-                var $form = this.crudgrid.$instance.getForm();
-                var val = $form.productCategory.id;
+            getSelectedProductStandards: function (productCategoryId) {
                 var productCategory = {};
                 $.each(this.productCategory.data, function () {
-                    if(this.id === val) {
+                    if(this.id === productCategoryId) {
                         productCategory = this;
                     }
                 });
                 return productCategory.productStandards;
+            },
+            getSkuTotalLength: function (selectedProductStandards) {
+                if(selectedProductStandards.items.length <= 0) {
+                    return 0;
+                }
+                var count = selectedProductStandards.items.length;
+                var total = selectedProductStandards.items[0].length;
+                for(var i = 1, l = count; i < l; i++) {
+                    total = total * selectedProductStandards.items[i].length;
+                }
+                return total;
             }
         },
         mounted: function() {

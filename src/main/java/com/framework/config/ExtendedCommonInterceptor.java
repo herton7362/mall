@@ -33,14 +33,11 @@ public class ExtendedCommonInterceptor extends CommonInterceptor {
                 if(oAuth2Authentication != null) {
                     User user = (User) oAuth2Authentication.getPrincipal();
                     UserThread.getInstance().setClientId(oAuth2Authentication.getOAuth2Request().getClientId());
-                    oAuth2Authentication.getUserAuthentication().getAuthorities().forEach(grantedAuthority -> {
-                        BaseUser baseUser;
-                        if(grantedAuthority.getAuthority().equals(BaseUser.UserType.MEMBER.name())) {
-                            baseUser = memberRepository.findOneByLoginName(user.getUsername());
-                            baseUser.setPassword(null);
-                            UserThread.getInstance().set(baseUser);
-                        }
-                    });
+                    BaseUser baseUser = memberRepository.findOneByLoginName(user.getUsername());
+                    if(baseUser != null) {
+                        baseUser.setPassword(null);
+                        UserThread.getInstance().set(baseUser);
+                    }
                 }
             }
         }

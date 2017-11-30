@@ -64,6 +64,16 @@ public class CartController extends AbstractCrudController<Cart> {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * 获取购物车数量
+     */
+    @ApiOperation(value="获取购物车数量")
+    @RequestMapping(value = "/count/member/{memberId}", method = RequestMethod.GET)
+    public ResponseEntity<Integer> getMemberCartCount(@PathVariable String memberId) throws Exception {
+        Integer count = cartService.getMemberCartCount(memberId);
+        return new ResponseEntity<>(count, HttpStatus.OK);
+    }
+
     @Autowired
     public CartController(CartService cartService) {
         this.cartService = cartService;

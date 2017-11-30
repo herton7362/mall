@@ -29,4 +29,10 @@ public interface CartService extends CrudService<Cart> {
      * @param id 购物车项id
      */
     void reduceItemCount(String id);
+
+    /**
+     * 获取购物车数量
+     * @param memberId 会员id
+     */
+    Integer getMemberCartCount(String memberId) throws Exception;
 }
