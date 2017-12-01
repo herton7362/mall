@@ -45,23 +45,27 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 },
                 coverImage: null,
                 styleImages: [],
-                detailImages: []
+                detailImages: [],
+                productProductStandards: []
             },
             selectedProductStandards: {
                 data: [],
                 items: [],
                 index: []
-            }
-
+            },
+            skus: []
         },
         watch: {
             'selectedProductStandards.data': function (val) {
                 var self = this;
                 this.selectedProductStandards.items.splice(0);
                 $.each(val, function (i) {
-                    self.selectedProductStandards.items[i] = [];
-                })
+                    self.selectedProductStandards.index[i] = 0;
+                });
+            },
+            'selectedProductStandards.items': function (val) {
 
+                this.makeSkus();
             },
             deep: true
         },
@@ -78,7 +82,6 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                         id: selectedId,
                         productStandards: this.getSelectedProductStandards(selectedId)
                     };
-                    this.selectedProductStandards.data = this.getSelectedProductStandards(selectedId);
                 } else {
                     $form.productCategory = {};
                 }
@@ -108,10 +111,23 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 this.crudgrid.$instance.load(param);
             },
             comboboxChange: function (selectedId) {
-                this.selectedProductStandards.data = this.getSelectedProductStandards(selectedId);
+                var productStandards = this.getSelectedProductStandards(selectedId);
+                var $form = this.crudgrid.$instance.getForm();
+                this.selectedProductStandards.data = productStandards;
+                $form.productProductStandards = [];
+                $.each(productStandards, function () {
+                    $form.productProductStandards.push({
+                        productStandard: this,
+                        productStandardItems: this.items
+                    })
+                });
             },
             hasStandard: function () {
-                var productStandards = this.selectedProductStandards.data;
+                if(!this.crudgrid.$instance.getForm) {
+                    return false;
+                }
+                var $form = this.crudgrid.$instance.getForm();
+                var productStandards = $form.productProductStandards;
                 return productStandards && productStandards.length > 0;
             },
             getSelectedProductStandards: function (productCategoryId) {
@@ -123,16 +139,45 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 });
                 return productCategory.productStandards;
             },
-            getSkuTotalLength: function (selectedProductStandards) {
-                if(selectedProductStandards.items.length <= 0) {
+            getSkuTotalLength: function () {
+                if(this.selectedProductStandards.items.length <= 0) {
                     return 0;
                 }
-                var count = selectedProductStandards.items.length;
-                var total = selectedProductStandards.items[0].length;
+                var count = this.selectedProductStandards.items.length;
+                var total = this.selectedProductStandards.items[0].length;
                 for(var i = 1, l = count; i < l; i++) {
-                    total = total * selectedProductStandards.items[i].length;
+                    total = total * this.selectedProductStandards.items[i].length;
                 }
                 return total;
+            },
+            increaseProductStandardsIndex: function (index) {
+                if(this.selectedProductStandards.index[index] + 1
+                    >= this.selectedProductStandards.items[index].length) {
+                    if(index > 0) {
+                        this.increaseProductStandardsIndex(index - 1);
+                    }
+                    this.selectedProductStandards.index[index] = 0;
+                } else {
+                    this.selectedProductStandards.index[index] += 1;
+                }
+            },
+            makeSkus: function () {
+                this.skus = [];
+                var productStandardItems;
+                for(var i = 0, l = this.getSkuTotalLength(); i < l; i++) {
+                    productStandardItems = [];
+                    for(var j = 0, jl = this.selectedProductStandards.items.length; j < jl; j++) {
+                        productStandardItems.push(this.selectedProductStandards.items[j][this.selectedProductStandards.index[j]]);
+                    }
+                    this.increaseProductStandardsIndex(jl - 1);
+                    this.skus[i] = {
+                        productStandardItems: productStandardItems,
+                        price: null,
+                        stockCount: 0,
+                        isDefault: i === 0,
+                        coverImage: {}
+                    }
+                }
             }
         },
         mounted: function() {

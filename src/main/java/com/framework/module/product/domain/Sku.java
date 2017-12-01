@@ -1,5 +1,6 @@
 package com.framework.module.product.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.kratos.entity.BaseEntity;
 import com.kratos.module.attachment.domain.Attachment;
 import io.swagger.annotations.ApiModel;
@@ -16,16 +17,13 @@ import java.util.List;
 @Entity
 @ApiModel("最小库存单位")
 public class Sku extends BaseEntity {
-    @ApiModelProperty(value = "商品规格")
-    @ManyToMany
-    @JoinTable(name="sku_product_standard",joinColumns={@JoinColumn(name="sku_id")},inverseJoinColumns={@JoinColumn(name="product_standard_id")})
-    private List<ProductStandard> productStandards;
     @ApiModelProperty(value = "商品规格条目")
     @ManyToMany
     @JoinTable(name="sku_product_standard_items",joinColumns={@JoinColumn(name="sku_id")},inverseJoinColumns={@JoinColumn(name="product_standard_item_id")})
     private List<ProductStandardItem> productStandardItems;
     @ApiModelProperty(value = "商品")
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonBackReference
     private Product product;
     @ApiModelProperty(value = "单价")
     @Column(length = 11, precision = 2)
@@ -35,14 +33,8 @@ public class Sku extends BaseEntity {
     @ApiModelProperty(value = "封面图片")
     @ManyToOne
     private Attachment coverImage;
-
-    public List<ProductStandard> getProductStandards() {
-        return productStandards;
-    }
-
-    public void setProductStandards(List<ProductStandard> productStandards) {
-        this.productStandards = productStandards;
-    }
+    @ApiModelProperty(value = "是否默认")
+    private Boolean isDefault;
 
     public List<ProductStandardItem> getProductStandardItems() {
         return productStandardItems;
@@ -82,5 +74,13 @@ public class Sku extends BaseEntity {
 
     public void setCoverImage(Attachment coverImage) {
         this.coverImage = coverImage;
+    }
+
+    public Boolean getDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(Boolean aDefault) {
+        isDefault = aDefault;
     }
 }

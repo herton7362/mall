@@ -10,7 +10,7 @@
     以获得更好的体验！</p>
 <![endif]-->
 <!-- Site wrapper -->
-<div class="wrapper">
+<div class="wrapper product-list">
     <header th:include="admin/common/header_html"></header>
     <!-- =============================================== -->
     <aside th:include="admin/common/aside"></aside>
@@ -96,19 +96,42 @@
                                 <label>{{productStandard.name}}：</label>
                                 <div class="checkbox">
                                     <label v-for="row in productStandard.items">
-                                        <checkbox :value="row" :name="'productStandardItem_'+index" v-model="selectedProductStandards.items[index]"></checkbox> {{row.name}}
+                                        <checkbox :value="row"
+                                                  :name="'productStandardItem_'+index"
+                                                  v-model="props.form.productProductStandards[index].productStandardItems"></checkbox> {{row.name}}
                                     </label>
                                 </div>
                             </div>
-                            <div class="dataTables_wrapper form-group">
+                            <div class="dataTables_wrapper form-group sku-modify-table" v-if="hasStandard()">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <div v-for="index in getSkuTotalLength(selectedProductStandards)">
-                                            {{index}}
-                                            <template v-for="column in selectedProductStandards.items.length">
-                                                {{selectedProductStandards.items[column - 1].length}}
-                                            </template>
-                                        </div>
+                                        <table role="grid" aria-describedby="example2_info" class="table table-bordered table-hover dataTable">
+                                            <thead>
+                                            <tr>
+                                                <th width="30" style="text-align: center">默认</th>
+                                                <th :colspan="selectedProductStandards.items.length" style="text-align: center">规格</th>
+                                                <th width="50" style="text-align: center">库存</th>
+                                                <th width="50" style="text-align: center">价格</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr v-for="sku in skus">
+                                                <td style="text-align: center">
+                                                    <radio :value="true" name="defaultSku" v-model="sku.isDefault"></radio>
+                                                </td>
+                                                <td v-for="productStandardItem in sku.productStandardItems">
+                                                    {{productStandardItem.name}}
+                                                </td>
+                                                <td class="form-group" style="margin: 0;">
+                                                    <input type="text" class="form-control" v-model="sku.stockCount" required placeholder="库存">
+                                                </td>
+                                                <td class="form-group" style="margin: 0;">
+                                                    <input type="text" class="form-control" v-model="sku.price" required placeholder="价格">
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+
                                     </div>
                                 </div>
                             </div>
