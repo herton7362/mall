@@ -32,7 +32,7 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
     public Product save(Product product) throws Exception {
         List<ProductProductStandard> productProductStandards = product.getProductProductStandards();
         if(productProductStandards != null) {
-            if(StringUtils.isBlank(product.getId())) {
+            if(StringUtils.isNotBlank(product.getId())) {
                 Product old = productRepository.findOne(product.getId());
                 productProductStandardRepository.delete(old.getProductProductStandards());
             }
