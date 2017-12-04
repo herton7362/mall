@@ -92,7 +92,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group" v-for="(productStandard, index) in selectedProductStandards.data">
+                            <div class="form-group" v-for="(productStandard, index) in selectedProductStandards.data" v-if="hasStandard()">
                                 <label>{{productStandard.name}}：</label>
                                 <div class="checkbox">
                                     <label v-for="row in productStandard.items">
@@ -109,13 +109,13 @@
                                             <thead>
                                             <tr>
                                                 <th width="30" style="text-align: center">默认</th>
-                                                <th :colspan="selectedProductStandards.items.length" style="text-align: center">规格</th>
+                                                <th :colspan="props.form.productProductStandards.length" style="text-align: center">规格</th>
                                                 <th width="50" style="text-align: center">库存</th>
                                                 <th width="50" style="text-align: center">价格</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr v-for="sku in skus">
+                                            <tr v-for="sku in props.form.skus">
                                                 <td style="text-align: center">
                                                     <radio :value="true" name="defaultSku" v-model="sku.isDefault"></radio>
                                                 </td>

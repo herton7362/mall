@@ -59,6 +59,11 @@
                     </div>
                     <div class="form-group">
                         <label>规格：</label>
+                        <div>
+                            <button type="button" class="btn btn-info"> <i class="fa fa-plus"></i> 增加规格</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <div class="checkbox">
                             <label v-for="row in productStandards">
                                 <checkbox :value="row" name="productStandard" v-model="props.form.productStandards"></checkbox> {{row.name}}[{{row.remark}}]

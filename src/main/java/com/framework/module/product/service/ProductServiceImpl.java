@@ -1,11 +1,9 @@
 package com.framework.module.product.service;
 
-import com.framework.module.product.domain.Product;
-import com.framework.module.product.domain.ProductProductStandard;
-import com.framework.module.product.domain.ProductProductStandardRepository;
-import com.framework.module.product.domain.ProductRepository;
+import com.framework.module.product.domain.*;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
+import com.kratos.common.utils.IteratorUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,6 +14,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Component
@@ -23,6 +22,7 @@ import java.util.List;
 public class ProductServiceImpl extends AbstractCrudService<Product> implements ProductService {
     private final ProductRepository productRepository;
     private final ProductProductStandardRepository productProductStandardRepository;
+    private final SkuRepository skuRepository;
     @Override
     protected PageRepository<Product> getRepository() {
         return productRepository;
@@ -31,14 +31,26 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
     @Override
     public Product save(Product product) throws Exception {
         List<ProductProductStandard> productProductStandards = product.getProductProductStandards();
+        Product old = productRepository.findOne(product.getId());
         if(productProductStandards != null) {
             if(StringUtils.isNotBlank(product.getId())) {
-                Product old = productRepository.findOne(product.getId());
                 productProductStandardRepository.delete(old.getProductProductStandards());
             }
-            productProductStandards.forEach(productProductStandard -> productProductStandard.setProduct(product));
+            IteratorUtils.forEach(productProductStandards, (index, productProductStandard) -> {
+                productProductStandard.setSortNumber(index);
+                productProductStandard.setId(null);
+                productProductStandard.setProduct(product);
+            });
             productProductStandardRepository.save(productProductStandards);
         }
+        List<Sku> skus = product.getSkus();
+        skuRepository.delete(old.getSkus());
+        IteratorUtils.forEach(skus, (index, sku) -> {
+            sku.setId(null);
+            sku.setSortNumber(index);
+            sku.setProduct(product);
+        });
+        skuRepository.save(skus);
         return super.save(product);
     }
 
@@ -56,9 +68,11 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
     @Autowired
     public ProductServiceImpl(
             ProductRepository productRepository,
-            ProductProductStandardRepository productProductStandardRepository
+            ProductProductStandardRepository productProductStandardRepository,
+            SkuRepository skuRepository
     ) {
         this.productRepository = productRepository;
         this.productProductStandardRepository = productProductStandardRepository;
+        this.skuRepository = skuRepository;
     }
 }

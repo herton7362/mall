@@ -5,7 +5,9 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 商品分类
@@ -54,6 +56,12 @@ public class ProductCategory extends BaseEntity {
     }
 
     public List<ProductStandard> getProductStandards() {
+        if(productStandards != null && !productStandards.isEmpty()) {
+            return productStandards
+                    .stream()
+                    .sorted(Comparator.comparing(ProductStandard::getSortNumber))
+                    .collect(Collectors.toList());
+        }
         return productStandards;
     }
 

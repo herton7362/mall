@@ -49,25 +49,8 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 productProductStandards: []
             },
             selectedProductStandards: {
-                data: [],
-                items: [],
-                index: []
-            },
-            skus: []
-        },
-        watch: {
-            'selectedProductStandards.data': function (val) {
-                var self = this;
-                this.selectedProductStandards.items.splice(0);
-                $.each(val, function (i) {
-                    self.selectedProductStandards.index[i] = 0;
-                });
-            },
-            'selectedProductStandards.items': function (val) {
-
-                this.makeSkus();
-            },
-            deep: true
+                data: []
+            }
         },
         methods: {
             modalOpen: function() {
@@ -140,50 +123,88 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 return productCategory.productStandards;
             },
             getSkuTotalLength: function () {
-                if(this.selectedProductStandards.items.length <= 0) {
+                var $form = this.crudgrid.$instance.getForm();
+                if($form.productProductStandards.length <= 0) {
                     return 0;
                 }
-                var count = this.selectedProductStandards.items.length;
-                var total = this.selectedProductStandards.items[0].length;
+                var count = $form.productProductStandards.length;
+                var total = $form.productProductStandards[0].productStandardItems.length;
                 for(var i = 1, l = count; i < l; i++) {
-                    total = total * this.selectedProductStandards.items[i].length;
+                    total = total * $form.productProductStandards[i].productStandardItems.length;
                 }
                 return total;
             },
-            increaseProductStandardsIndex: function (index) {
-                if(this.selectedProductStandards.index[index] + 1
-                    >= this.selectedProductStandards.items[index].length) {
+            increaseProductStandardsIndex: function (hex, index) {
+                var $form = this.crudgrid.$instance.getForm();
+                if(hex[index] + 1
+                    >= $form.productProductStandards[index].productStandardItems.length) {
                     if(index > 0) {
-                        this.increaseProductStandardsIndex(index - 1);
+                        this.increaseProductStandardsIndex(hex, index - 1);
                     }
-                    this.selectedProductStandards.index[index] = 0;
+                    hex[index] = 0;
                 } else {
-                    this.selectedProductStandards.index[index] += 1;
+                    hex[index] += 1;
                 }
             },
-            makeSkus: function () {
-                this.skus = [];
-                var productStandardItems;
-                for(var i = 0, l = this.getSkuTotalLength(); i < l; i++) {
-                    productStandardItems = [];
-                    for(var j = 0, jl = this.selectedProductStandards.items.length; j < jl; j++) {
-                        productStandardItems.push(this.selectedProductStandards.items[j][this.selectedProductStandards.index[j]]);
+            matchSku: function (skus, productStandardItems) {
+                function compare(s1, s2) {
+                    if (s1.length !== s2.length) {
+                        return false;
                     }
-                    this.increaseProductStandardsIndex(jl - 1);
-                    this.skus[i] = {
-                        productStandardItems: productStandardItems,
-                        price: null,
-                        stockCount: 0,
-                        isDefault: i === 0,
-                        coverImage: {}
+                    for (var i = 0, l = s1.length; i < l; i++) {
+                        if (s1[i].id !== s2[i].id) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+                for(var i = 0, l = skus.length; i < l; i++) {
+                    if(compare(skus[i].productStandardItems, productStandardItems)) {
+                        return skus[i];
                     }
                 }
+                return null;
+            },
+            makeSkus: function () {
+                var $form = this.crudgrid.$instance.getForm();
+                var skus = [];
+                var productStandardItems;
+                var hex = [];
+                var oldSku;
+                $.each($form.productProductStandards, function (i) {
+                    hex[i] = 0;
+                });
+                for(var i = 0, l = this.getSkuTotalLength(); i < l; i++) {
+                    productStandardItems = [];
+                    for(var j = 0, jl = $form.productProductStandards.length; j < jl; j++) {
+                        productStandardItems.push($form.productProductStandards[j].productStandardItems[hex[j]]);
+                    }
+                    this.increaseProductStandardsIndex(hex, jl - 1);
+                    oldSku = this.matchSku($form.skus, productStandardItems);
+                    if(oldSku) {
+                        skus[i] = oldSku;
+                    } else {
+                        skus[i] = {
+                            productStandardItems: productStandardItems,
+                            price: null,
+                            stockCount: 0,
+                            isDefault: false,
+                            coverImage: null
+                        }
+                    }
+                }
+                $form.skus = skus;
             }
         },
         mounted: function() {
             var self = this;
             this.loadSidebar(function() {
                 this.sidebarClick(this.sidebar.root);
+            });
+            this.crudgrid.$instance.$watch('form.productProductStandards', function () {
+                self.makeSkus();
+            }, {
+                deep: true
             });
             $.ajax({
                 url: utils.patchUrl('/api/productCategory'),

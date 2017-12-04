@@ -6,9 +6,12 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
+import org.hibernate.annotations.OrderBy;
 
 import javax.persistence.*;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 商品
@@ -61,6 +64,7 @@ public class Product extends BaseEntity {
     private List<ProductProductStandard> productProductStandards;
     @ApiModelProperty(value = "sku")
     @OneToMany(mappedBy = "product")
+    @OrderBy(clause="sort_number asc")
     private List<Sku> skus;
 
     public ProductCategory getProductCategory() {
@@ -168,6 +172,18 @@ public class Product extends BaseEntity {
     }
 
     public List<ProductProductStandard> getProductProductStandards() {
+        if(productProductStandards != null && !productProductStandards.isEmpty()) {
+            return productProductStandards
+                    .stream()
+                    .sorted((o1, o2) -> {
+                        if(o1.getProductStandard() != null && o2.getProductStandard() != null) {
+                            return o1.getProductStandard().getSortNumber().compareTo(o2.getProductStandard().getSortNumber());
+                        } else {
+                            return 0;
+                        }
+                    })
+                    .collect(Collectors.toList());
+        }
         return productProductStandards;
     }
 
