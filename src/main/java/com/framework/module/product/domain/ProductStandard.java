@@ -1,5 +1,6 @@
 package com.framework.module.product.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.kratos.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -17,6 +18,10 @@ import java.util.List;
 @Entity
 @ApiModel("商品规格")
 public class ProductStandard extends BaseEntity {
+    @ApiModelProperty(value = "商品类别")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonBackReference
+    private ProductCategory productCategory;
     @ApiModelProperty(value = "名称")
     @Column(length = 50)
     private String name;
@@ -28,6 +33,14 @@ public class ProductStandard extends BaseEntity {
     @Where(clause="logically_deleted=0")
     @OrderBy(clause="sort_number asc")
     private List<ProductStandardItem> items;
+
+    public ProductCategory getProductCategory() {
+        return productCategory;
+    }
+
+    public void setProductCategory(ProductCategory productCategory) {
+        this.productCategory = productCategory;
+    }
 
     public String getName() {
         return name;

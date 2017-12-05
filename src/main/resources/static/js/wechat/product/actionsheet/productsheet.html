@@ -8,7 +8,7 @@
                     </div>
                     <div class="weui-media-box__bd">
                         <h4 class="weui-media-box__title">{{product.name}}</h4>
-                        <p class="weui-media-box__desc main-text-color">￥{{product.price | price}}</p>
+                        <p class="weui-media-box__desc main-text-color">￥{{product | price}}</p>
                     </div>
                     <div class="cancel" @click="actionsheet.$instance.close()">
                         <i class="fa fa-close"></i>
@@ -17,6 +17,12 @@
             </div>
         </template>
         <template slot="body">
+            <div class="weui-cell product-category" v-for="row in product.productProductStandards">
+                <div class="weui-flex__item" >{{row.productStandard.name}}</div>
+                <ul class="weui-flex__item">
+                    <li v-for="item in row.productStandardItems"><span class="weui-badge ">  {{item.name}}</span></li>
+                </ul>
+            </div>
             <div class="weui-cell">
                 <div class="weui-cell__hd">购买数量：</div>
                 <div class="weui-cell__bd">

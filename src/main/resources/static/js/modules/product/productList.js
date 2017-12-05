@@ -57,6 +57,11 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 var $form = this.crudgrid.$instance.getForm();
                 if($form.id) {
                     this.selectedProductStandards.data = this.getSelectedProductStandards($form.productCategory.id);
+                    $.each(this.selectedProductStandards.data, function (i) {
+                        if(!$form.productProductStandards[i]) {
+                            $form.productProductStandards.push({productStandardItems: []});
+                        }
+                    });
                     return;
                 }
                 var selectedId = this.sidebar.$instance.getSelectedId();
@@ -101,9 +106,10 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 $.each(productStandards, function () {
                     $form.productProductStandards.push({
                         productStandard: this,
-                        productStandardItems: this.items
+                        productStandardItems:  [].concat(this.items)
                     })
                 });
+                this.makeSkus();
             },
             hasStandard: function () {
                 if(!this.crudgrid.$instance.getForm) {
@@ -174,6 +180,9 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 $.each($form.productProductStandards, function (i) {
                     hex[i] = 0;
                 });
+                if(!$form.skus) {
+                    Vue.set($form, 'skus', []);
+                }
                 for(var i = 0, l = this.getSkuTotalLength(); i < l; i++) {
                     productStandardItems = [];
                     for(var j = 0, jl = $form.productProductStandards.length; j < jl; j++) {
@@ -193,7 +202,11 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                         }
                     }
                 }
-                $form.skus = skus;
+
+                $form.skus.splice(0);
+                $.each(skus, function () {
+                    $form.skus.push(this)
+                })
             }
         },
         mounted: function() {

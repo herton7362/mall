@@ -3,11 +3,11 @@ package com.framework.module.product.domain;
 import com.kratos.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.annotations.OrderBy;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 商品分类
@@ -27,8 +27,9 @@ public class ProductCategory extends BaseEntity {
     @Column(length = 200)
     private String remark;
     @ApiModelProperty(value = "商品规格")
-    @ManyToMany
-    @JoinTable(name="product_category_product_standard",joinColumns={@JoinColumn(name="product_category_id")},inverseJoinColumns={@JoinColumn(name="product_standard_id")})
+    @OneToMany(mappedBy = "productCategory")
+    @Where(clause="logically_deleted=0")
+    @OrderBy(clause="sort_number asc")
     private List<ProductStandard> productStandards;
 
     public ProductCategory getParent() {
@@ -56,12 +57,6 @@ public class ProductCategory extends BaseEntity {
     }
 
     public List<ProductStandard> getProductStandards() {
-        if(productStandards != null && !productStandards.isEmpty()) {
-            return productStandards
-                    .stream()
-                    .sorted(Comparator.comparing(ProductStandard::getSortNumber))
-                    .collect(Collectors.toList());
-        }
         return productStandards;
     }
 

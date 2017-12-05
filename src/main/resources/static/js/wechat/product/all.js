@@ -20,7 +20,20 @@ require([
                 return utils.patchUrl('/attachment/download/' + val);
             },
             price: function (val) {
-                return utils.formatMoney(val);
+                if(val.skus && val.skus.length > 0) {
+                    var min = 999999999999;
+                    var max = 0;
+                    $.each(val.skus, function () {
+                        if(min > this.price) {
+                            min = this.price;
+                        }
+                        if(max < this.price) {
+                            max = this.price;
+                        }
+                    });
+                    return utils.formatMoney(min) + '-' +  utils.formatMoney(max);;
+                }
+                return utils.formatMoney(val.price);
             }
         },
         methods: {

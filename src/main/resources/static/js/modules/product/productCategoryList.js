@@ -3,12 +3,12 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
         el: '#content',
         data: {
             crudgrid: {
+                $instance: {},
                 columns: [
                     {field:'name', title:'名称'},
                     {field:'remark', title:'备注'}
                 ]
             },
-            productStandards: [],
             sidebar: {
                 root: {
                     id: 'isNull',
@@ -45,23 +45,31 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     }
                 })
             },
-            loadProductStandard: function () {
-                var self = this;
-                $.ajax({
-                    url: utils.patchUrl('/api/productStandard'),
-                    data: {
-                        sort: 'sortNumber',
-                        order: 'asc'
-                    },
-                    success: function (data) {
-                        self.productStandards = data.content;
-                    }
+            addStandard: function () {
+                var $form = this.crudgrid.$instance.getForm();
+                $form.productStandards.push({
+                    name: null,
+                    items:[]
+                })
+            },
+            addItem: function (row) {
+                row.items.push({
+                    name: null
+                })
+            },
+            deleteStandard: function (standards, row, event) {
+                messager.alert('确认删除' + row.name + '吗？', event, function () {
+                    standards.splice($.inArray(row, standards), 1);
+                })
+            },
+            deleteItem: function(row, item, event) {
+                messager.alert('确认删除' + row.name + '：' + item.name + '吗？', event, function () {
+                    row.items.splice($.inArray(item, row.items), 1);
                 })
             }
         },
         mounted: function() {
             this.loadCombobox();
-            this.loadProductStandard();
         }
     });
 });

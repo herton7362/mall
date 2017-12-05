@@ -896,3 +896,29 @@
 .point-selector .weui-flex__item {
     padding: 10px;
 }
+
+
+#product-sheet .product-category {
+    flex-direction: column;
+    -webkit-box-align: start;
+    -webkit-align-items: flex-start;
+    align-items: flex-start;
+}
+
+#product-sheet .product-category li {
+    float: left;
+    list-style: none;
+}
+
+#product-sheet .product-category li .weui-badge {
+    margin-right: 15px;
+    color: #333;
+    background: #ddd;
+    padding: 3px 10px;
+    border-radius: 5px;
+}
+
+#product-sheet .product-category li .weui-badge.selected {
+    color: #fff;
+    background: #C3A769;
+}

@@ -34,6 +34,7 @@
         <section id="content" class="content" v-cloak>
             <treegrid
                     domain="productCategory"
+                    :instance="crudgrid"
                     :root="sidebar.root"
                     :columns="crudgrid.columns"
                     :form-data="formData"
@@ -60,14 +61,57 @@
                     <div class="form-group">
                         <label>规格：</label>
                         <div>
-                            <button type="button" class="btn btn-info"> <i class="fa fa-plus"></i> 增加规格</button>
+                            <button type="button" class="btn btn-info" @click="addStandard"> <i class="fa fa-plus"></i> 增加规格</button>
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="checkbox">
-                            <label v-for="row in productStandards">
-                                <checkbox :value="row" name="productStandard" v-model="props.form.productStandards"></checkbox> {{row.name}}[{{row.remark}}]
-                            </label>
+                        <div class="dataTables_wrapper">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <form class="form-horizontal">
+                                        <draggable v-model="props.form.productStandards" :options="{handle:'.draggable-handler'}">
+                                            <div v-for="row in props.form.productStandards">
+                                                <div class="row form-group">
+                                                    <div class="col-xs-8">
+                                                        <input type="text" class="form-control" required v-model="row.name" placeholder="输入规格名称">
+                                                    </div>
+                                                    <div class="col-xs-4" style="padding-top: 5px;">
+                                                        <a title="拖拽移动" class="btn btn-xs bg-purple margin-r-5 draggable-handler">
+                                                            <i class="fa fa-arrows"></i>
+                                                        </a>
+                                                        <a title="添加条目" class="btn btn-xs bg-green margin-r-5" @click="addItem(row)">
+                                                            <i class="fa fa-plus"></i>
+                                                        </a>
+                                                        <a title="删除" class="btn btn-xs bg-red" @click="deleteStandard(props.form.productStandards, row, $event)">
+                                                            <i class="fa fa-trash"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <draggable v-model="row.items" :options="{handle:'.item-draggable-handler'}">
+                                                    <div class="row form-group" v-for="item in row.items">
+                                                        <div class="col-xs-8">
+                                                            <div class="row">
+                                                                <label class="col-xs-4 control-label">条目：</label>
+                                                                <div class="col-xs-8">
+                                                                    <input type="text" class="form-control" required v-model="item.name" placeholder="输入条目名称">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-4" style="padding-top: 5px;">
+                                                            <a title="拖拽移动" class="btn btn-xs bg-purple margin-r-5 item-draggable-handler">
+                                                                <i class="fa fa-arrows"></i>
+                                                            </a>
+                                                            <a title="删除" class="btn btn-xs bg-red" @click="deleteItem(row, item, $event)">
+                                                                <i class="fa fa-trash"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </draggable>
+                                            </div>
+                                        </draggable>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </template>
