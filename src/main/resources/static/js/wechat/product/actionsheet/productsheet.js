@@ -16,6 +16,8 @@ define([
             product: {
                 coverImage: {}
             },
+            selectedProductProductStandardItems: [],
+            selectedSku: null,
             button: {
                 text: '确定',
                 callback: function () {
@@ -51,6 +53,14 @@ define([
             open: function (product) {
                 if(product) {
                     this.product = product;
+                    var self = this;
+                    if(this.product.productProductStandards) {
+                        self.selectedProductProductStandardItems = [];
+                        $.each(this.product.productProductStandards, function () {
+                            self.selectedProductProductStandardItems.push({id: null});
+                        })
+                    }
+                    this.selectedSku = null;
                 }
                 this.actionsheet.$instance.open();
             },
@@ -68,6 +78,9 @@ define([
             },
             addCart: function () {
                 var self = this;
+                if(!this.validate()) {
+                    return;
+                }
                 utils.getLoginMember(function(member) {
                     $.ajax({
                         url: utils.patchUrl('/api/cart/addProduct'),
@@ -77,7 +90,8 @@ define([
                             member: member,
                             items: [{
                                 product: self.product,
-                                count: self.count
+                                count: self.count,
+                                sku: self.selectedSku
                             }]
                         }),
                         success: function() {
@@ -89,7 +103,66 @@ define([
                 });
             },
             justBuy: function () {
-                window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/new?productId=' + this.product.id + '&count=' + this.count)
+                if(!this.validate()) {
+                    return;
+                }
+                window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/new?productId=' +
+                    this.product.id +
+                    '&count=' +
+                    this.count +
+                    '&skuId=' +
+                    this.selectedSku.id)
+            },
+            validate: function () {
+                if(!this.product) {
+                    messager.bubble('商品参数为空');
+                    return false;
+                }
+                if(!this.count) {
+                    messager.bubble('数量为空');
+                    return false;
+                }
+
+                return this.validateProductProductStandardItems();
+            },
+            validateProductProductStandardItems: function (silence) {
+                if(this.selectedProductProductStandardItems) {
+                    var itemsSelected = true;
+                    var unSelectStandard = -1;
+                    for(var i = 0, l = this.selectedProductProductStandardItems.length; i < l; i++) {
+                        if(!this.selectedProductProductStandardItems[i].id) {
+                            itemsSelected = false;
+                            unSelectStandard = i;
+                            break;
+                        }
+                    }
+                    if(!itemsSelected) {
+                        if(!silence) {
+                            messager.bubble('请选择' + this.product.productProductStandards[unSelectStandard].productStandard.name);
+                        }
+                        return false;
+                    }
+                }
+                return true;
+            },
+            selectCategory: function (index, item) {
+                $.extend(this.selectedProductProductStandardItems[index], item);
+                if(this.validateProductProductStandardItems(true)) {
+                    var skuMap = {};
+                    var itemIds = [];
+                    $.each(this.product.skus, function () {
+                        itemIds = [];
+                        $.each(this.productStandardItems, function () {
+                            itemIds.push(this.id)
+                        });
+                        skuMap[itemIds.join(',')] = this;
+                    });
+                    itemIds = [];
+                    $.each(this.selectedProductProductStandardItems, function () {
+                        itemIds.push(this.id)
+                    });
+                    this.selectedSku = skuMap[itemIds.join(',')];
+                }
             }
         }
     });

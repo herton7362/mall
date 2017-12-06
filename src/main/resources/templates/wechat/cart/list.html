@@ -65,10 +65,14 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="space"></div>
+                                    <div class="space">
+                                        <template v-for="standardItem in (item.sku||{productStandardItems:[]}).productStandardItems">
+                                            {{standardItem.name}}
+                                        </template>
+                                    </div>
                                     <div class="row">
                                         <div class="col-xs-8">
-                                            <p class="weui-media-box__title price">￥ {{item.product.price | price}}</p>
+                                            <p class="weui-media-box__title price">￥ {{item.sku || item.product | productPrice}}</p>
                                         </div>
                                         <div class="col-xs-4" v-if="!editing">
                                             <p class="weui-media-box__title num" style="text-align: right">x {{item.count}}</p>

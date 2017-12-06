@@ -56,7 +56,8 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
             CartItem cartItem = cartItems.get(0);
             oldCartItems = oldCartItems
                     .stream()
-                    .filter(item -> item.getProduct().getId().equals(cartItem.getProduct().getId()))
+                    .filter(item -> item.getProduct().getId().equals(cartItem.getProduct().getId()) &&
+                            (item.getSku() == null || (item.getSku() != null && item.getSku().getId().equals(cartItem.getSku().getId()))))
                     .collect(Collectors.toList());
 
             if (oldCartItems != null && !oldCartItems.isEmpty()) {

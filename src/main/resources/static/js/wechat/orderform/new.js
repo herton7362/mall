@@ -51,6 +51,22 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             coverPath: function (val) {
                 return utils.patchUrl('/attachment/download/' + val);
             },
+            productPrice: function (val) {
+                if(val.skus && val.skus.length > 0) {
+                    var min = 999999999999;
+                    var max = 0;
+                    $.each(val.skus, function () {
+                        if(min > this.price) {
+                            min = this.price;
+                        }
+                        if(max < this.price) {
+                            max = this.price;
+                        }
+                    });
+                    return utils.formatMoney(min) + '-' +  utils.formatMoney(max);;
+                }
+                return utils.formatMoney(val.price);
+            },
             price: function (val) {
                 return utils.formatMoney(val);
             },
@@ -75,6 +91,28 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                     this.value = this.id;
                 });
                 return val;
+            },
+            'account.balance': function (val, oldVal) {
+                if(val > this.member.balance) {
+                    messager.bubble('余额不足');
+                    this.account.balance = oldVal;
+                }
+            },
+            'account.point': function (val, oldVal) {
+                if(val > this.member.salePoint) {
+                    messager.bubble('积分不足');
+                    this.account.point = oldVal;
+                }
+                if(this.getFinalTotal() < 0) {
+                    messager.bubble('积分超出商品价格','danger');
+                    this.account.point = oldVal;
+                }
+            },
+            'orderForm.coupon': function (val, oldVal) {
+                if(this.getFinalTotal() < 0) {
+                    messager.bubble('优惠券优惠超出商品价格','danger');
+                    this.orderForm.coupon = oldVal;
+                }
             }
         },
         methods: {
@@ -89,7 +127,11 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             getTotal: function () {
                 var total = 0;
                 $.each(this.orderForm.items, function () {
-                    total += this.product.price * this.count;
+                    if(this.sku) {
+                        total += this.sku.price * this.count;
+                    } else {
+                        total += this.product.price * this.count;
+                    }
                 });
                 return total;
             },
@@ -160,12 +202,22 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 } else {
                     var productId = utils.getQueryString('productId');
                     var count = utils.getQueryString('count');
+                    var skuId = utils.getQueryString('skuId');
+                    var sku = null;
                     $.ajax({
                         url: utils.patchUrl('/product/' + productId),
                         success: function(data) {
+                            if(skuId) {
+                                $.each(data.skus, function () {
+                                    if(this.id === skuId) {
+                                        sku = this;
+                                    }
+                                });
+                            }
                             self.orderForm.items.push({
                                 product: data,
-                                count: count
+                                count: count,
+                                sku: sku
                             });
                         }
                     })
@@ -294,14 +346,13 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 this.balanceSelector.$instance.open();
             },
             useBalance:function (balance) {
-                if(balance > this.member.balance) {
-                    messager.bubble('余额不足');
-                    return;
+                var total = this.getFinalTotal() + this.account.balance;
+                if(total > 0) {
+                    if(balance > total) {
+                        balance = total;
+                    }
+                    this.account.balance = balance;
                 }
-                if(balance > this.getTotal()) {
-                    balance = this.getTotal();
-                }
-                this.account.balance = balance;
                 window.history.go(-1);
             },
             otherBalance: function () {
@@ -327,6 +378,10 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             },
             onActionsheetClose: function () {
                 $('body').css('position', 'static');
+            },
+            editAddress: function (row) {
+                this.newAddressActionsheet.$instance.open();
+                this.memberAddressForm = row;
             }
         },
         mounted: function () {

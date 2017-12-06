@@ -273,9 +273,15 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
 
         BigDecimal actualTotalAmount = new BigDecimal(0);
         Product product;
+        Double price;
         for (OrderItem orderItem : orderForm.getItems()) {
             product = orderItem.getProduct();
-            actualTotalAmount = actualTotalAmount.add(new BigDecimal(product.getPrice()).multiply(new BigDecimal(orderItem.getCount())));
+            if(orderItem.getSku() != null) {
+                price = orderItem.getSku().getPrice();
+            } else {
+                price = product.getPrice();
+            }
+            actualTotalAmount = actualTotalAmount.add(new BigDecimal(price).multiply(new BigDecimal(orderItem.getCount())));
         }
 
         if(orderForm.getCoupon() != null && StringUtils.isNotBlank(orderForm.getCoupon().getId())) {

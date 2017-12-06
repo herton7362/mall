@@ -563,6 +563,10 @@
     color: #999;
 }
 
+.orderform-new .weui-media-box__title.price {
+    text-align: right;
+}
+
 .product-list .product-item {
     background-color: #fafafa;
     padding: 10px;
@@ -598,6 +602,8 @@
 }
 
 .cart-list.product-list .product-item  .space {
+    color: #999;
+    font-size: 12px;
     height: 20px;
 }
 
@@ -754,8 +760,10 @@
     margin-left: 15px;
 }
 
-.orderform-list.product-list .product-item .space {
+.product-list .product-item .space {
     height: 20px;
+    color: #999;
+    font-size: 12px;
 }
 
 .orderform-list .empty {
