@@ -46,8 +46,12 @@
                                             <p class="weui-media-box__title num" style="text-align: right">x {{item.count}}</p>
                                         </div>
                                     </div>
-                                    <div class="space"></div>
-                                    <p class="weui-media-box__title price">￥ {{item.product.price | price}}</p>
+                                    <div class="space">
+                                        <template v-for="standardItem in (item.sku||{productStandardItems:[]}).productStandardItems">
+                                            {{standardItem.name}}
+                                        </template>
+                                    </div>
+                                    <p class="weui-media-box__title price">￥ {{item.sku || item.product | productPrice}}</p>
                                 </div>
                             </div>
                         </div>

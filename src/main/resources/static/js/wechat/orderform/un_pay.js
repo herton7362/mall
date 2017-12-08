@@ -17,6 +17,22 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             coverPath: function (val) {
                 return utils.patchUrl('/attachment/download/' + val);
             },
+            productPrice: function (val) {
+                if(val.skus && val.skus.length > 0) {
+                    var min = 999999999999;
+                    var max = 0;
+                    $.each(val.skus, function () {
+                        if(min > this.price) {
+                            min = this.price;
+                        }
+                        if(max < this.price) {
+                            max = this.price;
+                        }
+                    });
+                    return utils.formatMoney(min) + '-' +  utils.formatMoney(max);;
+                }
+                return utils.formatMoney(val.price);
+            },
             price: function (val) {
                 return utils.formatMoney(val);
             },
@@ -46,7 +62,11 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             getTotal: function () {
                 var total = 0;
                 $.each(this.orderForm.items, function () {
-                    total += this.product.price * this.count;
+                    if(this.sku) {
+                        total += this.sku.price * this.count;
+                    } else {
+                        total += this.product.price * this.count;
+                    }
                 });
                 return total;
             },

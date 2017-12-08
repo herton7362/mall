@@ -64,6 +64,7 @@ public class Product extends BaseEntity {
     private List<ProductProductStandard> productProductStandards;
     @ApiModelProperty(value = "sku")
     @OneToMany(mappedBy = "product")
+    @Where(clause="logically_deleted=0")
     @OrderBy(clause="sort_number asc")
     private List<Sku> skus;
 

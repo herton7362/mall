@@ -99,9 +99,9 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
     }
 
     /**
-     * 申请退货
+     * 退货
      */
-    @ApiOperation(value="申请退货")
+    @ApiOperation(value="退货")
     @RequestMapping(value = "/reject", method = RequestMethod.POST)
     public ResponseEntity<OrderForm> reject(@RequestBody RejectParam rejectParam) throws Exception {
         return new ResponseEntity<>(orderFormService.reject(rejectParam), HttpStatus.OK);

@@ -23,7 +23,11 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             getTotal: function () {
                 var total = 0;
                 $.each(this.orderForm.items, function () {
-                    total += this.product.price * this.count;
+                    if(this.sku) {
+                        total += this.sku.price * this.count;
+                    } else {
+                        total += this.product.price * this.count;
+                    }
                 });
                 return total;
             },

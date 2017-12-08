@@ -4,17 +4,20 @@ import com.framework.module.product.domain.*;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
 import com.kratos.common.utils.IteratorUtils;
+import com.kratos.common.utils.SpringUtils;
+import com.kratos.entity.BaseEntity;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @Component
@@ -44,18 +47,27 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
             productProductStandardRepository.save(productProductStandards);
         }
         List<Sku> skus = product.getSkus();
-        skuRepository.delete(old.getSkus());
+        // compare skus with old to judge whither has bean modified or not.
+        // it must be newed if sku id is null.so remove them from the candidates .
+        List<Sku> skuForCompare = new ArrayList<>();
         IteratorUtils.forEach(skus, (index, sku) -> {
-            sku.setId(null);
             sku.setSortNumber(index);
             sku.setProduct(product);
+            if(StringUtils.isNotBlank(sku.getId())) {
+                skuForCompare.add(sku);
+            }
         });
+        if(!BaseEntity.compare(skuForCompare, old.getSkus())) {
+            old.getSkus().forEach(sku -> sku.setLogicallyDeleted(true));
+            skuRepository.save(old.getSkus());
+            IteratorUtils.forEach(skus, (index, sku) -> sku.setId(null));
+        }
         skuRepository.save(skus);
         return super.save(product);
     }
 
     @Override
-    public Long count() {
+    public Long count() throws Exception {
         return productRepository.count(
                 (Root<Product> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder)-> {
                     List<Predicate> predicate = new ArrayList<>();
@@ -63,6 +75,25 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
                     return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
                 }
         );
+    }
+
+    @Override
+    public Page<Product> getStock(PageRequest pageRequest, String maxStockCount) throws Exception {
+        return productRepository.findAll((Root<Product> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder)->{
+            List<Predicate> predicate = new ArrayList<>();
+            Long count = 100L;
+            if(StringUtils.isNotBlank(maxStockCount)) {
+                count = Long.parseLong(maxStockCount);
+            }
+            predicate.add(criteriaBuilder.lessThanOrEqualTo(root.get("stockCount"), count));
+            EntityManager entityManager = SpringUtils.getBean(EntityManager.class);
+            Query query = entityManager.createQuery("select s from Sku s where s.stockCount<=:maxStockCount");
+            query.setParameter("maxStockCount", count);
+            List list = query.getResultList();
+            criteriaQuery.distinct(true);
+            predicate.add(criteriaBuilder.in(root.join("skus", JoinType.LEFT)).value(list));
+            return criteriaBuilder.or(predicate.toArray(new Predicate[]{}));
+        }, pageRequest);
     }
 
     @Autowired

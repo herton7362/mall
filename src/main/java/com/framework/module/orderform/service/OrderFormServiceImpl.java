@@ -11,6 +11,10 @@ import com.framework.module.orderform.web.ApplyRejectParam;
 import com.framework.module.orderform.web.RejectParam;
 import com.framework.module.orderform.web.SendOutParam;
 import com.framework.module.product.domain.Product;
+import com.framework.module.product.domain.ProductRepository;
+import com.framework.module.product.domain.Sku;
+import com.framework.module.product.domain.SkuRepository;
+import com.framework.module.product.service.ProductService;
 import com.framework.module.record.domain.OperationRecord;
 import com.framework.module.record.service.OperationRecordService;
 import com.kratos.common.AbstractCrudService;
@@ -35,6 +39,8 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     private final OperationRecordService operationRecordService;
     private final OauthClientDetailsService oauthClientDetailsService;
     private final CouponService couponService;
+    private final ProductRepository productRepository;
+    private final SkuRepository skuRepository;
 
     @Override
     protected PageRepository<OrderForm> getRepository() {
@@ -145,6 +151,17 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         orderForm.setShippingCode(sendOutParam.getShippingCode());
         orderForm.setShippingDate(sendOutParam.getShippingDate());
         orderFormRepository.save(orderForm);
+        orderForm.getItems().forEach(orderItem -> {
+            Sku sku = orderItem.getSku();
+            if(sku!= null) {
+                sku.setStockCount(sku.getStockCount() - 1);
+                skuRepository.save(sku);
+            } else {
+                Product product = orderItem.getProduct();
+                product.setStockCount(product.getStockCount() - 1);
+                productRepository.save(product);
+            }
+        });
         return orderForm;
     }
 
@@ -203,6 +220,17 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         orderFormRepository.save(orderForm);
         // 修改账户余额
         rejectModifyMemberAccount(orderForm);
+        orderForm.getItems().forEach(orderItem -> {
+            Sku sku = orderItem.getSku();
+            if(sku!= null) {
+                sku.setStockCount(sku.getStockCount() + 1);
+                skuRepository.save(sku);
+            } else {
+                Product product = orderItem.getProduct();
+                product.setStockCount(product.getStockCount() + 1);
+                productRepository.save(product);
+            }
+        });
         return orderForm;
     }
 
@@ -374,12 +402,16 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             MemberService memberService,
             OperationRecordService operationRecordService,
             OauthClientDetailsService oauthClientDetailsService,
-            CouponService couponService
+            CouponService couponService,
+            ProductRepository productRepository,
+            SkuRepository skuRepository
     ) {
         this.orderFormRepository = orderFormRepository;
         this.memberService = memberService;
         this.operationRecordService = operationRecordService;
         this.oauthClientDetailsService = oauthClientDetailsService;
         this.couponService = couponService;
+        this.productRepository = productRepository;
+        this.skuRepository = skuRepository;
     }
 }

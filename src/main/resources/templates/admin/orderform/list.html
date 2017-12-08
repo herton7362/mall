@@ -144,12 +144,17 @@
                                             </div>
                                             <div class="pull-left">
                                                 <p>{{sub.product.name}}</p>
-                                                <span style="color: #999">-{{sub.product.productCategory.name}}</span>
+                                                <span style="color: #999">
+                                                    -{{sub.product.productCategory.name}}
+                                                    <template v-for="standardItem in (sub.sku||{productStandardItems:[]}).productStandardItems">
+                                                        {{standardItem.name}}
+                                                    </template>
+                                                </span>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="col-xs-4 cell-title">销售金额：</div>
-                                            {{sub.product.price | price}}
+                                            {{sub.sku || sub.product | productPrice}}
                                         </td>
                                         <td>
                                             <div class="col-xs-4 cell-title">数量：</div>
@@ -273,6 +278,10 @@
                     <div class="form-group">
                         <label>状态：</label>
                         <input type="text" class="form-control" :value="formDetail.form.status | status" placeholder="-">
+                    </div>
+                    <div class="form-group">
+                        <label>优惠券：</label>
+                        <input type="text" class="form-control" :value="formDetail.form.coupon?formDetail.form.coupon.amount: ''" placeholder="-">
                     </div>
                     <div class="form-group">
                         <label>赠送积分：</label>
