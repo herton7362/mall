@@ -7,6 +7,7 @@ import com.kratos.entity.BaseUser;
 import com.kratos.exceptions.BusinessException;
 import com.kratos.kits.Kits;
 import com.kratos.kits.notification.Notification;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
@@ -50,6 +51,15 @@ public class LoginServiceImpl extends AbstractLoginService {
         }
         if(findUserByMobile(mobile) != null) {
             throw new BusinessException("该手机号已被注册，请选择找回密码或者直接登录");
+        }
+        if(StringUtils.isBlank(password)) {
+            throw new BusinessException("密码不能为空");
+        }
+        if(StringUtils.isBlank(mobile)) {
+            throw new BusinessException("电话不能为空");
+        }
+        if(password.length() < 6) {
+            throw new BusinessException("密码最短为6位");
         }
         Member member = new Member();
         member.setMobile(mobile);

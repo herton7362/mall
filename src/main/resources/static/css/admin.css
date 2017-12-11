@@ -54,3 +54,7 @@ ul.pagination {
     padding: 0;
     text-align: center;
 }
+
+#consume .sidebar-plugin {
+    white-space: normal;
+}

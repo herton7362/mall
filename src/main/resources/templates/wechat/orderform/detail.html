@@ -36,7 +36,7 @@
                                 </div>
                             </div>
 
-                            <p class="weui-media-box__desc">收货地址：{{orderForm.deliverToAddress.address | addressName}}{{orderForm.deliverToAddress.detailAddress}}</p>
+                            <p class="weui-media-box__desc" v-if="orderForm.deliverToAddress.address">收货地址：{{orderForm.deliverToAddress.address | addressName}}{{orderForm.deliverToAddress.detailAddress}}</p>
                         </div>
                         <div class="weui-cell__ft"></div>
                     </div>

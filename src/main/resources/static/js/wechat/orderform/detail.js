@@ -79,6 +79,9 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                     url: utils.patchUrl('/api/orderForm/' + utils.getQueryString('id')),
                     success: function(data) {
                         self.orderItems = data.items;
+                        data.deliverToAddress = data.deliverToAddress || {
+                            name: '现场交货'
+                        };
                         self.orderForm = data;
                     }
                 })

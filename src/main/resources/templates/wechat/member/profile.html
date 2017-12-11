@@ -20,7 +20,9 @@
                             {{member.name}}
                             <span class="weui-badge" style="margin-left: 5px;vertical-align: middle">{{memberLevel.name}}</span>
                         </h3>
-                        <!--<i class="widget-user-config fa fa-cog">资料修改</i>-->
+                        <a th:href="@{/wechat/member/modify}">
+                            <i class="widget-user-config fa fa-cog"></i>
+                        </a>
                     </div>
                     <div class="widget-user-image">
                         <img class="img-circle" :src="getHeadPhoto()" :alt="member.name">

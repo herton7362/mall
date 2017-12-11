@@ -20,7 +20,11 @@ define([
                 summary: function(data) {
                     var total = 0;
                     $.each(data, function () {
-                        total += this.price * this.count;
+                        if(this.sku) {
+                            total += this.sku.price * this.count;
+                        } else {
+                            total += this.price * this.count;
+                        }
                     });
                     return '合计：' + utils.formatMoney(total) + ' 元';
                 },
@@ -28,8 +32,17 @@ define([
                     name: ''
                 },
                 columns: [
-                    {field:'name', title:'名称'},
-                    {field:'price', title:'单价', formatter: function(value) {
+                    {field:'name', title:'名称', formatter: function (value, row) {
+                        var name = '';
+                        $.each(row.sku.productStandardItems, function () {
+                            name += this.name;
+                        });
+                        return value + '-' + name;
+                    }},
+                    {field:'price', title:'单价', formatter: function(value, row) {
+                        if(row.sku) {
+                            return utils.formatMoney(row.sku.price);
+                        }
                         return utils.formatMoney(value);
                     }},
                     {field:'count', title:'数量', summary: 'max', align: 'center', width: 50, editor: {
@@ -141,10 +154,35 @@ define([
                         }),
                         success: function (product) {
                             $.each(product.content, function() {
+                                var self = this;
+                                var oldName = self.name;
+                                this.productId = this.id;
                                 if(this.productCategory) {
-                                    this.parent = this.productCategory;
-                                    this.name = this.name + '（' + utils.formatMoney(this.price) + '元）';
-                                    this.count = 1;
+                                    if(this.skus && this.skus.length > 0) {
+                                        $.each(this.skus, function (i,v) {
+                                            var name = '';
+                                            $.each(v.productStandardItems, function () {
+                                                name += this.name;
+                                            });
+                                            if(i === 0) {
+                                                self.parent = self.productCategory;
+                                                self.name = oldName + name + '（' + utils.formatMoney(v.price) + '元）';
+                                                self.count = 1;
+                                                self.sku = v;
+                                            } else {
+                                                product.content.push($.extend({}, self, {
+                                                    id: v.id,
+                                                    name: oldName + name + '（' + utils.formatMoney(v.price) + '元）',
+                                                    sku: v
+                                                }));
+                                            }
+                                        });
+                                    } else {
+                                        this.parent = this.productCategory;
+                                        this.name = this.name + '（' + utils.formatMoney(this.price) + '元）';
+                                        this.count = 1;
+                                    }
+
                                 }
                             });
                             category.content = category.content || [];
@@ -156,20 +194,34 @@ define([
             add: function() {
                 var self = this;
                 var index = -1;
+                var product = {};
+                var selectedId = this.sidebar.$instance.getSelectedId();
+                $.each(this.sidebar.data, function () {
+                    if(this.id === selectedId) {
+                        product = this;
+                    }
+                });
                 $.ajax({
-                    url: utils.patchUrl('/api/product/' + this.sidebar.$instance.getSelectedId()),
-                    success: function (product) {
-                        if(product) {
-                            product.count = 1;
+                    url: utils.patchUrl('/api/product/' + product.productId),
+                    success: function (data) {
+                        if(data) {
+                            data.sku = product.sku;
+                            data.count = 1;
                             $.each(self.datagrid.data, function(i) {
-                                if(this.id === product.id) {
-                                    index = i;
+                                if(this.id === data.id) {
+                                    if(this.sku) {
+                                        if(this.sku.id === data.sku.id) {
+                                            index = i;
+                                        }
+                                    } else {
+                                        index = i;
+                                    }
                                 }
                             });
                             if(index >= 0) {
                                 self.datagrid.data[index].count ++;
                             } else {
-                                self.datagrid.data.push(product);
+                                self.datagrid.data.push(data);
                             }
                         }
                     }
@@ -182,7 +234,11 @@ define([
                 var data = this.datagrid.data;
                 var total = 0;
                 $.each(data, function () {
-                    total += this.price * this.count;
+                    if(this.sku) {
+                        total += this.sku.price * this.count;
+                    } else {
+                        total += this.price * this.count;
+                    }
                 });
                 return total;
             },
@@ -218,6 +274,7 @@ define([
                 $.each(this.datagrid.data, function () {
                     items.push({
                         count: this.count,
+                        sku: this.sku,
                         product: this
                     })
                 });
@@ -233,13 +290,19 @@ define([
                         point: this.account.point
                     }),
                     type: 'POST',
-                    success: function() {
-                        messager.bubble("操作成功");
-                        self.consumeModal.$instance.close();
-                        self.modal.$instance.close();
-                        if(self.onClose) {
-                            self.onClose.call(self);
-                        }
+                    success: function(data) {
+                        $.ajax({
+                            url: utils.patchUrl('/api/orderForm/receive/' + data.id),
+                            type: 'post',
+                            success: function () {
+                                messager.bubble("操作成功");
+                                self.consumeModal.$instance.close();
+                                self.modal.$instance.close();
+                                if(self.onClose) {
+                                    self.onClose.call(self);
+                                }
+                            }
+                        })
                     }
                 })
             }

@@ -20,6 +20,8 @@ import com.framework.module.record.service.OperationRecordService;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
 import com.kratos.exceptions.BusinessException;
+import com.kratos.module.auth.UserThread;
+import com.kratos.module.auth.domain.Admin;
 import com.kratos.module.auth.service.OauthClientDetailsService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -171,10 +173,11 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         if(orderForm == null) {
             throw new BusinessException("订单未找到");
         }
-        if(OrderForm.OrderStatus.DELIVERED != orderForm.getStatus()) {
+        if(OrderForm.PaymentStatus.PAYED != orderForm.getPaymentStatus()) {
             throw new BusinessException("订单状态不正确");
         }
-        if(!MemberThread.getInstance().get().getId().equals(orderForm.getMember().getId())) {
+        if(!UserThread.getInstance().get().getId().equals(orderForm.getMember().getId()) &&
+                !(UserThread.getInstance().get() instanceof Admin)) {
             throw new BusinessException("当前会员无权操作此订单");
         }
         orderForm.setStatus(OrderForm.OrderStatus.RECEIVED);
