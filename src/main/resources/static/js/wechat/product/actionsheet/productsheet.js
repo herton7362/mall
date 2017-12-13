@@ -111,7 +111,7 @@ define([
                     '&count=' +
                     this.count +
                     '&skuId=' +
-                    this.selectedSku.id)
+                    (this.selectedSku? this.selectedSku.id: ''))
             },
             validate: function () {
                 if(!this.product) {

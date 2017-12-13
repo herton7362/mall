@@ -146,9 +146,6 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         if(OrderForm.OrderStatus.PAYED != orderForm.getStatus()) {
             throw new BusinessException("订单状态不正确");
         }
-        if(!MemberThread.getInstance().get().getId().equals(orderForm.getMember().getId())) {
-            throw new BusinessException("当前会员无权操作此订单");
-        }
         orderForm.setStatus(OrderForm.OrderStatus.DELIVERED);
         orderForm.setShippingCode(sendOutParam.getShippingCode());
         orderForm.setShippingDate(sendOutParam.getShippingDate());
