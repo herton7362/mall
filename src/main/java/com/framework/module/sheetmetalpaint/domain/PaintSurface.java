@@ -1,5 +1,6 @@
 package com.framework.module.sheetmetalpaint.domain;
 
+import com.kratos.entity.BaseEntity;
 import com.kratos.module.attachment.domain.Attachment;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -10,7 +11,7 @@ import javax.persistence.ManyToOne;
 
 @Entity
 @ApiModel("漆面")
-public class PaintSurface {
+public class PaintSurface extends BaseEntity {
     @ApiModelProperty(value = "名称")
     @Column(length = 100)
     private String name;

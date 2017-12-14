@@ -6,6 +6,7 @@ import com.framework.module.member.domain.MemberAddress;
 import com.framework.module.orderform.domain.OrderItem;
 import com.framework.module.shop.domain.Shop;
 import com.framework.module.vehicle.domain.Vehicle;
+import com.kratos.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Entity
 @ApiModel("钣金喷漆订单")
-public class PaintOrderForm {
+public class PaintOrderForm extends BaseEntity {
     @ApiModelProperty(value = "车")
     @ManyToOne(fetch = FetchType.EAGER)
     private Vehicle vehicle;

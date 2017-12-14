@@ -7,7 +7,9 @@ require(['jquery', 'vue', 'messager', 'utils', _appConf.ctx + '/static/js/module
                 url: '/api/operationRecord',
                 queryParams: {
                     businessType: 'DEDUCT_BALANCE',
-                    member: {}
+                    member: {},
+                    sort: 'updatedDate',
+                    order: 'desc'
                 },
                 count: 0,
                 columns: [

@@ -1,6 +1,6 @@
 package com.framework.module.shop.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.kratos.entity.BaseEntity;
 import com.kratos.module.attachment.domain.Attachment;
 import com.kratos.module.auth.domain.OauthClientDetails;
 import io.swagger.annotations.ApiModel;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @ApiModel("店铺")
-public class Shop {
+public class Shop extends BaseEntity {
     @ApiModelProperty(value = "名称")
     @Column(length = 200)
     private String name;
@@ -23,7 +23,7 @@ public class Shop {
     @Column(length = 500)
     private String address;
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonBackReference
+    @JoinColumn(name = "clientId", referencedColumnName = "clientId")
     private OauthClientDetails oauthClientDetails;
 
     public String getName() {

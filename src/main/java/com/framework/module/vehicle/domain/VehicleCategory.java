@@ -1,5 +1,6 @@
 package com.framework.module.vehicle.domain;
 
+import com.kratos.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -10,7 +11,7 @@ import javax.persistence.ManyToOne;
 
 @Entity
 @ApiModel("车型")
-public class VehicleCategory {
+public class VehicleCategory extends BaseEntity {
     @ApiModelProperty(value = "上级分类")
     @ManyToOne(fetch = FetchType.EAGER)
     private VehicleCategory parent;

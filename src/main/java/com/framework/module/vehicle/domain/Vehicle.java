@@ -1,16 +1,16 @@
 package com.framework.module.vehicle.domain;
 
+import com.framework.module.sheetmetalpaint.domain.Paint;
+import com.kratos.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @ApiModel("车")
-public class Vehicle {
+public class Vehicle extends BaseEntity {
     @ApiModelProperty(value = "上级分类")
     @ManyToOne(fetch = FetchType.EAGER)
     private VehicleCategory parent;
@@ -19,6 +19,10 @@ public class Vehicle {
     private String engineDisplacement;
     @ApiModelProperty(value = "生产年份")
     private Integer productionYear;
+    @ApiModelProperty(value = "车辆喷漆")
+    @ManyToMany
+    @JoinTable(name="vehicle_paints",joinColumns={@JoinColumn(name="vehicle_id")},inverseJoinColumns={@JoinColumn(name="paint_id")})
+    private List<Paint> paints;
 
     public VehicleCategory getParent() {
         return parent;
@@ -42,5 +46,13 @@ public class Vehicle {
 
     public void setProductionYear(Integer productionYear) {
         this.productionYear = productionYear;
+    }
+
+    public List<Paint> getPaints() {
+        return paints;
+    }
+
+    public void setPaints(List<Paint> paints) {
+        this.paints = paints;
     }
 }
