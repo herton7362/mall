@@ -931,3 +931,133 @@
     color: #fff;
     background: #C3A769;
 }
+
+.sheet-metal-paint .content-wrapper {
+    background: #fff;
+}
+
+.sheet-metal-paint .title {
+    padding: 15px;
+    font-size: 14px;
+    line-height: 14px;
+}
+
+.sheet-metal-paint .info {
+    color: #999;
+    font-size: 12px;
+    padding: 7px 15px 10px;
+}
+
+.sheet-metal-paint .card {
+    padding: 10px;
+    border-radius: 3px;
+    margin-left: 15px;
+    font-size: 14px;
+}
+
+.sheet-metal-paint .card.weui-badge {
+    color: #666;
+    background: #eee;
+}
+
+.sheet-metal-paint .remove-vehicle-btn {
+    color: #666;
+}
+
+.sheet-metal-paint .card.weui-badge.selected {
+    color: #fff;
+    background: #C3A769;
+}
+
+.sheet-metal-paint .car-view,
+.sheet-metal-paint .options {
+    margin: 15px;
+    position: relative;
+}
+
+.sheet-metal-paint .car-view {
+}
+
+.sheet-metal-paint .car-view img.paint-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.sheet-metal-paint .options li {
+    float: left;
+    list-style: none;
+    width: 33.3333%;
+    padding: 5px;
+}
+
+.sheet-metal-paint .options li .weui-badge {
+    margin-right: 15px;
+    color: #666;
+    background: #ddd;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    width: 100%;
+}
+
+.sheet-metal-paint .options li .weui-badge.selected {
+    color: #fff;
+    background: #C3A769;
+}
+
+.vehicle-selector .weui-cell {
+    padding: 2px 15px;
+    line-height: 35px;
+}
+
+.sheet-metal-paint-confirm .highlight {
+    color: #df3348;
+}
+
+.sheet-metal-paint-confirm .tishi {
+    padding: 0 15px 60px;
+}
+
+.sheet-metal-paint-confirm .tishi .more .text:after,
+.sheet-metal-paint-confirm .tishi .more .text:before {
+    position: absolute;
+    content: "";
+    width: 35%;
+    background: #bfbfbf;
+    height: 1px;
+    top: 8px;
+}
+
+.sheet-metal-paint-confirm .tishi .more .text:before {
+    left: 0;
+}
+
+.sheet-metal-paint-confirm .tishi .more .text:after {
+    right: 0;
+}
+
+.sheet-metal-paint-confirm .tishi .more {
+    margin-top: 15px;
+    padding: 0 15px;
+}
+
+.sheet-metal-paint-confirm .tishi .more .text {
+    color: #999;
+    font-size: 13px;
+    text-align: center;
+    position: relative;
+}
+
+.sheet-metal-paint-confirm .tishi ul {
+    padding: 5px 15px 10px;
+    color: #999;
+    font-size: 12px;
+}
+
+.sheet-metal-paint-confirm .tishi ul li {
+    line-height: 18px;
+    list-style: none;
+}

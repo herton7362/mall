@@ -1,4 +1,3 @@
-
 require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils) {
     new Vue({
         el: '#content',
@@ -25,6 +24,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             }
         },
         methods: {
+
         },
         mounted: function() {
             var self = this;

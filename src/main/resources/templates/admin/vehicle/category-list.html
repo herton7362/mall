@@ -54,6 +54,20 @@
                         <label>名称：</label>
                         <input type="text" class="form-control" required v-model="props.form.name" placeholder="输入模块名称">
                     </div>
+                    <div class="form-group">
+                        <label>油漆种类：</label>
+                        <div class="checkbox">
+                            <label v-for="row in paints">
+                                <checkbox :value="row"
+                                          :name="paints"
+                                          v-model="props.form.paints"></checkbox> {{row.name}}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>logo图片：</label>
+                        <uploader v-model="props.form.logo"></uploader>
+                    </div>
                 </template>
             </treegrid>
         </section>

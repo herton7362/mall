@@ -1,5 +1,6 @@
 package com.framework.module.vehicle.domain;
 
+import com.framework.module.member.domain.Member;
 import com.framework.module.sheetmetalpaint.domain.Paint;
 import com.kratos.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
@@ -13,23 +14,24 @@ import java.util.List;
 public class Vehicle extends BaseEntity {
     @ApiModelProperty(value = "上级分类")
     @ManyToOne(fetch = FetchType.EAGER)
-    private VehicleCategory parent;
+    private VehicleCategory vehicleCategory;
     @ApiModelProperty(value = "发动机排量")
     @Column(length = 50)
     private String engineDisplacement;
     @ApiModelProperty(value = "生产年份")
     private Integer productionYear;
-    @ApiModelProperty(value = "车辆喷漆")
-    @ManyToMany
-    @JoinTable(name="vehicle_paints",joinColumns={@JoinColumn(name="vehicle_id")},inverseJoinColumns={@JoinColumn(name="paint_id")})
-    private List<Paint> paints;
+    @ApiModelProperty(value = "会员")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Member member;
+    @ApiModelProperty(value = "是否默认")
+    private Boolean isDefault;
 
-    public VehicleCategory getParent() {
-        return parent;
+    public VehicleCategory getVehicleCategory() {
+        return vehicleCategory;
     }
 
-    public void setParent(VehicleCategory parent) {
-        this.parent = parent;
+    public void setVehicleCategory(VehicleCategory vehicleCategory) {
+        this.vehicleCategory = vehicleCategory;
     }
 
     public String getEngineDisplacement() {
@@ -48,11 +50,19 @@ public class Vehicle extends BaseEntity {
         this.productionYear = productionYear;
     }
 
-    public List<Paint> getPaints() {
-        return paints;
+    public Member getMember() {
+        return member;
     }
 
-    public void setPaints(List<Paint> paints) {
-        this.paints = paints;
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
+    public Boolean getIsDefault() {
+        return isDefault;
+    }
+
+    public void setIsDefault(Boolean aDefault) {
+        isDefault = aDefault;
     }
 }

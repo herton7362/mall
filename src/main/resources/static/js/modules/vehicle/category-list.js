@@ -22,8 +22,10 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             formData: {
                 id: null,
                 parent: {},
-                name: null
-            }
+                name: null,
+                logo: null
+            },
+            paints: []
         },
         methods: {
             refresh: function () {
@@ -41,10 +43,24 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                         self.parent.data = data.content;
                     }
                 })
+            },
+            loadPaints: function () {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/api/paint'),
+                    data: {
+                        sort: 'sortNumber',
+                        order: 'asc'
+                    },
+                    success: function(data) {
+                        self.paints = data.content;
+                    }
+                })
             }
         },
         mounted: function() {
             this.loadCombobox();
+            this.loadPaints();
         }
     });
 });

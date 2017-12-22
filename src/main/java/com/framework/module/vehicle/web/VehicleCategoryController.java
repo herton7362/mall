@@ -1,6 +1,5 @@
 package com.framework.module.vehicle.web;
 
-import com.framework.module.product.domain.ProductCategory;
 import com.framework.module.vehicle.domain.VehicleCategory;
 import com.framework.module.vehicle.service.VehicleCategoryService;
 import com.kratos.common.AbstractCrudController;

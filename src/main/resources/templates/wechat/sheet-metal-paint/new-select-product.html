@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <template th:include="wechat/common/header_statics :: header('鼎骏医车 - 钣金喷漆')" th:remove="tag"></template>
+    <link rel="stylesheet" th:href="@{/static/css/wechat.css}"/>
+</head>
+<!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
+<body class="layout-top-nav skin-yellow h5-layout" style="height: auto; min-height: 100%;">
+<div id="content"  class="wrapper orderform-new sheet-metal-paint" style="height: auto; min-height: 100%;" v-cloak>
+
+    <!-- Full Width Column -->
+    <div class="content-wrapper">
+        <div class="container">
+            <!-- Main content -->
+            <section class="content">
+                <div>
+                    <div class="title">您当前购买喷漆服务的车型</div>
+                    <div>
+                        <span class="card weui-badge selected">  {{userVehicle.vehicleCategory.name}}</span>
+                        <a href="#content" title="修改" class="btn btn-xs" @click="myVehicle.$instance.open()">
+                            <i class="iconfont icon-edit"></i>
+                        </a>
+                    </div>
+                    <p class="info">请您确认车型，如果到店车型与所选车型不符，门店有权拒绝服务或要求您补车型差价。</p>
+                </div>
+                <div>
+                    <div class="title">选择油漆产品</div>
+                    <div>
+                        <span class="card weui-badge"
+                              :class="{selected:selectedPaint && selectedPaint.id === paint.id}"
+                              v-for="paint in userVehicle.vehicleCategory.paints"
+                              @click="selectPaint(paint)">
+                            {{paint.name}}
+                            <br>
+                            ￥{{paint.price}}起/标准面
+                        </span>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="title">数量</div>
+                    <div>
+                        <span class="card weui-badge selected">
+                            {{surfaceCount}}个标准面
+                        </span>
+                    </div>
+                </div>
+
+            </section>
+            <!-- /.content -->
+        </div>
+        <!-- /.container -->
+    </div>
+    <actionsheet :instance="myVehicle" :button="null">
+        <template slot="header">
+            <div class="weui-panel__bd">
+                <h4>我的爱车</h4>
+            </div>
+        </template>
+        <template slot="body">
+            <div class="weui-cells weui-cells_radio" style="margin-top: 5px;">
+                <label class="weui-cell weui-check__label" v-for="vehicle in userVehicles" @click="selectVehicle(vehicle)">
+                    <div class="weui-cell__hd">
+                        <img :src="vehicle.vehicleCategory.parent.logo.id | coverPath" alt="" style="width:35px;margin-right:5px;display:block">
+                    </div>
+                    <div class="weui-cell__bd">
+                        <p>{{vehicle.vehicleCategory.name}}</p>
+                    </div>
+                    <div class="weui-cell__ft">
+                        <input type="radio" name="selectedVehicle" class="weui-check" :checked="vehicle.isDefault">
+                        <span class="weui-icon-checked"></span>
+                        <a href="javascript:void(0)" title="删除" class="btn btn-xs remove-vehicle-btn" @click.stop="removeVehicle(vehicle)">
+                            <i class="iconfont icon-delete"></i>
+                        </a>
+                    </div>
+                </label>
+            </div>
+        </template>
+        <template slot="footer">
+            <div class="weui-flex">
+                <div class="weui-flex__item">
+                    <a class="weui-actionsheet__cell main-btn"
+                       href="javascript:"
+                       @click="vehicleSelector.$instance.open();myVehicle.$instance.close()"
+                       style="display: block;">添加爱车</a>
+                </div>
+            </div>
+        </template>
+    </actionsheet>
+    <sidemodal class="vehicle-selector" :instance="vehicleSelector">
+        <template slot="header">
+            选择车型
+        </template>
+        <template slot="body">
+            <div class="weui-cells" style="margin-top: -15px;">
+                <a href="#content" class="weui-cell weui-check__label" v-for="category in vehicleCategories" @click="selectVehicleCategory(category)">
+                    <div class="weui-cell__hd" v-if="category.logo">
+                        <img :src="category.logo.id | coverPath" alt="" style="width:35px;margin-right:5px;display:block">
+                    </div>
+                    <div class="weui-cell__bd">
+                        <p>{{category.name}}</p>
+                    </div>
+                </a>
+            </div>
+        </template>
+    </sidemodal>
+    <sidemodal class="vehicle-selector" :instance="vehicleSelector2">
+        <template slot="header">
+            <img :src="selectedVehicle.logo.id | coverPath" alt="" style="width:35px;margin-right:5px;display:block">
+            {{selectedVehicle.name}}
+        </template>
+        <template slot="body">
+            <div class="weui-cells" style="margin-top: -15px;">
+                <label class="weui-cell weui-check__label" v-for="category in selectedVehicle.children" @click="createVehicle(category)">
+                    <div class="weui-cell__bd">
+                        <p>{{category.name}}</p>
+                    </div>
+                </label>
+            </div>
+        </template>
+    </sidemodal>
+    <div class="row tabbar">
+        <div class="col-xs-8 total">
+            <span>合计：</span>
+            <span class="main-text-color">￥{{getFinalTotal() | price}}</span>
+        </div>
+        <div class="col-xs-4 padding-none">
+            <button type="button" class="btn btn-flat submit-order main-btn" @click="submit">去结算</button>
+        </div>
+    </div>
+    <aside th:replace="wechat/common/aside"></aside>
+    <!-- /.content-wrapper -->
+</div>
+<!-- ./wrapper -->
+<footer th:replace="wechat/common/footer_statics"></footer>
+<script th:src="@{/static/js/wechat/sheet-metal-paint/new-select-product.js}"></script>
+</body>
+</html>
