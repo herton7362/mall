@@ -2,6 +2,7 @@ package com.framework.module.member.service;
 
 import com.framework.module.auth.MemberThread;
 import com.framework.module.member.domain.Member;
+import com.framework.module.member.domain.MemberCoupon;
 import com.framework.module.member.domain.MemberRepository;
 import com.framework.module.orderform.base.BaseOrderForm;
 import com.framework.module.orderform.base.BaseOrderItem;
@@ -28,9 +29,9 @@ import java.util.List;
 @Component
 @Transactional
 public class MemberServiceImpl extends AbstractCrudService<Member> implements MemberService {
-    @Autowired private MemberRepository repository;
-    @Autowired private OauthClientDetailsService oauthClientDetailsService;
-    @Autowired private OperationRecordService operationRecordService;
+    private MemberRepository repository;
+    private OauthClientDetailsService oauthClientDetailsService;
+    private OperationRecordService operationRecordService;
 
     @Override
     public Member save(Member member) throws Exception {
@@ -148,7 +149,7 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
     }
 
     @SuppressWarnings("unchecked")
-    public void consumeModifyMemberAccount(BaseOrderForm orderForm) throws Exception {
+    public Member calculateMemberAccountAfterConsume(BaseOrderForm orderForm) {
         Member member = orderForm.getMember();
         Integer productPoints = 0;
         List<BaseOrderItem> items = orderForm.getItems();
@@ -159,7 +160,25 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
         member.setPoint(increaseNumber(member.getPoint(), productPoints));
         member.setSalePoint(increaseNumber(member.getSalePoint(), productPoints));
         member.setBalance(subtractMoney(member.getBalance(), orderForm.getBalance()));
-        save(member);
+        return member;
+    }
+
+
+    public void consumeModifyMemberAccount(BaseOrderForm orderForm) throws Exception {
+        Member member =calculateMemberAccountAfterConsume(orderForm);
+        repository.save(member);
+    }
+
+    @Override
+    public Integer getAvailableCouponCount(String memberId) throws Exception {
+        Member member = findOne(memberId);
+        Integer count = 0;
+        for (MemberCoupon memberCoupon : member.getCoupons()) {
+            if(!memberCoupon.getUsed()) {
+                count ++;
+            }
+        }
+        return count;
     }
 
     private Integer subtractNumber(Integer sourcePoint, Integer point) {
@@ -167,5 +186,16 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
             sourcePoint = 0;
         }
         return sourcePoint - point;
+    }
+
+    @Autowired
+    public MemberServiceImpl(
+            MemberRepository repository,
+            OauthClientDetailsService oauthClientDetailsService,
+            OperationRecordService operationRecordService
+    ) {
+        this.repository = repository;
+        this.oauthClientDetailsService = oauthClientDetailsService;
+        this.operationRecordService = operationRecordService;
     }
 }

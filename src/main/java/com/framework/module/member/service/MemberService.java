@@ -52,4 +52,11 @@ public interface MemberService extends CrudService<Member> {
      * @param orderForm 订单
      */
     void consumeModifyMemberAccount(BaseOrderForm orderForm) throws Exception;
+
+    /**
+     * 获取可用优惠券数量
+     * @param memberId 会员id
+     * @return 优惠券数量
+     */
+    Integer getAvailableCouponCount(String memberId) throws Exception;
 }

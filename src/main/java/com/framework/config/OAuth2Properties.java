@@ -8,17 +8,20 @@ import org.springframework.stereotype.Component;
 public class OAuth2Properties {
     private String accessTokenUri;
     private String userAuthorizationUri;
-    private String findMemberUrl;
-    private String findAllMemberUrl;
-    private String saveMemberUrl;
-    private String findMemberByMobileUrl;
-    private String findMemberByCardNoUrl;
-    private String fastIncreasePointUrl;
-    private String deductBalanceUrl;
-    private String getCouponsUrl;
-    private String getMemberCountUrl;
-    private String rechargeUrl;
-    private String deleteMemberUrl;
+    private String findMemberByMobileUrl; // 根据手机号获取会员
+    private String findMemberByCardNoUrl; // 根据卡号获取会员
+    private String fastIncreasePointUrl; // 快速积分消费
+    private String deductBalanceUrl; // 扣除余额
+    private String getCouponsUrl; // 获取优惠券
+    private String getMemberCountUrl;// 获取会员数量
+    private String rechargeUrl; // 充值
+    private String memberDomainUri; // 会员
+    private String couponDomainUri; // 优惠券
+    private String getUnClaimedUrl; // 获取未获取的优惠券
+    private String getAvailableCouponCountUrl; // 获取可用优惠券
+    private String getMemberCouponsUrl; // 获取当前用户优惠券
+    private String claimCouponUrl; // 领取优惠券
+    private String useCouponUrl; // 使用优惠券
 
     public String getAccessTokenUri() {
         return accessTokenUri;
@@ -34,30 +37,6 @@ public class OAuth2Properties {
 
     public void setUserAuthorizationUri(String userAuthorizationUri) {
         this.userAuthorizationUri = userAuthorizationUri;
-    }
-
-    public String getFindMemberUrl() {
-        return findMemberUrl;
-    }
-
-    public void setFindMemberUrl(String findMemberUrl) {
-        this.findMemberUrl = findMemberUrl;
-    }
-
-    public String getFindAllMemberUrl() {
-        return findAllMemberUrl;
-    }
-
-    public void setFindAllMemberUrl(String findAllMemberUrl) {
-        this.findAllMemberUrl = findAllMemberUrl;
-    }
-
-    public String getSaveMemberUrl() {
-        return saveMemberUrl;
-    }
-
-    public void setSaveMemberUrl(String saveMemberUrl) {
-        this.saveMemberUrl = saveMemberUrl;
     }
 
     public String getFindMemberByMobileUrl() {
@@ -116,11 +95,59 @@ public class OAuth2Properties {
         this.rechargeUrl = rechargeUrl;
     }
 
-    public String getDeleteMemberUrl() {
-        return deleteMemberUrl;
+    public String getGetAvailableCouponCountUrl() {
+        return getAvailableCouponCountUrl;
     }
 
-    public void setDeleteMemberUrl(String deleteMemberUrl) {
-        this.deleteMemberUrl = deleteMemberUrl;
+    public void setGetAvailableCouponCountUrl(String getAvailableCouponCountUrl) {
+        this.getAvailableCouponCountUrl = getAvailableCouponCountUrl;
+    }
+
+    public String getMemberDomainUri() {
+        return memberDomainUri;
+    }
+
+    public void setMemberDomainUri(String memberDomainUri) {
+        this.memberDomainUri = memberDomainUri;
+    }
+
+    public String getCouponDomainUri() {
+        return couponDomainUri;
+    }
+
+    public void setCouponDomainUri(String couponDomainUri) {
+        this.couponDomainUri = couponDomainUri;
+    }
+
+    public String getGetUnClaimedUrl() {
+        return getUnClaimedUrl;
+    }
+
+    public void setGetUnClaimedUrl(String getUnClaimedUrl) {
+        this.getUnClaimedUrl = getUnClaimedUrl;
+    }
+
+    public String getGetMemberCouponsUrl() {
+        return getMemberCouponsUrl;
+    }
+
+    public void setGetMemberCouponsUrl(String getMemberCouponsUrl) {
+        this.getMemberCouponsUrl = getMemberCouponsUrl;
+    }
+
+    public String getClaimCouponUrl() {
+        return claimCouponUrl;
+    }
+
+    public void setClaimCouponUrl(String claimCouponUrl) {
+        this.claimCouponUrl = claimCouponUrl;
+    }
+
+    public String getUseCouponUrl() {
+        return useCouponUrl;
+    }
+
+    public void setUseCouponUrl(String useCouponUrl) {
+        this.useCouponUrl = useCouponUrl;
     }
 }
