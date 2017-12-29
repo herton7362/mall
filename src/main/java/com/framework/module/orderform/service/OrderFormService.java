@@ -1,5 +1,6 @@
 package com.framework.module.orderform.service;
 
+import com.framework.module.orderform.base.BaseOrderForm;
 import com.framework.module.orderform.domain.OrderForm;
 import com.framework.module.orderform.web.ApplyRejectParam;
 import com.framework.module.orderform.web.RejectParam;
@@ -70,4 +71,18 @@ public interface OrderFormService extends CrudService<OrderForm> {
      * @return 每日销售额
      */
     List<Map<String, Object>> getEverydaySale() throws Exception;
+
+    /**
+     * 要求外部订单号必须唯一。
+     * @return 订单号
+     */
+    String getOutTradeNo() throws Exception;
+
+    /**
+     * 表单价格校验
+     * 先计算实际货物的总价格
+     * @param orderForm 订单对象
+     * @throws Exception {@link com.kratos.exceptions.BusinessException}逻辑异常
+     */
+    void validAccount(BaseOrderForm orderForm) throws Exception;
 }

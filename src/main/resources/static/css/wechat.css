@@ -1061,3 +1061,25 @@
     line-height: 18px;
     list-style: none;
 }
+
+.shop-selector .shop.selected {
+    border: 2px solid #C3A769;
+    position: relative;
+}
+
+.shop-selector .shop.selected:before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 18px;
+    height: 16px;
+    background: #C3A769;
+    content: "\EA08";
+    color: #fff;
+    margin: 0;
+    padding: 2px;
+    text-align: right;
+    font: normal normal normal 12px/1 weui;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+}

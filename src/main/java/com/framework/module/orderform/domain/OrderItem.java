@@ -1,37 +1,24 @@
 package com.framework.module.orderform.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.framework.module.orderform.base.BaseOrderItem;
 import com.framework.module.product.domain.Product;
 import com.framework.module.product.domain.Sku;
-import com.kratos.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 
 @Entity
 @ApiModel("订单项")
-public class OrderItem extends BaseEntity{
-    @ApiModelProperty(value = "订单")
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JsonBackReference
-    private OrderForm orderForm;
+public class OrderItem extends BaseOrderItem<OrderForm> {
     @ApiModelProperty(value = "购买的商品")
     @ManyToOne(fetch = FetchType.EAGER)
     private Product product;
     @ApiModelProperty(value = "购买的商品sku")
     @ManyToOne(fetch = FetchType.EAGER)
     private Sku sku;
-    @ApiModelProperty(value = "购买的数量")
-    private Integer count;
-
-    public OrderForm getOrderForm() {
-        return orderForm;
-    }
-
-    public void setOrderForm(OrderForm orderForm) {
-        this.orderForm = orderForm;
-    }
 
     public Product getProduct() {
         return product;
@@ -47,13 +34,5 @@ public class OrderItem extends BaseEntity{
 
     public void setSku(Sku sku) {
         this.sku = sku;
-    }
-
-    public Integer getCount() {
-        return count;
-    }
-
-    public void setCount(Integer count) {
-        this.count = count;
     }
 }

@@ -87,12 +87,12 @@
             </div>
         </template>
     </actionsheet>
-    <sidemodal class="vehicle-selector" :instance="vehicleSelector">
+    <sidemodal class="vehicle-selector" :instance="vehicleSelector" padding="0">
         <template slot="header">
             选择车型
         </template>
         <template slot="body">
-            <div class="weui-cells" style="margin-top: -15px;">
+            <div class="weui-cells" style="margin-top: 0;">
                 <a href="#content" class="weui-cell weui-check__label" v-for="category in vehicleCategories" @click="selectVehicleCategory(category)">
                     <div class="weui-cell__hd" v-if="category.logo">
                         <img :src="category.logo.id | coverPath" alt="" style="width:35px;margin-right:5px;display:block">
@@ -104,13 +104,13 @@
             </div>
         </template>
     </sidemodal>
-    <sidemodal class="vehicle-selector" :instance="vehicleSelector2">
+    <sidemodal class="vehicle-selector" :instance="vehicleSelector2" padding="0">
         <template slot="header">
             <img :src="selectedVehicle.logo.id | coverPath" alt="" style="width:35px;margin-right:5px;display:block">
             {{selectedVehicle.name}}
         </template>
         <template slot="body">
-            <div class="weui-cells" style="margin-top: -15px;">
+            <div class="weui-cells" style="margin-top: 0;">
                 <label class="weui-cell weui-check__label" v-for="category in selectedVehicle.children" @click="createVehicle(category)">
                     <div class="weui-cell__bd">
                         <p>{{category.name}}</p>

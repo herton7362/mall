@@ -13,6 +13,7 @@ import com.kratos.module.auth.UserThread;
 import com.kratos.module.auth.domain.OauthClientDetails;
 import com.kratos.module.auth.service.OauthClientDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

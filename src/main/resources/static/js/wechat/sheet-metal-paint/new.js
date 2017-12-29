@@ -14,8 +14,18 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
         },
         methods: {
             submit: function () {
+                if(!this.validate()) {
+                    return;
+                }
                 localStorage.selectedPaintSurfaces = JSON.stringify(this.selectedPaintSurfaces);
                 window.location.href = utils.patchUrl('/wechat/sheet-metal-paint/new-select-product');
+            },
+            validate: function () {
+                if(this.selectedPaintSurfaces.length <= 0) {
+                    messager.bubble('请选择漆面', 'warning');
+                    return false;
+                }
+                return true;
             },
             loadPaintSurface: function () {
                 var self = this;

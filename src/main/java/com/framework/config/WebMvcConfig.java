@@ -1,5 +1,7 @@
 package com.framework.config;
 
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +11,6 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.oauth2.client.OAuth2ClientContext;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
-import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
 import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.web.accept.ContentNegotiationManagerFactoryBean;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @EnableWebMvc
@@ -62,7 +64,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 		private OAuth2Properties oAuth2Properties;
 
 		@Bean
-		public OAuth2ProtectedResourceDetails framework() {
+		public ClientCredentialsResourceDetails framework() {
 			ClientCredentialsResourceDetails details = new ClientCredentialsResourceDetails();
 			details.setId("framework/tonr");
 			details.setClientId("tonr");

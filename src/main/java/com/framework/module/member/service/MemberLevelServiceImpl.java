@@ -6,6 +6,7 @@ import com.framework.module.member.domain.MemberLevelRepository;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

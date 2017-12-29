@@ -4,6 +4,8 @@ import com.framework.module.auth.MemberThread;
 import com.framework.module.marketing.service.CouponService;
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.service.MemberService;
+import com.framework.module.orderform.base.BaseOrderForm;
+import com.framework.module.orderform.base.BaseOrderItem;
 import com.framework.module.orderform.domain.OrderForm;
 import com.framework.module.orderform.domain.OrderFormRepository;
 import com.framework.module.orderform.domain.OrderItem;
@@ -32,6 +34,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Consumer;
 
 @Component
 @Transactional
@@ -56,40 +59,23 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             throw new BusinessException("下单账户未找到");
         }
         orderForm.setOrderNumber(getOutTradeNo());
+        orderForm.getItems().forEach(new ItemSetter(orderForm));
         validAccount(orderForm);
         if(OrderForm.OrderStatus.PAYED == orderForm.getStatus()) {
             orderForm.setPaymentStatus(OrderForm.PaymentStatus.PAYED);
         } else if(OrderForm.OrderStatus.UN_PAY == orderForm.getStatus()) {
             orderForm.setPaymentStatus(OrderForm.PaymentStatus.UN_PAY);
         }
-        List<OrderItem> items = new ArrayList<>();
-        items.addAll(orderForm.getItems());
+        List<OrderItem> items = new ArrayList<>(orderForm.getItems());
         orderForm.getItems().clear();
         final OrderForm newOrderForm = orderFormRepository.save(orderForm);
-        items.forEach(newOrderForm::addItem);
+        items.forEach(newOrderForm :: addItem);
         // 修改账户余额
         if(OrderForm.OrderStatus.PAYED == orderForm.getStatus()) {
-            consumeModifyMemberAccount(orderForm);
+            memberService.consumeModifyMemberAccount(orderForm);
+            recordConsume(member, orderForm.getCash(), orderForm.getBalance(), orderForm.getPoint(), orderForm.getItems());
         }
         return orderForm;
-    }
-
-    /**
-     * 消费修改账户余额
-     * @param orderForm 订单
-     */
-    private void consumeModifyMemberAccount(OrderForm orderForm) throws Exception {
-        Member member = orderForm.getMember();
-        Integer productPoints = 0;
-        for (OrderItem orderItem : orderForm.getItems()) {
-            productPoints += orderItem.getProduct().getPoints();
-        }
-        member.setSalePoint(subtractNumber(member.getSalePoint(), orderForm.getPoint()));
-        member.setPoint(increaseNumber(member.getPoint(), productPoints));
-        member.setSalePoint(increaseNumber(member.getSalePoint(), productPoints));
-        member.setBalance(subtractMoney(member.getBalance(), orderForm.getBalance()));
-        memberService.save(member);
-        recordConsume(member, orderForm.getCash(), orderForm.getBalance(), orderForm.getPoint(), orderForm.getItems());
     }
 
     /**
@@ -128,12 +114,13 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         if(OrderForm.OrderStatus.UN_PAY != orderForm.getStatus()) {
             throw new BusinessException("订单状态不正确");
         }
-        orderForm.getItems().forEach(item -> item.setOrderForm(orderForm));
+        orderForm.getItems().forEach(new ItemSetter(orderForm));
         validAccount(orderForm);
         orderForm.setStatus(OrderForm.OrderStatus.PAYED);
         orderForm.setPaymentStatus(OrderForm.PaymentStatus.PAYED);
         final OrderForm newOrderForm = orderFormRepository.save(orderForm);
-        consumeModifyMemberAccount(newOrderForm);
+        memberService.consumeModifyMemberAccount(newOrderForm);
+        recordConsume(orderForm.getMember(), orderForm.getCash(), orderForm.getBalance(), orderForm.getPoint(), orderForm.getItems());
         return newOrderForm;
     }
 
@@ -270,11 +257,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         return result;
     }
 
-    /**
-     * 要求外部订单号必须唯一。
-     * @return 订单号
-     */
-    private synchronized String getOutTradeNo() {
+    public synchronized String getOutTradeNo() {
         SimpleDateFormat format = new SimpleDateFormat("MMddHHmmss", Locale.getDefault());
         Date date = new Date();
         String key = format.format(date);
@@ -286,13 +269,8 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         return key;
     }
 
-    /**
-     * 表单价格校验
-     * 先计算实际货物的总价格
-     * @param orderForm 订单对象
-     * @throws Exception {@link com.kratos.exceptions.BusinessException}逻辑异常
-     */
-    private void validAccount(OrderForm orderForm) throws Exception {
+    @SuppressWarnings("unchecked")
+    public void validAccount(BaseOrderForm orderForm) throws Exception {
         BigDecimal balance = new BigDecimal(orderForm.getBalance()).setScale(2, RoundingMode.HALF_UP);
         BigDecimal cash = new BigDecimal(orderForm.getCash()).setScale(2, RoundingMode.HALF_UP);
         BigDecimal point = new BigDecimal(orderForm.getPoint());
@@ -300,15 +278,10 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         customerPayAmount = balance.add(cash).add(point.divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
 
         BigDecimal actualTotalAmount = new BigDecimal(0);
-        Product product;
         Double price;
-        for (OrderItem orderItem : orderForm.getItems()) {
-            product = orderItem.getProduct();
-            if(orderItem.getSku() != null) {
-                price = orderItem.getSku().getPrice();
-            } else {
-                price = product.getPrice();
-            }
+        List<BaseOrderItem> items = orderForm.getItems();
+        for (BaseOrderItem orderItem : items) {
+            price = orderItem.getPrice();
             actualTotalAmount = actualTotalAmount.add(new BigDecimal(price).multiply(new BigDecimal(orderItem.getCount())));
         }
 
@@ -318,7 +291,8 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             orderForm.setCoupon(null);
         }
 
-        if(customerPayAmount.compareTo(actualTotalAmount) != 0) {
+        if(customerPayAmount.setScale(2, BigDecimal.ROUND_HALF_UP).compareTo(
+                actualTotalAmount.setScale(2, BigDecimal.ROUND_HALF_UP)) != 0) {
             throw new BusinessException("结算金额不正确");
         }
     }
@@ -394,6 +368,29 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             sourcePoint = 0;
         }
         return sourcePoint + point;
+    }
+
+    /**
+     * 设置item的默认值
+     */
+    class ItemSetter implements Consumer<OrderItem> {
+        private OrderForm orderForm;
+        ItemSetter(OrderForm orderForm) {
+            this.orderForm = orderForm;
+        }
+        @Override
+        public void accept(OrderItem item) {
+            item.setOrderForm(orderForm);
+            Double price;
+            Product product = item.getProduct();
+            item.setPoint(product.getPoints());
+            if(item.getSku() != null) {
+                price = item.getSku().getPrice();
+            } else {
+                price = product.getPrice();
+            }
+            item.setPrice(price);
+        }
     }
 
     @Autowired

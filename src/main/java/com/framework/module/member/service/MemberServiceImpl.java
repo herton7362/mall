@@ -1,18 +1,19 @@
 package com.framework.module.member.service;
 
-import com.kratos.common.AbstractCrudService;
-import com.kratos.common.PageRepository;
-import com.kratos.exceptions.BusinessException;
 import com.framework.module.auth.MemberThread;
-import com.kratos.module.auth.service.OauthClientDetailsService;
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.domain.MemberRepository;
-import com.framework.module.member.service.MemberService;
+import com.framework.module.orderform.base.BaseOrderForm;
+import com.framework.module.orderform.base.BaseOrderItem;
 import com.framework.module.record.domain.OperationRecord;
 import com.framework.module.record.service.OperationRecordService;
+import com.kratos.common.AbstractCrudService;
+import com.kratos.common.PageRepository;
+import com.kratos.entity.BaseUser;
+import com.kratos.exceptions.BusinessException;
+import com.kratos.module.auth.service.OauthClientDetailsService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,9 +28,9 @@ import java.util.List;
 @Component
 @Transactional
 public class MemberServiceImpl extends AbstractCrudService<Member> implements MemberService {
-    private final MemberRepository repository;
-    private final OauthClientDetailsService oauthClientDetailsService;
-    private final OperationRecordService operationRecordService;
+    @Autowired private MemberRepository repository;
+    @Autowired private OauthClientDetailsService oauthClientDetailsService;
+    @Autowired private OperationRecordService operationRecordService;
 
     @Override
     public Member save(Member member) throws Exception {
@@ -146,14 +147,25 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
         return new BigDecimal(sourceMoney).subtract(new BigDecimal(money)).doubleValue();
     }
 
-    @Autowired
-    public MemberServiceImpl(
-            MemberRepository repository,
-            OauthClientDetailsService oauthClientDetailsService,
-            OperationRecordService operationRecordService
-    ) {
-        this.repository = repository;
-        this.oauthClientDetailsService = oauthClientDetailsService;
-        this.operationRecordService = operationRecordService;
+    @SuppressWarnings("unchecked")
+    public void consumeModifyMemberAccount(BaseOrderForm orderForm) throws Exception {
+        Member member = orderForm.getMember();
+        Integer productPoints = 0;
+        List<BaseOrderItem> items = orderForm.getItems();
+        for (BaseOrderItem orderItem : items) {
+            productPoints += orderItem.getPoint() * orderItem.getCount().intValue();
+        }
+        member.setSalePoint(subtractNumber(member.getSalePoint(), orderForm.getPoint()));
+        member.setPoint(increaseNumber(member.getPoint(), productPoints));
+        member.setSalePoint(increaseNumber(member.getSalePoint(), productPoints));
+        member.setBalance(subtractMoney(member.getBalance(), orderForm.getBalance()));
+        save(member);
+    }
+
+    private Integer subtractNumber(Integer sourcePoint, Integer point) {
+        if(sourcePoint == null) {
+            sourcePoint = 0;
+        }
+        return sourcePoint - point;
     }
 }

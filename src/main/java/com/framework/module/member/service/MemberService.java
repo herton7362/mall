@@ -1,7 +1,10 @@
 package com.framework.module.member.service;
 
+import com.framework.module.orderform.base.BaseOrderForm;
+import com.framework.module.orderform.domain.OrderForm;
 import com.kratos.common.CrudService;
 import com.framework.module.member.domain.Member;
+import com.kratos.entity.BaseUser;
 
 public interface MemberService extends CrudService<Member> {
     /**
@@ -43,4 +46,10 @@ public interface MemberService extends CrudService<Member> {
      * @return 会员总数
      */
     Long count();
+
+    /**
+     * 消费修改账户余额
+     * @param orderForm 订单
+     */
+    void consumeModifyMemberAccount(BaseOrderForm orderForm) throws Exception;
 }

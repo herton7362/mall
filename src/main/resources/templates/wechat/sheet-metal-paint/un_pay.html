@@ -14,16 +14,15 @@
             <!-- Main content -->
             <section class="content">
                 <div class="weui-cells">
-                    <a href="#content" class="weui-cell weui-cell_access" @click="shopSelector.$instance.open()">
+                    <div class="weui-cell">
                         <div class="weui-cell__bd">
                             <p>
-                                {{(selectedShop && selectedShop.name) || '暂无门店信息'}}
+                                {{orderForm.shop.name}}
                             </p>
                         </div>
                         <div class="weui-cell__ft">
-                            选择门店
                         </div>
-                    </a>
+                    </div>
                 </div>
                 <div class="weui-cells">
                     <a href="#content" class="weui-cell weui-cell_access" @click="serverSelector.$instance.open()">
@@ -33,7 +32,7 @@
                             </p>
                         </div>
                         <div class="weui-cell__ft">
-                            共<span class="highlight">{{surfaceCount}}</span>个标准面
+                            共<span class="highlight">{{getSurfaceCount()}}</span>个标准面
                         </div>
                     </a>
                 </div>
@@ -77,35 +76,17 @@
         </div>
         <!-- /.container -->
     </div>
-    <sidemodal class="shop-selector" :instance="shopSelector" :padding="0">
-        <template slot="header">
-            选择门店
-        </template>
-        <template slot="body">
-            <div class="shop" :class="{selected: selectedShop && shop.id === selectedShop.id}" v-for="shop in shops">
-                <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg" @click="selectShop(shop)">
-                    <div class="weui-media-box__hd">
-                        <img width="60" height="60" class="weui-media-box__thumb" :src="shop.styleImages[0].id | coverPath" :alt="shop.name">
-                    </div>
-                    <div class="weui-media-box__bd">
-                        <h4 class="weui-media-box__title">{{shop.name}}</h4>
-                        <p class="weui-media-box__desc">{{shop.address}}</p>
-                    </div>
-                </a>
-            </div>
-        </template>
-    </sidemodal>
     <sidemodal :instance="serverSelector" :padding="0">
         <template slot="header">
-            共<span class="highlight">{{surfaceCount}}</span>个标准面<p class="main-text-color pull-right">￥{{getFinalTotal() | price}}</p>
+            共<span class="highlight">{{getSurfaceCount()}}</span>个标准面<p class="main-text-color pull-right">￥{{getFinalTotal() | price}}</p>
         </template>
         <template slot="body">
             <div class="weui-cells" style="margin-top: 0">
-                <div class="weui-cell" v-for="row in selectedPaintSurfaces">
+                <div class="weui-cell" v-for="row in orderForm.items">
                     <div class="weui-cell__bd">
-                        <p>{{row.name}}</p>
+                        <p>{{row.paintSurface.name}}</p>
                     </div>
-                    <div class="weui-cell__ft">x{{row.standardsPercent}}</div>
+                    <div class="weui-cell__ft">x{{row.paintSurface.standardsPercent}}</div>
                 </div>
             </div>
         </template>
@@ -116,7 +97,7 @@
             <span class="main-text-color">￥{{getFinalTotal() | price}}</span>
         </div>
         <div class="col-xs-4 padding-none">
-            <button type="button" class="btn btn-flat submit-order main-btn" @click="submit">提交订单</button>
+            <button type="button" class="btn btn-flat submit-order main-btn" @click="submit">支付</button>
         </div>
     </div>
     <aside th:replace="wechat/common/aside"></aside>
@@ -124,6 +105,6 @@
 </div>
 <!-- ./wrapper -->
 <footer th:replace="wechat/common/footer_statics"></footer>
-<script th:src="@{/static/js/wechat/sheet-metal-paint/confirm.js}"></script>
+<script th:src="@{/static/js/wechat/sheet-metal-paint/un_pay.js}"></script>
 </body>
 </html>
