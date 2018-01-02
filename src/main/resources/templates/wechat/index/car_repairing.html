@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <template th:include="wechat/common/header_statics :: header('鼎骏商城')" th:remove="tag"></template>
+    <link rel="stylesheet" th:href="@{/static/css/wechat.css}"/>
+</head>
+<!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
+<body class="layout-top-nav skin-yellow h5-layout" style="height: auto; min-height: 100%;">
+<div class="wrapper" style="height: auto; min-height: 100%;">
+
+    <!-- Full Width Column -->
+    <div id="content" class="content-wrapper car_repairing-home product-list" v-cloak>
+        <div class="top-bar">
+            <div class="weui-flex">
+                <div class="address">
+                    沈阳
+                    <i class="fa fa-fw fa-angle-down"></i>
+                </div>
+                <div class="weui-flex__item">
+                    <div class="weui-search-bar weui-search-bar_focusing">
+                        <form class="weui-search-bar__form">
+                            <div class="weui-search-bar__box">
+                                <i class="weui-icon-search"></i>
+                                <input type="search" class="weui-search-bar__input" placeholder="请您输入您想要查询的商品或服务" required="">
+                                <a href="javascript:" class="weui-icon-clear"></a>
+                            </div>
+                            <label class="weui-search-bar__label" id="searchText" style="transform-origin: 0px 0px 0px; opacity: 1; transform: scale(1, 1);">
+                                <i class="weui-icon-search"></i>
+                                <span>搜索</span>
+                            </label>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="weui-flex apps">
+                <div class="weui-flex__item">
+                    <a class="btn btn-app">
+                        <i class="iconfont icon-tyre"></i>
+                        <div>轮胎</div>
+                    </a>
+                </div>
+                <div class="weui-flex__item">
+                    <a class="btn btn-app">
+                        <i class="iconfont icon-car_maintenance"></i>
+                        <div>保养</div>
+                    </a>
+                </div>
+                <div class="weui-flex__item">
+                    <a class="btn btn-app">
+                        <i class="iconfont icon-sheet_metal_paint"></i>
+                        <div>钣金喷漆</div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="add-car">
+                <a href="javascript:;" class="weui-btn main-btn">
+                    <i class="iconfont icon-car"></i>
+                    添加我的爱车
+                    <i class="fa fa-fw fa-plus"></i>
+                </a>
+            </div>
+
+            <div class="advertisement">
+                <img width="100%" th:src="@{static/image/wechat/index_banner.png}">
+            </div>
+
+            <div class="area">
+                <div class="area_title">
+                    <img class="index_icon_fg" th:src="@{static/image/wechat/index_icon_fg.png}">
+                    <span class="area_title_text">轮胎专区</span>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 col-md-4 padding-none" v-for="product in tyres">
+                        <div class="thumbnail margin-5" @click="productDetail(product)">
+                            <img :alt="product.name" :src="product.coverImage.id | coverPath">
+                            <div class="caption">
+                                <p class="product-title">{{product.name}}</p>
+                                <p class="bottom-area">
+                                    <em class="product-price">¥ {{product | price}}</em>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="area">
+                <div class="area_title">
+                    <img class="index_icon_fg" th:src="@{static/image/wechat/index_icon_fg1.png}">
+                    <span class="area_title_text">保养专区</span>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 col-md-4 padding-none" v-for="product in engineOils">
+                        <div class="thumbnail margin-5" @click="productDetail(product)">
+                            <img :alt="product.name" :src="product.coverImage.id | coverPath">
+                            <div class="caption">
+                                <p class="product-title">{{product.name}}</p>
+                                <p class="bottom-area">
+                                    <em class="product-price">¥ {{product | price}}</em>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- /.container -->
+    </div>
+    <aside th:replace="wechat/common/aside"></aside>
+    <!-- /.content-wrapper -->
+    <footer th:replace="wechat/common/footer_html"></footer>
+</div>
+<!-- ./wrapper -->
+<footer th:replace="wechat/common/footer_statics"></footer>
+<script th:src="@{/static/js/wechat/index/car_repairing.js}"></script>
+</body>
+</html>

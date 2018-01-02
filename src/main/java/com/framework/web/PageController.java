@@ -37,7 +37,7 @@ public class PageController {
      */
     @RequestMapping(value = "/",method = RequestMethod.GET)
     public ModelAndView index() throws Exception {
-        return new ModelAndView("wechat/index");
+        return new ModelAndView("wechat/index/car_repairing");
     }
 
     /**

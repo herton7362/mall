@@ -28,7 +28,7 @@ public class Product extends BaseEntity {
     @Column(length = 50)
     private String code;
     @ApiModelProperty(value = "商品名称")
-    @Column(length = 50)
+    @Column(length = 500)
     private String name;
     @ApiModelProperty(value = "商品备注")
     @Column(length = 200)

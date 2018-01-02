@@ -57,7 +57,7 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
                 skuForCompare.add(sku);
             }
         });
-        if(!BaseEntity.compare(skuForCompare, old.getSkus())) {
+        if(StringUtils.isNotBlank(product.getId()) && !BaseEntity.compare(skuForCompare, old.getSkus())) {
             old.getSkus().forEach(sku -> sku.setLogicallyDeleted(true));
             skuRepository.save(old.getSkus());
             IteratorUtils.forEach(skus, (index, sku) -> sku.setId(null));
