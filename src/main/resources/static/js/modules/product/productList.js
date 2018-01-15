@@ -15,6 +15,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     {field:'name', title:'名称'},
                     {field:'remark', title:'备注'},
                     {field:'points', title:'积分'},
+                    {field:'sortNumber', title:'排序'},
                     {field:'price', title:'价格', formatter: function(value) {
                         return utils.formatMoney(value);
                     }}
@@ -46,7 +47,8 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 coverImage: null,
                 styleImages: [],
                 detailImages: [],
-                productProductStandards: []
+                productProductStandards: [],
+                sortNumber: null
             },
             selectedProductStandards: {
                 data: []
@@ -70,6 +72,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                         id: selectedId,
                         productStandards: this.getSelectedProductStandards(selectedId)
                     };
+                    this.comboboxChange(selectedId);
                 } else {
                     $form.productCategory = {};
                 }

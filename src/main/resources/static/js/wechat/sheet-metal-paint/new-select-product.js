@@ -1,30 +1,14 @@
-require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils, weui, messager) {
+require(['jquery', 'vue', 'utils', 'weui', 'messager', _appConf.ctx + '/static/js/wechat/vehicle/vehicle-selector.js'],
+    function ($, Vue, utils, weui, messager, vehicleSelector) {
     new Vue({
         el: '#content',
         data: {
             member: {},
-            vehicleSelector: {
-                $instance: {}
-            },
-            vehicleSelector2: {
-                $instance: {}
-            },
-            myVehicle: {
-                $instance: {}
-            },
             selectedPaintSurfaces: [],
-            userVehicles: [],
+            selectedPaint: null,
             userVehicle: {
-                vehicleCategory: {},
-                logo: {}
-            },
-            vehicleCategories: [],
-            selectedVehicle: {
-                vehicleCategory: {},
-                logo: {}
-            },
-            surfaceCount: 0,
-            selectedPaint: null
+                vehicleCategory: {}
+            }
         },
         filters: {
             price: function (val) {
@@ -45,120 +29,35 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 window.location.href = utils.patchUrlPrefixUrl('/wechat/sheet-metal-paint/confirm');
             },
             getFinalTotal: function () {
-                if(this.selectedPaint) {
-                    return this.selectedPaint.price * this.surfaceCount;
-                } else {
-                    return 0;
-                }
+                var self = this;
+                var price = 0;
+                $.each(this.selectedPaintSurfaces, function () {
+                    $.each(this.skus, function () {
+                        if(self.selectedPaint && this.productStandardItems[0].id === self.selectedPaint.id) {
+                            price += this.price;
+                        }
+                    })
+                });
+                return price;
             },
             loadSelectedPaintSurfaces: function () {
-                var self = this;
                 this.selectedPaintSurfaces = eval(localStorage.selectedPaintSurfaces);
-                $.each(this.selectedPaintSurfaces, function () {
-                    self.surfaceCount += this.standardsPercent;
-                })
-            },
-            loadUserVehicle: function () {
-                var self = this;
-                $.ajax({
-                    url: utils.patchUrl('/api/vehicle'),
-                    data: {
-                        sort: 'sortNumber',
-                        order: 'asc',
-                        member: {
-                            id: this.member.id
-                        }
-                    },
-                    success: function(data) {
-                        self.userVehicles = data.content;
-                        if(!self.userVehicles || self.userVehicles.length <= 0) {
-                            self.vehicleSelector.$instance.open();
-                        } else {
-                            $.each(self.userVehicles, function () {
-                                if(this.isDefault) {
-                                    self.userVehicle = this;
-                                }
-                            })
-                        }
-                        if(self.userVehicle && self.userVehicle.vehicleCategory && self.userVehicle.vehicleCategory.paints) {
-                            self.selectedPaint = self.userVehicle.vehicleCategory.paints[0];
-                        }
-                    }
-                })
-            },
-            loadVehicleCategories: function () {
-                var self = this;
-                $.ajax({
-                    url: utils.patchUrl('/api/vehicleCategory'),
-                    data: {
-                        sort: 'sortNumber',
-                        order: 'asc'
-                    },
-                    success: function(data) {
-                        self.vehicleCategories = utils.treeDataConverter(data.content);
-                    }
-                })
-            },
-            selectVehicleCategory: function (category) {
-                this.selectedVehicle = category;
-                this.vehicleSelector2.$instance.open();
-            },
-            createVehicle: function (category) {
-                var self = this;
-                $.ajax({
-                    url: utils.patchUrl('/api/vehicle'),
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        member: self.member,
-                        vehicleCategory: category,
-                        isDefault: true
-                    }),
-                    success: function (vehicle) {
-                        self.userVehicle = vehicle;
-                        self.vehicleSelector.$instance.close();
-                        self.vehicleSelector2.$instance.close();
-                        self.loadUserVehicle();
-                    }
-                })
-            },
-            selectVehicle: function (vehicle) {
-                var self = this;
-                this.userVehicle = vehicle;
-                $.ajax({
-                    url: utils.patchUrl('/api/vehicle'),
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify($.extend(vehicle, {
-                        member: self.member,
-                        isDefault: true
-                    })),
-                    success: function () {
-                        self.myVehicle.$instance.close();
-                        self.loadUserVehicle();
-                    }
-                })
             },
             selectPaint: function (paint) {
                 this.selectedPaint = paint;
             },
-            removeVehicle: function (vehicle) {
+            myVehicleOpen: function () {
+                vehicleSelector.open();
+            },
+            getPaintSurfacePrice: function (row) {
                 var self = this;
-                messager.alert('确认删除['+vehicle.vehicleCategory.name+']吗？', function () {
-                    $.ajax({
-                        url: utils.patchUrl('/api/vehicle/' + vehicle.id),
-                        type: 'DELETE',
-                        success: function () {
-                            for(var i = 0, l = self.userVehicles.length; i < l; i++) {
-                                if(self.userVehicles[i].id !== vehicle.id) {
-                                    self.userVehicle = self.userVehicles[i];
-                                    break;
-                                }
-                            }
-                            self.loadUserVehicle();
-                        }
-                    })
-                })
+                var price = 0;
+                $.each(row.skus, function () {
+                    if(self.selectedPaint && this.productStandardItems[0].id === self.selectedPaint.id) {
+                        price = this.price;
+                    }
+                });
+                return price;
             }
         },
         mounted: function () {
@@ -167,8 +66,13 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 self.member = member;
             });
             this.loadSelectedPaintSurfaces();
-            this.loadUserVehicle();
-            this.loadVehicleCategories();
+            vehicleSelector.$watch('userVehicle', function (val) {
+                self.userVehicle = val;
+            });
+            vehicleSelector.$watch('selectedPaint', function (val) {
+                self.selectedPaint = val;
+            });
+            vehicleSelector.load();
         }
     });
 });

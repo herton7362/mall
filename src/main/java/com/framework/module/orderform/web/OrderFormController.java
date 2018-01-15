@@ -4,6 +4,8 @@ import com.framework.module.orderform.domain.OrderForm;
 import com.framework.module.orderform.service.OrderFormService;
 import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
+import com.kratos.common.utils.XmlUtils;
+import com.kratos.kits.wechat.WeChatAPI;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +29,8 @@ import java.util.Map;
 @RequestMapping("/api/orderForm")
 public class OrderFormController extends AbstractCrudController<OrderForm> {
     private final OrderFormService orderFormService;
+    private final WeChatAPI weChatAPI;
+
     @Override
     protected CrudService<OrderForm> getService() {
         return orderFormService;
@@ -137,8 +147,21 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    /**
+     * 获取预付订单
+     */
+    @ApiOperation(value="获取预付订单")
+    @RequestMapping(value = "/unified", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> unified(@RequestBody OrderForm orderForm, HttpServletRequest request) throws Exception {
+        return new ResponseEntity<>(weChatAPI.makeAppUnifiedOrder(orderForm.getOrderNumber(), request, ((Double)(orderForm.getCash()*100D)).intValue()), HttpStatus.OK);
+    }
+
     @Autowired
-    public OrderFormController(OrderFormService orderFormService) {
+    public OrderFormController(
+            OrderFormService orderFormService,
+            WeChatAPI weChatAPI
+    ) {
         this.orderFormService = orderFormService;
+        this.weChatAPI = weChatAPI;
     }
 }

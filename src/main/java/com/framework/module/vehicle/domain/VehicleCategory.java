@@ -1,5 +1,6 @@
 package com.framework.module.vehicle.domain;
 
+import com.framework.module.product.domain.ProductStandardItem;
 import com.framework.module.sheetmetalpaint.domain.Paint;
 import com.kratos.entity.BaseEntity;
 import com.kratos.module.attachment.domain.Attachment;
@@ -20,8 +21,8 @@ public class VehicleCategory extends BaseEntity {
     private String name;
     @ApiModelProperty(value = "车辆喷漆")
     @ManyToMany
-    @JoinTable(name="vehicle_category_paints",joinColumns={@JoinColumn(name="vehicle_category_id")},inverseJoinColumns={@JoinColumn(name="paint_id")})
-    private List<Paint> paints;
+    @JoinTable(name="vehicle_category_paints",joinColumns={@JoinColumn(name="vehicle_category_id")},inverseJoinColumns={@JoinColumn(name="product_standard_item_id")})
+    private List<ProductStandardItem> paints;
     @ApiModelProperty(value = "热门")
     private Boolean hot;
     @ApiModelProperty(value = "logo图片")
@@ -44,11 +45,11 @@ public class VehicleCategory extends BaseEntity {
         this.name = name;
     }
 
-    public List<Paint> getPaints() {
+    public List<ProductStandardItem> getPaints() {
         return paints;
     }
 
-    public void setPaints(List<Paint> paints) {
+    public void setPaints(List<ProductStandardItem> paints) {
         this.paints = paints;
     }
 

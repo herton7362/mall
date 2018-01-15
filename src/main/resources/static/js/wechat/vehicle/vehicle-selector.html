@@ -1,0 +1,70 @@
+<div id="vehicle-selector" >
+<actionsheet :instance="myVehicle" :button="null">
+    <template slot="header">
+        <div class="weui-panel__bd">
+            <h4>我的爱车</h4>
+        </div>
+    </template>
+    <template slot="body">
+        <div class="weui-cells weui-cells_radio" style="margin-top: 5px;">
+            <label class="weui-cell weui-check__label" v-for="vehicle in userVehicles" @click="selectVehicle(vehicle)">
+                <div class="weui-cell__hd">
+                    <img :src="vehicle.vehicleCategory.parent.logo.id | coverPath" alt="" style="width:35px;margin-right:5px;display:block">
+                </div>
+                <div class="weui-cell__bd">
+                    <p>{{vehicle.vehicleCategory.name}}</p>
+                </div>
+                <div class="weui-cell__ft">
+                    <input type="radio" name="selectedVehicle" class="weui-check" :checked="vehicle.isDefault">
+                    <span class="weui-icon-checked"></span>
+                    <a href="javascript:void(0)" title="删除" class="btn btn-xs remove-vehicle-btn" @click.stop="removeVehicle(vehicle)">
+                        <i class="iconfont icon-delete"></i>
+                    </a>
+                </div>
+            </label>
+        </div>
+    </template>
+    <template slot="footer">
+        <div class="weui-flex">
+            <div class="weui-flex__item">
+                <a class="weui-actionsheet__cell main-btn"
+                   href="javascript:"
+                   @click="vehicleSelector.$instance.open();myVehicle.$instance.close()"
+                   style="display: block;">添加爱车</a>
+            </div>
+        </div>
+    </template>
+</actionsheet>
+<sidemodal class="vehicle-selector" :instance="vehicleSelector" padding="0">
+    <template slot="header">
+        选择车型
+    </template>
+    <template slot="body">
+        <div class="weui-cells" style="margin-top: 0;">
+            <a href="#content" class="weui-cell weui-check__label" v-for="category in vehicleCategories" @click="selectVehicleCategory(category)">
+                <div class="weui-cell__hd" v-if="category.logo">
+                    <img :src="category.logo.id | coverPath" alt="" style="width:35px;margin-right:5px;display:block">
+                </div>
+                <div class="weui-cell__bd">
+                    <p>{{category.name}}</p>
+                </div>
+            </a>
+        </div>
+    </template>
+</sidemodal>
+<sidemodal class="vehicle-selector" :instance="vehicleSelector2" padding="0">
+    <template slot="header">
+        <img :src="selectedVehicle.logo.id | coverPath" alt="" style="width:35px;margin-right:5px;display:block">
+        {{selectedVehicle.name}}
+    </template>
+    <template slot="body">
+        <div class="weui-cells" style="margin-top: 0;">
+            <label class="weui-cell weui-check__label" v-for="category in selectedVehicle.children" @click="createVehicle(category)">
+                <div class="weui-cell__bd">
+                    <p>{{category.name}}</p>
+                </div>
+            </label>
+        </div>
+    </template>
+</sidemodal>
+</div>

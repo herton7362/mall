@@ -111,12 +111,14 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         if(orderForm == null) {
             throw new BusinessException("订单未找到");
         }
-        if(OrderForm.OrderStatus.UN_PAY != orderForm.getStatus()) {
+        if(OrderForm.PaymentStatus.UN_PAY != orderForm.getPaymentStatus()) {
             throw new BusinessException("订单状态不正确");
         }
         orderForm.getItems().forEach(new ItemSetter(orderForm));
         validAccount(orderForm);
-        orderForm.setStatus(OrderForm.OrderStatus.PAYED);
+        if(OrderForm.OrderStatus.UN_PAY == orderForm.getStatus()) {
+            orderForm.setStatus(OrderForm.OrderStatus.PAYED);
+        }
         orderForm.setPaymentStatus(OrderForm.PaymentStatus.PAYED);
         final OrderForm newOrderForm = orderFormRepository.save(orderForm);
         memberService.consumeModifyMemberAccount(newOrderForm);
@@ -130,7 +132,8 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         if(orderForm == null) {
             throw new BusinessException("订单未找到");
         }
-        if(OrderForm.OrderStatus.PAYED != orderForm.getStatus()) {
+        if(OrderForm.PaymentStatus.PAYED != orderForm.getPaymentStatus()
+                && !(OrderForm.OrderStatus.UN_PAY == orderForm.getStatus() && OrderForm.PaymentType.IN_SHOP == orderForm.getPaymentType())) {
             throw new BusinessException("订单状态不正确");
         }
         orderForm.setStatus(OrderForm.OrderStatus.DELIVERED);
@@ -157,7 +160,8 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         if(orderForm == null) {
             throw new BusinessException("订单未找到");
         }
-        if(OrderForm.PaymentStatus.PAYED != orderForm.getPaymentStatus()) {
+        if(OrderForm.PaymentStatus.PAYED != orderForm.getPaymentStatus()
+                && OrderForm.PaymentType.IN_SHOP != orderForm.getPaymentType()) {
             throw new BusinessException("订单状态不正确");
         }
         if(!UserThread.getInstance().get().getId().equals(orderForm.getMember().getId()) &&

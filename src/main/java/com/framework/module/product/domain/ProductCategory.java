@@ -31,6 +31,8 @@ public class ProductCategory extends BaseEntity {
     @Where(clause="logically_deleted=0")
     @OrderBy(clause="sort_number asc")
     private List<ProductStandard> productStandards;
+    @ApiModelProperty(value = "是否统一展示")
+    private Boolean showInIndex = true;
 
     public ProductCategory getParent() {
         return parent;
@@ -62,5 +64,13 @@ public class ProductCategory extends BaseEntity {
 
     public void setProductStandards(List<ProductStandard> productStandards) {
         this.productStandards = productStandards;
+    }
+
+    public Boolean getShowInIndex() {
+        return showInIndex;
+    }
+
+    public void setShowInIndex(Boolean showInIndex) {
+        this.showInIndex = showInIndex;
     }
 }

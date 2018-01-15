@@ -14,15 +14,15 @@ public class NotificationConfig extends NotificationKitConfigurerAdaptor {
                 .setAppId("24495956")
                 .setAppSecret("895912d66f8740c478c967b2167019fb")
                 .setServerUrl("http://gw.api.taobao.com/router/rest")
-                .setSmsFreeSignName("威廉小院")
+                .setSmsFreeSignName("鼎骏出行")
                 .setSmsTemplateCode("SMS_71820364")
                 .setSmsType("normal")
                 .and()
                 .ipyyProvider()
                 .setServerUrl("https://dx.ipyy.net/sms.aspx")
                 .setAccountName("KA00012")
-                .setPassword("KA0001255")
-                .setSmsFreeSignName("威廉小院");
+                .setPassword("KA00012789t")
+                .setSmsFreeSignName("鼎骏出行");
     }
 
     @Override

@@ -3,13 +3,14 @@ require([
     'vue',
     'utils',
     'messager',
-    _appConf.ctx + '/static/js/wechat/product/actionsheet/productsheet.js'
-], function ($, Vue, utils, messager) {
+    _appConf.ctx + '/static/js/wechat/vehicle/vehicle-selector.js'
+], function ($, Vue, utils, messager, vehicleSelector) {
     new Vue({
         el: '#content',
         data: {
             tyres: [],
-            engineOils: []
+            engineOils: [],
+            searchKey: null
         },
         filters: {
             coverPath: function (val) {
@@ -74,6 +75,12 @@ require([
             },
             more: function () {
                 window.location.href = utils.patchUrlPrefixUrl('/wechat/product/all');
+            },
+            vehicleSelectorOpen: function () {
+                vehicleSelector.open();
+            },
+            search: function () {
+                window.location.href = utils.patchUrlPrefixUrl('/wechat/index/search-list?key=' + this.searchKey)
             }
         },
         mounted: function () {

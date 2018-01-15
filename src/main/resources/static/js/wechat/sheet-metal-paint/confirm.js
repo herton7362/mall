@@ -15,14 +15,14 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             },
             selectedPaintSurfaces: [],
             shops: [],
-            surfaceCount: 0,
             selectedPaint: null,
             selectedShop: null,
             account: {
                 cash: 0,
                 balance: null,
                 point: null
-            }
+            },
+            paymentType: 'ONLINE'
         },
         filters: {
             price: function (val) {
@@ -41,14 +41,19 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 }
                 self.account.cash = self.getFinalTotal();
                 $.each(this.selectedPaintSurfaces, function () {
-                    items.push({
-                        count: this.standardsPercent,
-                        paintSurface: this,
-                        paint: self.selectedPaint
+                    var product = this;
+                    $.each(this.skus, function () {
+                        if (self.selectedPaint && this.productStandardItems[0].id === self.selectedPaint.id) {
+                            items.push({
+                                count: 1,
+                                product: product,
+                                sku: this
+                            })
+                        }
                     })
                 });
                 $.ajax({
-                    url: utils.patchUrl('/api/paintOrderForm/makeOrder'),
+                    url: utils.patchUrl('/api/orderForm/makeOrder'),
                     contentType: 'application/json',
                     data: JSON.stringify({
                         vehicle: self.userVehicle,
@@ -58,13 +63,14 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                         cash: self.account.cash,
                         balance: self.account.balance || 0,
                         point: self.account.point || 0,
+                        paymentType: self.paymentType,
                         items: items
                     }),
                     type: 'POST',
                     success: function(orderForm) {
                         messager.bubble("操作成功");
                         setTimeout(function () {
-                            window.location.href = utils.patchUrlPrefixUrl('/wechat/sheet-metal-paint/un_pay?id=' + orderForm.id);
+                            window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/un_pay?id=' + orderForm.id);
                         }, 1000);
                     }
                 })
@@ -77,11 +83,16 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 return true;
             },
             getFinalTotal: function () {
-                if(this.selectedPaint) {
-                    return this.selectedPaint.price * this.surfaceCount;
-                } else {
-                    return 0;
-                }
+                var self = this;
+                var price = 0;
+                $.each(this.selectedPaintSurfaces, function () {
+                    $.each(this.skus, function () {
+                        if(self.selectedPaint && this.productStandardItems[0].id === self.selectedPaint.id) {
+                            price += this.price;
+                        }
+                    })
+                });
+                return price;
             },
             loadSelectedPaintSurfaces: function () {
                 var self = this;
@@ -104,6 +115,16 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             selectShop: function (shop) {
                 this.selectedShop = shop;
                 this.shopSelector.$instance.close();
+            },
+            getPaintSurfacePrice: function (row) {
+                var self = this;
+                var price = 0;
+                $.each(row.skus, function () {
+                    if(self.selectedPaint && this.productStandardItems[0].id === self.selectedPaint.id) {
+                        price = this.price;
+                    }
+                });
+                return price;
             }
         },
         mounted: function () {

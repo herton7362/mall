@@ -5,7 +5,8 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             orderItems: [],
             deliverToAddress: {},
             orderForm: {
-                deliverToAddress: {}
+                deliverToAddress: {},
+                shop: {}
             },
             orderStatus: []
         },
@@ -59,6 +60,15 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                     }
                 });
                 return result;
+            },
+            paymentType: function (val) {
+                if(val === 'IN_SHOP') {
+                    return '到店支付（请前往店铺支付）';
+                } else if(val === 'ONLINE') {
+                    return '在线支付';
+                } else {
+                    return '未知';
+                }
             }
         },
         methods: {
@@ -79,10 +89,12 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                     url: utils.patchUrl('/api/orderForm/' + utils.getQueryString('id')),
                     success: function(data) {
                         self.orderItems = data.items;
-                        data.deliverToAddress = data.deliverToAddress || {
-                            name: '现场交货'
-                        };
+
                         self.orderForm = data;
+                        data.deliverToAddress = data.deliverToAddress || {
+                            name: self.orderForm.shop.name,
+                            detailAddress: self.orderForm.shop.address
+                        };
                     }
                 })
             }

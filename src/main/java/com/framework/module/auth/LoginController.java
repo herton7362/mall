@@ -28,8 +28,11 @@ public class LoginController extends AbstractLoginController {
     @RequestMapping(value = "/user/info", method = RequestMethod.GET)
     public ResponseEntity<BaseUser> getOne() throws Exception {
         BaseUser user = UserThread.getInstance().get();
-        BaseUser newUser = memberService.findOne(user.getId());
-        if(newUser == null) {
+        BaseUser newUser = null;
+        if(user != null) {
+            newUser = memberService.findOne(user.getId());
+        }
+        if(newUser == null && user != null) {
             newUser = adminService.findOne(user.getId());
         }
         return new ResponseEntity<>(newUser, HttpStatus.OK);

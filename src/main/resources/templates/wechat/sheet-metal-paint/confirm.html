@@ -13,41 +13,61 @@
         <div class="container">
             <!-- Main content -->
             <section class="content">
-                <div class="weui-cells">
-                    <a href="#content" class="weui-cell weui-cell_access" @click="shopSelector.$instance.open()">
-                        <div class="weui-cell__bd">
-                            <p>
-                                {{(selectedShop && selectedShop.name) || '暂无门店信息'}}
-                            </p>
+                <div class="weui-cells member-address">
+                    <a href="#content"
+                       v-if="selectedShop == null"
+                       class="weui-media-box weui-cell_access weui-media-box_appmsg new-member-address"
+                       @click="shopSelector.$instance.open()">
+                        <div class="weui-media-box__hd">
+                            <img class="weui-media-box__thumb" th:src="@{/static/image/wechat/add_address.png}" alt="">
                         </div>
-                        <div class="weui-cell__ft">
-                            选择门店
+                        <div class="weui-media-box__bd">
+                            <p class="weui-media-box__desc">选择门店</p>
                         </div>
+                        <div class="weui-cell__ft"></div>
+                    </a>
+                    <a href="#content"
+                       class="weui-media-box weui-cell_access weui-media-box_appmsg member-address-item"
+                       v-if="selectedShop != null"
+                       @click="shopSelector.$instance.open()">
+                        <div class="weui-media-box__bd">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <p class="weui-media-box__title">
+                                        <i class="fa fa-fw fa-map-marker location"></i>
+                                        店铺名称：{{selectedShop.name}}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <p class="weui-media-box__desc">店铺地址：{{selectedShop.address}}</p>
+                        </div>
+                        <div class="weui-cell__ft"></div>
                     </a>
                 </div>
                 <div class="weui-cells">
                     <a href="#content" class="weui-cell weui-cell_access" @click="serverSelector.$instance.open()">
                         <div class="weui-cell__bd">
                             <p>
-                                标准漆
+                                {{selectedPaint && selectedPaint.name}}
                             </p>
                         </div>
                         <div class="weui-cell__ft">
-                            共<span class="highlight">{{surfaceCount}}</span>个标准面
+                            <span class="highlight">￥{{getFinalTotal() | price}}</span>
                         </div>
                     </a>
                 </div>
-                <div class="weui-cells">
-                    <div class="weui-cell">
+                <div class="weui-cells__title">支付方式</div>
+                <div class="weui-cells weui-cells_radio">
+                    <label class="weui-cell weui-check__label">
                         <div class="weui-cell__bd">
-                            <p>
-                                支付方式
-                            </p>
+                            <p>在线支付</p>
                         </div>
                         <div class="weui-cell__ft">
-                            在线支付
+                            <input type="radio" class="weui-check" name="paymentType" value="ONLINE" v-model="paymentType">
+                            <span class="weui-icon-checked"></span>
                         </div>
-                    </div>
+                    </label>
                 </div>
                 <div class="weui-cells">
                     <div class="weui-cell">
@@ -97,7 +117,7 @@
     </sidemodal>
     <sidemodal :instance="serverSelector" :padding="0">
         <template slot="header">
-            共<span class="highlight">{{surfaceCount}}</span>个标准面<p class="main-text-color pull-right">￥{{getFinalTotal() | price}}</p>
+            总价格 <p class="main-text-color pull-right">￥{{getFinalTotal() | price}}</p>
         </template>
         <template slot="body">
             <div class="weui-cells" style="margin-top: 0">
@@ -105,7 +125,7 @@
                     <div class="weui-cell__bd">
                         <p>{{row.name}}</p>
                     </div>
-                    <div class="weui-cell__ft">x{{row.standardsPercent}}</div>
+                    <div class="weui-cell__ft">{{getPaintSurfacePrice(row)}}</div>
                 </div>
             </div>
         </template>

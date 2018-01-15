@@ -15,7 +15,7 @@
             <section class="content">
                 <div class="car-view">
                     <img width="100%" th:src="@{/static/image/wechat/yangche_02.png}">
-                    <img class="paint-img" width="100%" v-for="row in selectedPaintSurfaces" :src="row.img.id | coverPath">
+                    <img class="paint-img" width="100%" v-for="row in selectedPaintSurfaces" :src="row.styleImages[0].id | coverPath">
                 </div>
                 <div class="options">
                     <ul class="weui-flex__item">

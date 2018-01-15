@@ -12,7 +12,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             addressMap: {},
             orderForm: {
                 items: [],
-                deliverToAddress: {},
+                deliverToAddress: null,
                 remark: null,
                 member: null,
                 coupon: {amount: 0}
@@ -45,6 +45,12 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 cash: 0,
                 balance: null,
                 point: null
+            },
+            paymentType: 'ONLINE',
+            selectedShop: null,
+            shops: [],
+            shopSelector: {
+                $instance: {}
             }
         },
         filters: {
@@ -254,6 +260,10 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             },
             submit: function () {
                 var self = this;
+                if(!this.selectedShop || !this.selectedShop.id) {
+                    messager.bubble('请选择门店信息', 'warning');
+                    return;
+                }
                 function makeOrder() {
                     $.each(self.orderForm.items,function () {
                         this.id = null;
@@ -265,6 +275,8 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                         data: JSON.stringify($.extend(self.orderForm,{
                             status: 'UN_PAY', // 下单未支付
                             member: self.member,
+                            shop: self.selectedShop,
+                            paymentType: self.paymentType,
                             cash: self.account.cash,
                             balance: self.account.balance || 0,
                             point: self.account.point || 0
@@ -295,11 +307,13 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 $.ajax({
                     url: utils.patchUrl('/api/coupon/member/' + self.member.id),
                     success: function (data) {
-                        $.each(data, function () {
-                            if(!self.ifExpired(this.coupon) && !this.used && this.coupon.minAmount <= self.getTotal()) {
-                                self.coupons.push(this.coupon);
-                            }
-                        });
+                        if(data) {
+                            $.each(data, function () {
+                                if(!self.ifExpired(this.coupon) && !this.used && this.coupon.minAmount <= self.getTotal()) {
+                                    self.coupons.push(this.coupon);
+                                }
+                            });
+                        }
                     }
                 })
             },
@@ -382,6 +396,19 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             editAddress: function (row) {
                 this.newAddressActionsheet.$instance.open();
                 this.memberAddressForm = row;
+            },
+            loadShops: function () {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/api/shop'),
+                    success: function (data) {
+                        self.shops = data;
+                    }
+                })
+            },
+            selectShop: function (shop) {
+                this.selectedShop = shop;
+                this.shopSelector.$instance.close();
             }
         },
         mounted: function () {
@@ -393,6 +420,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 self.loadMemberAddress();
                 self.loadCouponCount();
             });
+            this.loadShops();
         }
     });
 });

@@ -41,7 +41,10 @@
                         <div class="col-md-2">
                             <combobox :options="orderStatus" text-key="text" v-model="queryParams.status" :root="{id:null, text:'订单状态'}"></combobox>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-2">
+                            <combobox :options="shops" text-key="name" v-model="queryParams.shop.id" :root="{id:null, name:'所有店铺'}"></combobox>
+                        </div>
+                        <div class="col-md-4">
                             <div class="radio">
                                 <label>
                                     <radio :value="1" name="createdDate" v-model="queryParams.createdDateRadio"></radio> 今天
@@ -82,8 +85,10 @@
                                         <th>商品名称</th>
                                         <th>销售金额</th>
                                         <th>数量</th>
+                                        <th>店铺</th>
                                         <th>单号</th>
-                                        <th style="text-align: center; width: 40px;">状态</th>
+                                        <th style="text-align: center; width: 40px;">订单状态</th>
+                                        <th style="text-align: center; width: 40px;">支付类型</th>
                                         <th>创建日期</th>
                                         <th style="text-align: center; width: 100px;">操作</th>
                                     </tr>
@@ -103,16 +108,24 @@
                                         </td>
                                         <td>
                                             <div class="col-xs-4 cell-title">数量：</div>
-                                            {{getProductTotal(row)}}
+                                            x {{getProductTotal(row)}}
+                                        </td>
+                                        <td>
+                                            <div class="col-xs-4 cell-title">店铺：</div>
+                                            {{row.shop.name}}
                                         </td>
                                         <td>
                                             <div class="col-xs-4 cell-title">单号：</div>
                                             {{row.orderNumber}}
                                         </td>
                                         <td style="text-align: center;">
-                                            <div class="col-xs-4 cell-title">状态：</div>
+                                            <div class="col-xs-4 cell-title">订单状态：</div>
                                             <span class="label margin-r-5"
                                                   :class="getStatusClass(row.status)">{{row.status| status}}</span>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <div class="col-xs-4 cell-title">支付类型：</div>
+                                            <span class="label margin-r-5 label-success">{{row.paymentType| paymentType}}</span>
                                         </td>
                                         <td>
                                             <div class="col-xs-4 cell-title">创建日期：</div>
@@ -160,6 +173,8 @@
                                             <div class="col-xs-4 cell-title">数量：</div>
                                             x {{sub.count}}
                                         </td>
+                                        <td class="hidden-xs"></td>
+                                        <td class="hidden-xs"></td>
                                         <td class="hidden-xs"></td>
                                         <td class="hidden-xs"></td>
                                         <td class="hidden-xs"></td>
@@ -338,12 +353,18 @@
                 </template>
                 <template slot="footer">
                     <button type="button" class="btn btn-default margin-r-5 btn-flat" @click="formDetail.modal.$instance.close()">关闭窗口</button>
-                    <button type="button" v-if="formDetail.form.status == 'PAYED'"
+                    <button type="button" v-if="formDetail.form.status == 'PAYED' || (formDetail.form.paymentType == 'IN_SHOP' && formDetail.form.status == 'UN_PAY')"
                        class="btn btn-flat btn-success margin-r-5"
                        @click="shipModalOpen(formDetail.form)"><i class="fa fa-bus"></i> 发货</button>
                     <button type="button" v-if="formDetail.form.status == 'APPLY_REJECTED'"
                        class="btn btn-flat btn-danger"
                        @click="rejectModalOpen(formDetail.form)"><i class="fa fa-reply"></i> 退换货</button>
+                    <button type="button" v-if="formDetail.form.paymentType == 'IN_SHOP' && formDetail.form.paymentStatus == 'UN_PAY'"
+                            class="btn btn-flat btn-success"
+                            @click="receipt(formDetail.form)"><i class="fa fa-fw fa-cny"></i> 确认收款</button>
+                    <button type="button" v-if="formDetail.form.status == 'DELIVERED'"
+                            class="btn btn-flat btn-success margin-r-5"
+                            @click="receive(formDetail.form)"><i class="fa fa-fw fa-cart-arrow-down"></i> 确认收货</button>
                 </template>
             </sidemodal>
         </section>

@@ -18,17 +18,15 @@
                 </div>
                 <div class="weui-flex__item">
                     <div class="weui-search-bar weui-search-bar_focusing">
-                        <form class="weui-search-bar__form">
-                            <div class="weui-search-bar__box">
-                                <i class="weui-icon-search"></i>
-                                <input type="search" class="weui-search-bar__input" placeholder="请您输入您想要查询的商品或服务" required="">
-                                <a href="javascript:" class="weui-icon-clear"></a>
-                            </div>
-                            <label class="weui-search-bar__label" id="searchText" style="transform-origin: 0px 0px 0px; opacity: 1; transform: scale(1, 1);">
-                                <i class="weui-icon-search"></i>
-                                <span>搜索</span>
-                            </label>
-                        </form>
+                        <div class="weui-search-bar__box">
+                            <i class="weui-icon-search"></i>
+                            <input type="text"
+                                   class="weui-search-bar__input"
+                                   placeholder="请您输入您想要查询的商品或服务"
+                                   v-model="searchKey"
+                                   @keydown.enter="search">
+                            <a href="javascript:" class="weui-icon-clear" @click="searchKey = null" v-show="searchKey"></a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -37,19 +35,19 @@
         <div class="main-content">
             <div class="weui-flex apps">
                 <div class="weui-flex__item">
-                    <a class="btn btn-app">
+                    <a th:href="@{/wechat/product/all(categoryId='402881d160b455650160b45a1dcf0000')}" class="btn btn-app">
                         <i class="iconfont icon-tyre"></i>
                         <div>轮胎</div>
                     </a>
                 </div>
                 <div class="weui-flex__item">
-                    <a class="btn btn-app">
+                    <a th:href="@{/wechat/product/all(categoryId='402881d160b455650160b45a45b50001')}" class="btn btn-app">
                         <i class="iconfont icon-car_maintenance"></i>
                         <div>保养</div>
                     </a>
                 </div>
                 <div class="weui-flex__item">
-                    <a class="btn btn-app">
+                    <a th:href="@{/wechat/sheet-metal-paint/new}" class="btn btn-app">
                         <i class="iconfont icon-sheet_metal_paint"></i>
                         <div>钣金喷漆</div>
                     </a>
@@ -57,7 +55,7 @@
             </div>
 
             <div class="add-car">
-                <a href="javascript:;" class="weui-btn main-btn">
+                <a href="javascript:;" class="weui-btn main-btn" @click="vehicleSelectorOpen">
                     <i class="iconfont icon-car"></i>
                     添加我的爱车
                     <i class="fa fa-fw fa-plus"></i>

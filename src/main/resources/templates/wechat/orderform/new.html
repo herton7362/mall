@@ -13,7 +13,7 @@
         <div class="container">
             <!-- Main content -->
             <section class="content">
-                <div class="weui-cells member-address">
+                <div class="weui-cells member-address" style="display: none">
                     <a href="javascript:void(0);"
                        v-if="orderForm.deliverToAddress == null || orderForm.deliverToAddress.id == null"
                        class="weui-media-box weui-cell_access weui-media-box_appmsg new-member-address"
@@ -44,6 +44,38 @@
                             </div>
 
                             <p class="weui-media-box__desc">收货地址：{{orderForm.deliverToAddress.address | addressName}}{{orderForm.deliverToAddress.detailAddress}}</p>
+                        </div>
+                        <div class="weui-cell__ft"></div>
+                    </a>
+                </div>
+                <div class="weui-cells member-address">
+                    <a href="#content"
+                       v-if="selectedShop == null"
+                       class="weui-media-box weui-cell_access weui-media-box_appmsg new-member-address"
+                       @click="shopSelector.$instance.open()">
+                        <div class="weui-media-box__hd">
+                            <img class="weui-media-box__thumb" th:src="@{/static/image/wechat/add_address.png}" alt="">
+                        </div>
+                        <div class="weui-media-box__bd">
+                            <p class="weui-media-box__desc">选择门店</p>
+                        </div>
+                        <div class="weui-cell__ft"></div>
+                    </a>
+                    <a href="#content"
+                       class="weui-media-box weui-cell_access weui-media-box_appmsg member-address-item"
+                       v-if="selectedShop != null"
+                       @click="shopSelector.$instance.open()">
+                        <div class="weui-media-box__bd">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <p class="weui-media-box__title">
+                                        <i class="fa fa-fw fa-map-marker location"></i>
+                                        店铺名称：{{selectedShop.name}}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <p class="weui-media-box__desc">店铺地址：{{selectedShop.address}}</p>
                         </div>
                         <div class="weui-cell__ft"></div>
                     </a>
@@ -113,6 +145,27 @@
                             <p class="main-text-color">￥{{getTotal() | price}}</p>
                         </div>
                     </div>
+                </div>
+                <div class="weui-cells__title">支付方式</div>
+                <div class="weui-cells weui-cells_radio">
+                    <label class="weui-cell weui-check__label">
+                        <div class="weui-cell__bd">
+                            <p>在线支付</p>
+                        </div>
+                        <div class="weui-cell__ft">
+                            <input type="radio" class="weui-check" name="paymentType" value="ONLINE" v-model="paymentType">
+                            <span class="weui-icon-checked"></span>
+                        </div>
+                    </label>
+                    <label class="weui-cell weui-check__label">
+                        <div class="weui-cell__bd">
+                            <p>到店支付</p>
+                        </div>
+                        <div class="weui-cell__ft">
+                            <input type="radio" class="weui-check" name="paymentType" value="IN_SHOP" v-model="paymentType">
+                            <span class="weui-icon-checked"></span>
+                        </div>
+                    </label>
                 </div>
                 <div class="weui-cells">
                     <a href="#content" class="weui-cell" :class="{'weui-cell_access':coupons.length > 0}" @click="selectCoupon">
@@ -193,6 +246,24 @@
             <!-- /.content -->
         </div>
         <!-- /.container -->
+        <sidemodal class="shop-selector" :instance="shopSelector" :padding="0">
+            <template slot="header">
+                选择门店
+            </template>
+            <template slot="body">
+                <div class="shop" :class="{selected: selectedShop && shop.id === selectedShop.id}" v-for="shop in shops">
+                    <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg" @click="selectShop(shop)">
+                        <div class="weui-media-box__hd">
+                            <img width="60" height="60" class="weui-media-box__thumb" :src="shop.styleImages[0].id | coverPath" :alt="shop.name">
+                        </div>
+                        <div class="weui-media-box__bd">
+                            <h4 class="weui-media-box__title">{{shop.name}}</h4>
+                            <p class="weui-media-box__desc">{{shop.address}}</p>
+                        </div>
+                    </a>
+                </div>
+            </template>
+        </sidemodal>
         <actionsheet class="new-address-form"
                      title="新建收货地址"
                      :instance="newAddressActionsheet"

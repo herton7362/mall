@@ -47,13 +47,13 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             loadPaints: function () {
                 var self = this;
                 $.ajax({
-                    url: utils.patchUrl('/api/paint'),
+                    url: utils.patchUrl('/api/productCategory/402881d160bef6460160bfa8c67d0002'),
                     data: {
                         sort: 'sortNumber',
                         order: 'asc'
                     },
                     success: function(data) {
-                        self.paints = data.content;
+                        self.paints = data.productStandards[0].items;
                     }
                 })
             }

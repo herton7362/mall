@@ -4,6 +4,8 @@ import com.framework.module.marketing.domain.Coupon;
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.domain.MemberAddress;
 import com.framework.module.orderform.base.BaseOrderForm;
+import com.framework.module.shop.domain.Shop;
+import com.framework.module.vehicle.domain.Vehicle;
 import com.kratos.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -40,7 +42,18 @@ public class OrderForm extends BaseOrderForm<OrderItem> {
     private String shippingStatus;
     @ApiModelProperty(value = "支付状态")
     @Column(length = 20)
+    @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
+    @ApiModelProperty(value = "支付方式")
+    @Column(length = 20)
+    @Enumerated(EnumType.STRING)
+    private PaymentType paymentType;
+    @ApiModelProperty(value = "车")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Vehicle vehicle;
+    @ApiModelProperty(value = "店铺")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Shop shop;
 
     public MemberAddress getDeliverToAddress() {
         return deliverToAddress;
@@ -98,6 +111,14 @@ public class OrderForm extends BaseOrderForm<OrderItem> {
         this.paymentStatus = paymentStatus;
     }
 
+    public PaymentType getPaymentType() {
+        return paymentType;
+    }
+
+    public void setPaymentType(PaymentType paymentType) {
+        this.paymentType = paymentType;
+    }
+
     public enum PaymentStatus {
         UN_PAY("待支付"), PAYED("已支付");
         private String displayName;
@@ -125,5 +146,33 @@ public class OrderForm extends BaseOrderForm<OrderItem> {
         public String getDisplayName() {
             return displayName;
         }
+    }
+
+    public enum PaymentType {
+        ONLINE("在线支付"),
+        IN_SHOP("到店支付");
+        private String displayName;
+        PaymentType(String displayName) {
+            this.displayName = displayName;
+        }
+        public String getDisplayName() {
+            return displayName;
+        }
+    }
+
+    public Vehicle getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
+    }
+
+    public Shop getShop() {
+        return shop;
+    }
+
+    public void setShop(Shop shop) {
+        this.shop = shop;
     }
 }

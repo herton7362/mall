@@ -8,12 +8,11 @@ require([
     new Vue({
         el: '#content',
         data: {
-            productCategories: [],
-            products: {},
-            activeId: null,
+            products: [],
             currentPage: 1,
             pageSize: 15,
-            totalPage: 0
+            totalPage: 0,
+            searchKey: null
         },
         filters: {
             coverPath: function (val) {
@@ -37,61 +36,44 @@ require([
             }
         },
         methods: {
-            loadProductCategory: function (callback) {
+            tabClick: function () {
                 var self = this;
-                $.ajax({
-                    url: utils.patchUrl('/productCategory'),
-                    data: {
-                        sort: 'sortNumber,updatedDate',
-                        order: 'asc,desc',
-                        showInIndex: true
-                    },
-                    success: function(data) {
-                        self.productCategories = data.content;
-                        if(callback instanceof Function) {
-                            callback.call(self, data.content);
-                        }
-                    }
-                })
-            },
-            tabClick: function (id) {
-                var self = this;
-                this.activeId = id;
                 $.ajax({
                     url: utils.patchUrl('/product'),
                     data: {
                         sort: 'sortNumber,updatedDate',
                         order: 'asc,desc',
-                        'productCategory.id': id,
+                        name: this.searchKey,
                         currentPage: this.currentPage,
                         pageSize: this.pageSize
                     },
                     success: function(data) {
-                        Vue.set(self.products, id, data.content);
+                        self.products = data.content;
                         self.totalPage = parseInt(data.totalElements / self.pageSize) + 1;
                     }
                 });
             },
             prev: function () {
                 this.currentPage = this.currentPage - 1;
-                this.tabClick(this.activeId);
+                this.tabClick();
             },
             next: function () {
                 this.currentPage = this.currentPage + 1;
-                this.tabClick(this.activeId);
+                this.tabClick();
             },
             productDetail: function (row) {
                 window.location.href = utils.patchUrlPrefixUrl('/wechat/product/detail?id=' + row.id);
             },
             addCart: function (product) {
                 productsheet.open(product);
+            },
+            search: function () {
+                window.location.href = utils.patchUrlPrefixUrl('/wechat/index/search-list?key=' + this.searchKey)
             }
         },
         mounted: function () {
-            this.activeId = utils.getQueryString('categoryId');
-            this.loadProductCategory(function(data) {
-                this.tabClick(this.activeId || data[0].id);
-            });
+            this.searchKey = utils.getQueryString('key');
+            this.tabClick();
         }
     });
 })

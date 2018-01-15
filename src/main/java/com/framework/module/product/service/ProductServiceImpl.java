@@ -33,6 +33,7 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
 
     @Override
     public Product save(Product product) throws Exception {
+        Product newProduct = productRepository.save(product);
         List<ProductProductStandard> productProductStandards = product.getProductProductStandards();
         Product old = productRepository.findOne(product.getId());
         if(productProductStandards != null) {
@@ -42,7 +43,7 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
             IteratorUtils.forEach(productProductStandards, (index, productProductStandard) -> {
                 productProductStandard.setSortNumber(index);
                 productProductStandard.setId(null);
-                productProductStandard.setProduct(product);
+                productProductStandard.setProduct(newProduct);
             });
             productProductStandardRepository.save(productProductStandards);
         }
@@ -52,7 +53,7 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
         List<Sku> skuForCompare = new ArrayList<>();
         IteratorUtils.forEach(skus, (index, sku) -> {
             sku.setSortNumber(index);
-            sku.setProduct(product);
+            sku.setProduct(newProduct);
             if(StringUtils.isNotBlank(sku.getId())) {
                 skuForCompare.add(sku);
             }
@@ -63,7 +64,7 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
             IteratorUtils.forEach(skus, (index, sku) -> sku.setId(null));
         }
         skuRepository.save(skus);
-        return super.save(product);
+        return product;
     }
 
     @Override
@@ -91,7 +92,9 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
             query.setParameter("maxStockCount", count);
             List list = query.getResultList();
             criteriaQuery.distinct(true);
-            predicate.add(criteriaBuilder.in(root.join("skus", JoinType.LEFT)).value(list));
+            if(!list.isEmpty()) {
+                predicate.add(criteriaBuilder.in(root.join("skus", JoinType.LEFT)).value(list));
+            }
             return criteriaBuilder.or(predicate.toArray(new Predicate[]{}));
         }, pageRequest);
     }

@@ -5,6 +5,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             data: [],
             queryParams: {
                 createdDate: [new Date(new Date().format('yyyy-MM-dd')).getTime()-24*60*60*1000, new Date().getTime()+24*60*60*1000],
+                shop: {},
                 createdDateRadio: 1
             },
             currentPage: 1,
@@ -42,7 +43,8 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     items: [],
                     coupon:{}
                 }
-            }
+            },
+            shops: []
         },
         watch: {
             'queryParams.createdDateRadio': function (val) {
@@ -110,6 +112,15 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     }
                 });
                 return result;
+            },
+            paymentType: function (val) {
+                if(val === 'IN_SHOP') {
+                    return '到店支付';
+                } else if(val === 'ONLINE') {
+                    return '在线支付';
+                } else {
+                    return '未知';
+                }
             }
         },
         methods: {
@@ -206,6 +217,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     success: function () {
                         messager.bubble('操作成功');
                         self.shippingInfo.modal.$instance.close();
+                        self.formDetail.modal.$instance.close();
                         self.load();
                     }
                 })
@@ -240,8 +252,51 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     url: utils.patchUrl('/api/orderForm/' + row.id),
                     cache: false,
                     success: function (data) {
+                        data.deliverToAddress = data.deliverToAddress || {
+                            name: data.shop.name,
+                            detailAddress: data.shop.address
+                        };
                         self.formDetail.form = data;
                         self.formDetail.modal.$instance.open();
+                    }
+                })
+            },
+            receipt: function (row) {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/api/orderForm/pay'),
+                    contentType: 'application/json',
+                    data: JSON.stringify($.extend({}, row, {
+                        deliverToAddress: null
+                    })),
+                    type: 'POST',
+                    success: function() {
+                        messager.bubble("操作成功", 'success');
+                        self.formDetail.modal.$instance.close();
+                        self.load();
+                    }
+                })
+            },
+            receive: function (row) {
+                messager.alert('是否确认收货？', function () {
+                    $.ajax({
+                        url: utils.patchUrl('/api/orderForm/receive/' + row.id),
+                        contentType: 'application/json',
+                        type: 'POST',
+                        success: function() {
+                            messager.bubble("操作成功");
+                            self.formDetail.modal.$instance.close();
+                            self.load();
+                        }
+                    })
+                })
+            },
+            loadShops: function () {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/api/shop'),
+                    success: function (data) {
+                        self.shops = data;
                     }
                 })
             }
@@ -249,6 +304,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
         mounted: function() {
             var self = this;
             this.load();
+            this.loadShops();
             $.ajax({
                 url: utils.patchUrl('/api/orderForm/status'),
                 success: function (data) {

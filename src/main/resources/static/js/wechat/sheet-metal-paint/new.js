@@ -30,10 +30,13 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             loadPaintSurface: function () {
                 var self = this;
                 $.ajax({
-                    url: utils.patchUrl('/api/paintSurface'),
+                    url: utils.patchUrl('/product'),
                     data: {
-                        sort: 'sortNumber',
-                        order: 'asc'
+                        sort: 'sortNumber,updatedDate',
+                        order: 'asc,desc',
+                        'productCategory.id': '402881d160bef6460160bfa8c67d0002',
+                        currentPage: this.currentPage,
+                        pageSize: this.pageSize
                     },
                     success: function(data) {
                         self.paintSurfaces = data.content;

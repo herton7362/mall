@@ -78,6 +78,14 @@
                     </div>
                     <div class="weui-cell">
                         <div class="weui-cell__bd">
+                            <p>支付方式</p>
+                        </div>
+                        <div class="weui-cell__ft">
+                            <p>{{orderForm.paymentType | paymentType}}</p>
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
                             <p>配送方式</p>
                         </div>
                         <div class="weui-cell__ft">
@@ -97,6 +105,18 @@
                         </div>
                         <div class="weui-cell__bd" style="text-align: right">
                             <p class="main-text-color">￥{{getTotal() | price}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui-cells">
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <p>
+                                店铺信息
+                            </p>
+                        </div>
+                        <div class="weui-cell__ft">
+                            {{orderForm.shop.name}}
                         </div>
                     </div>
                 </div>

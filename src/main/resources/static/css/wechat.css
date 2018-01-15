@@ -417,7 +417,7 @@
 }
 
 
-.car_repairing-home .top-bar {
+.top-bar {
     background: #c0a669;
     position: fixed;
     z-index: 500;
@@ -428,7 +428,7 @@
 }
 
 @media (min-width: 760px) {
-    .car_repairing-home .top-bar {
+    .top-bar {
         width: 538px;
         margin: 0 auto;
         top: 30px;
@@ -463,42 +463,46 @@
     line-height: 45px;
 }
 
-.car_repairing-home .top-bar .address {
+.top-bar .address {
     color: #fff;
     font-size: 16px;
     padding-left: 10px;
     line-height: 50px;
 }
 
-.car_repairing-home .top-bar .weui-search-bar {
+.top-bar .weui-search-bar {
     background-color: transparent;
 }
 
-.car_repairing-home .top-bar .weui-search-bar .weui-search-bar__form,
-.car_repairing-home .top-bar .weui-search-bar .weui-search-bar__box {
+.top-bar .weui-search-bar .weui-search-bar__form,
+.top-bar .weui-search-bar .weui-search-bar__box {
     border-radius: 4px;
     background: #a1864b;
 }
 
-.car_repairing-home .top-bar .weui-search-bar .weui-search-bar__box {
+.top-bar .weui-search-bar .weui-search-bar__box {
     padding-top: 5px;
     padding-bottom: 5px;
     padding-left: 40px;
 }
 
-.car_repairing-home .top-bar .weui-search-bar .weui-icon-search {
+.top-bar .weui-search-bar .weui-icon-search {
     top: 5px;
     font-size: 18px;
 }
 
-.car_repairing-home .top-bar .weui-search-bar .weui-icon-search,
-.car_repairing-home .top-bar .weui-search-bar .weui-search-bar__input::-webkit-input-placeholder { /* WebKit browsers */
+.top-bar .weui-search-bar .weui-icon-search,
+.top-bar .weui-search-bar .weui-search-bar__input::-webkit-input-placeholder { /* WebKit browsers */
     color:#5f4c22;
 }
 
-.car_repairing-home .top-bar .weui-search-bar:after,
-.car_repairing-home .top-bar .weui-search-bar:before {
+.top-bar .weui-search-bar:after,
+.top-bar .weui-search-bar:before {
     display: none;
+}
+
+.top-bar .weui-search-bar__box .weui-icon-clear {
+    line-height: 40px;
 }
 
 .car_repairing-home .add-car {
