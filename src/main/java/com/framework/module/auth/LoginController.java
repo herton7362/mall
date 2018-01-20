@@ -1,6 +1,5 @@
 package com.framework.module.auth;
 
-import com.framework.module.member.domain.Member;
 import com.framework.module.member.service.MemberService;
 import com.kratos.common.AbstractLoginController;
 import com.kratos.common.AbstractLoginService;
@@ -28,11 +27,8 @@ public class LoginController extends AbstractLoginController {
     @RequestMapping(value = "/user/info", method = RequestMethod.GET)
     public ResponseEntity<BaseUser> getOne() throws Exception {
         BaseUser user = UserThread.getInstance().get();
-        BaseUser newUser = null;
-        if(user != null) {
-            newUser = memberService.findOne(user.getId());
-        }
-        if(newUser == null && user != null) {
+        BaseUser newUser = memberService.findOne(user.getId());
+        if(newUser == null) {
             newUser = adminService.findOne(user.getId());
         }
         return new ResponseEntity<>(newUser, HttpStatus.OK);
