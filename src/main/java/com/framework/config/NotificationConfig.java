@@ -21,7 +21,7 @@ public class NotificationConfig extends NotificationKitConfigurerAdaptor {
                 .ipyyProvider()
                 .setServerUrl("https://dx.ipyy.net/sms.aspx")
                 .setAccountName("KA00012")
-                .setPassword("KA00012789t")
+                .setPassword("KA00012789")
                 .setSmsFreeSignName("鼎骏出行");
     }
 
