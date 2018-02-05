@@ -24,7 +24,7 @@ public class ExtendedCommonInterceptor extends CommonInterceptor {
         if(!super.preHandle(request, response, handler)) {
             return false;
         }
-        if(UserThread.getInstance().get() == null) {
+        if(UserThread.getInstance().get() == null && UserThread.getInstance().getClientId() == null) {
             memberService = (MemberService) SpringUtils.getBean("memberService");
             tokenStore = SpringUtils.getBean(TokenStore.class);
             String accessToken = request.getParameter("access_token");
