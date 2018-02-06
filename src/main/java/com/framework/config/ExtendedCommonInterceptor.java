@@ -1,6 +1,6 @@
 package com.framework.config;
 
-import com.framework.module.member.domain.MemberRepository;
+import com.framework.module.member.service.MemberService;
 import com.kratos.common.utils.NetworkUtils;
 import com.kratos.common.utils.SpringUtils;
 import com.kratos.common.utils.StringUtils;
@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class ExtendedCommonInterceptor extends CommonInterceptor {
-    private MemberRepository memberRepository;
+    private MemberService memberService;
     private TokenStore tokenStore;
     @Override
     @SuppressWarnings("unchecked")
@@ -23,24 +23,24 @@ public class ExtendedCommonInterceptor extends CommonInterceptor {
         if(!super.preHandle(request, response, handler)) {
             return false;
         }
-        if(UserThread.getInstance().get() == null && UserThread.getInstance().getClientId() == null) {
-            memberRepository = SpringUtils.getBean(MemberRepository.class);
+        if(UserThread.getInstance().get() == null) {
+            memberService = (MemberService) SpringUtils.getBean("memberService");
             tokenStore = SpringUtils.getBean(TokenStore.class);
             String accessToken = request.getParameter("access_token");
             UserThread.getInstance().setIpAddress(NetworkUtils.getIpAddress(request));
             if(StringUtils.isNotBlank(accessToken)) {
                 OAuth2Authentication oAuth2Authentication = tokenStore.readAuthentication(accessToken);
                 if(oAuth2Authentication != null) {
-                    User user = (User) oAuth2Authentication.getPrincipal();
-                    UserThread.getInstance().setClientId(oAuth2Authentication.getOAuth2Request().getClientId());
-                    oAuth2Authentication.getUserAuthentication().getAuthorities().forEach(grantedAuthority -> {
-                        BaseUser baseUser;
-                        if(grantedAuthority.getAuthority().equals(BaseUser.UserType.MEMBER.name())) {
-                            baseUser = memberRepository.findOneByLoginName(user.getUsername());
+                    Object principal = oAuth2Authentication.getPrincipal();
+                    if(principal instanceof User) {
+                        User user = (User) principal;
+                        UserThread.getInstance().setClientId(oAuth2Authentication.getOAuth2Request().getClientId());
+                        BaseUser baseUser = memberService.findOneByLoginName(user.getUsername());
+                        if(baseUser != null) {
                             baseUser.setPassword(null);
                             UserThread.getInstance().set(baseUser);
                         }
-                    });
+                    }
                 }
             }
         }
