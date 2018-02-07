@@ -24,7 +24,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Component("memberService")
 @Transactional
 public class MemberServiceImpl extends AbstractCrudService<Member> implements MemberService {
     private final MemberRepository repository;
