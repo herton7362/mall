@@ -4,10 +4,10 @@
                              http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.framework</groupId>
-    <artifactId>mall</artifactId>
+    <artifactId>car_repairing</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
-    <name>Mall Web Service API</name>
+    <name>Car Repairing Web Service API</name>
 
     <parent>
         <artifactId>kratos</artifactId>
