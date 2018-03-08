@@ -13,10 +13,6 @@ import java.util.List;
 @Entity
 @ApiModel(value = "优惠券")
 public class Coupon extends BaseEntity {
-    @ApiModelProperty(value = "oauth2 客户端id")
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "clientId", referencedColumnName = "clientId")
-    private OauthClientDetails client;
     @ApiModelProperty(required = true, value = "优惠类型")
     @Column(length = 30)
     @Enumerated(EnumType.STRING)
@@ -45,14 +41,6 @@ public class Coupon extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "coupon")
     @JsonIgnore
     private List<MemberCoupon> members;
-
-    public OauthClientDetails getClient() {
-        return client;
-    }
-
-    public void setClient(OauthClientDetails client) {
-        this.client = client;
-    }
 
     public MarketingType getMarketingType() {
         return marketingType;

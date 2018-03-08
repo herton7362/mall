@@ -175,6 +175,16 @@ require(['jquery', 'vue', 'messager', 'utils', _appConf.ctx + '/static/js/module
                 setTimeout(function () {
                     self.datagrid.$instance.load();
                 }, 100)
+            },
+            tableTransformResponse: function (data) {
+                data.client = {name: null};
+                $.ajax({
+                    url: utils.patchUrl('/api/oauthClient/' + data.clientId),
+                    success: function (response) {
+                        data.client = response;
+                    }
+                });
+                return data;
             }
         },
         mounted: function() {

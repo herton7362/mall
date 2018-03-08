@@ -284,7 +284,9 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             orderForm.setCoupon(null);
         }
 
-        if(customerPayAmount.compareTo(actualTotalAmount) != 0) {
+        actualTotalAmount = actualTotalAmount.setScale(2, RoundingMode.HALF_UP);
+
+        if(customerPayAmount.setScale(2, BigDecimal.ROUND_HALF_UP).compareTo(actualTotalAmount) != 0) {
             throw new BusinessException("结算金额不正确");
         }
     }
@@ -298,7 +300,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         OperationRecord rechargeRecord = new OperationRecord();
         rechargeRecord.setMember(member);
         rechargeRecord.setBusinessType(OperationRecord.BusinessType.CONSUME.name());
-        rechargeRecord.setClient(oauthClientDetailsService.findOneByClientId(MemberThread.getInstance().getClientId()));
+        rechargeRecord.setClientId(MemberThread.getInstance().getClientId());
         rechargeRecord.setIpAddress(MemberThread.getInstance().getIpAddress());
         StringBuilder content = new StringBuilder();
         content.append(String.format("现金消费 %s 元，余额消费 %s 元，积分消费 %s 分", cash, balance, point));
@@ -324,7 +326,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         OperationRecord rechargeRecord = new OperationRecord();
         rechargeRecord.setMember(member);
         rechargeRecord.setBusinessType(OperationRecord.BusinessType.REJECT.name());
-        rechargeRecord.setClient(oauthClientDetailsService.findOneByClientId(MemberThread.getInstance().getClientId()));
+        rechargeRecord.setClientId(MemberThread.getInstance().getClientId());
         rechargeRecord.setIpAddress(MemberThread.getInstance().getIpAddress());
         String content = String.format("现金退款 %s 元，余额退款 %s 元，积分退款 %s 分", cash, balance, point)
                 + String.format("  订单号：%s" , orderForm.getOrderNumber());

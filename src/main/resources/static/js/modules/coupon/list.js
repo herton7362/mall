@@ -1,5 +1,5 @@
 require(['jquery', 'vue', 'utils'], function($, Vue, utils) {
-    new Vue({
+    var vue = new Vue({
         el: '#content',
         data: {
             crudgrid: {
@@ -7,7 +7,15 @@ require(['jquery', 'vue', 'utils'], function($, Vue, utils) {
                     name: ''
                 },
                 columns: [
-                    {field: 'client.name', title: '所属系统'},
+                    {field: 'clientId', title: '所属系统', formatter: function(value) {
+                            var result;
+                            $.each(vue.client.data, function () {
+                                if(value === this.id) {
+                                    result = this.name;
+                                }
+                            });
+                            return result;
+                        }},
                     {field: 'name', title: '名称'},
                     {field:'amount', title:'面额', formatter: function(value) {
                         return utils.formatMoney(value);
@@ -51,7 +59,7 @@ require(['jquery', 'vue', 'utils'], function($, Vue, utils) {
             formData: {
                 id: null,
                 name: null,
-                client: {clientId: null},
+                clientId: null,
                 amount: null,
                 minAmount: null,
                 startDate: null,

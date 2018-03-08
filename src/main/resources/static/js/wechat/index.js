@@ -45,6 +45,26 @@ require([
             }
         },
         mounted: function () {
+            var username, token;
+            token = utils.getQueryString("token");
+            username = utils.getQueryString("username");
+            if(token && username) {
+                $.ajax({
+                    url: utils.patchUrlPrefixUrl('/token/login'),
+                    data: {
+                        appId: 'tonr',
+                        appSecret: 'secret',
+                        username: username,
+                        token: token
+                    },
+                    type: 'POST',
+                    success: function(data) {
+                        window.localStorage.accessToken = data['access_token'];
+                        window.localStorage.refreshToken = data['refresh_token'];
+                        window.localStorage.expiration = new Date().getTime() + ((data['expires_in'] / 2) * 1000);
+                    }
+                })
+            }
             this.loadProducts();
         }
     });

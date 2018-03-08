@@ -80,7 +80,7 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
         OperationRecord rechargeRecord = new OperationRecord();
         rechargeRecord.setMember(member);
         rechargeRecord.setBusinessType(businessType.name());
-        rechargeRecord.setClient(oauthClientDetailsService.findOneByClientId(MemberThread.getInstance().getClientId()));
+        rechargeRecord.setClientId(MemberThread.getInstance().getClientId());
         rechargeRecord.setIpAddress(MemberThread.getInstance().getIpAddress());
         rechargeRecord.setContent(content);
         operationRecordService.save(rechargeRecord);

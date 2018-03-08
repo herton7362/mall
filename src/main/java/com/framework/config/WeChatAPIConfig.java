@@ -13,10 +13,10 @@ public class WeChatAPIConfig implements WeChatAPIConfigurer {
 
     @Override
     public void configure(WeChatPayConfig weChatPayConfig) {
-        weChatPayConfig.setAppId("");
-        weChatPayConfig.setAppSecret("");
-        weChatPayConfig.setApiKey("");
-        weChatPayConfig.setMchId("");
-        weChatPayConfig.setNotifyUrl("");
+        weChatPayConfig.setAppId("wx7caa47f20e19566e");
+        weChatPayConfig.setAppSecret("77ahhdskkqwuiqjhda8989wejasdq2ad");
+        weChatPayConfig.setApiKey("77ahhdskkqwuiqjhda8989wejasdq2ad");
+        weChatPayConfig.setMchId("1486889962");
+        weChatPayConfig.setNotifyUrl("http://www.dldjshop.com/wechat/pay/notify");
     }
 }

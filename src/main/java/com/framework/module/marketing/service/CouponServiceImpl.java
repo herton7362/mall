@@ -39,8 +39,8 @@ public class CouponServiceImpl extends AbstractCrudService<Coupon> implements Co
 
     @Override
     public Coupon save(Coupon coupon) throws Exception {
-        if(coupon.getClient() == null) {
-            coupon.setClient(oauthClientDetailsService.findOneByClientId(MemberThread.getInstance().getClientId()));
+        if(coupon.getClientId() == null) {
+            coupon.setClientId(MemberThread.getInstance().getClientId());
         }
         if(coupon.getObtainType() == null) {
             coupon.setObtainType(Coupon.ObtainType.LOGIN);
@@ -82,7 +82,7 @@ public class CouponServiceImpl extends AbstractCrudService<Coupon> implements Co
     public void validCouponUseAble(String couponId, Double amount) throws Exception {
         Coupon coupon = couponRepository.findOne(couponId);
         String clientId = UserThread.getInstance().getClientId();
-        if(!clientId.equals(coupon.getClient().getClientId())) {
+        if(!clientId.equals(coupon.getClientId())) {
             throw new BusinessException("优惠券不属于当前系统");
         }
         // 如果优惠券策略是满减
