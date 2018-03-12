@@ -103,8 +103,32 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 }
                 return total - this.orderForm.coupon.amount - point - balance;
             },
+            editAddress: function (row) {
+                this.newAddressActionsheet.$instance.open();
+                this.memberAddressForm = row;
+            },
             saveMemberAddress: function () {
                 var self = this;
+                if(!this.memberAddressForm.name) {
+                    messager.bubble("请填写收货人");
+                    return;
+                }
+                if(!this.memberAddressForm.tel) {
+                    messager.bubble("请填写联系电话");
+                    return;
+                }
+                if(!/^[1][3,4,5,7,8][0-9]{9}$/.test(this.memberAddressForm.tel)) {
+                    messager.bubble("联系电话格式不正确");
+                    return;
+                }
+                if(!this.memberAddressForm.address.id) {
+                    messager.bubble("请选择地区");
+                    return;
+                }
+                if(!this.memberAddressForm.detailAddress) {
+                    messager.bubble("请填写详细地区");
+                    return;
+                }
                 $.ajax({
                     url: utils.patchUrl('/api/memberAddress'),
                     contentType: 'application/json',
@@ -114,7 +138,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                     success: function(data) {
                         messager.bubble('保存成功！');
                         self.orderForm.deliverToAddress = data;
-                        self.memberAddresses.push(data);
+                        self.loadMemberAddress();
                         self.newAddressActionsheet.$instance.close();
                     }
                 });
@@ -270,6 +294,11 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 this.pointSelector.open = true;
             },
             usePoint:function (point) {
+                var total = this.getFinalTotal();
+                if(total < (point / 100)) {
+                    messager.bubble("积分大于商品价格，请重新选择积分");
+                    return;
+                }
                 this.account.point = point;
                 window.history.go(-1);
             },
@@ -281,6 +310,12 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 }, 200);
             },
             confirmPoint: function () {
+                var total = this.getFinalTotal();
+                if(total < (this.account.point / 100)) {
+                    messager.bubble("积分大于商品价格，请重新填写积分");
+                    this.account.point = null;
+                    return;
+                }
                 if(this.account.point < 100) {
                     messager.bubble('积分最小不能小于100');
                     this.account.point = null;

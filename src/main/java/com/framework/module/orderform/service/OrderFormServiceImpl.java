@@ -11,6 +11,9 @@ import com.framework.module.orderform.web.ApplyRejectParam;
 import com.framework.module.orderform.web.RejectParam;
 import com.framework.module.orderform.web.SendOutParam;
 import com.framework.module.product.domain.Product;
+import com.framework.module.product.domain.ProductRepository;
+import com.framework.module.product.domain.Sku;
+import com.framework.module.product.service.ProductService;
 import com.framework.module.record.domain.OperationRecord;
 import com.framework.module.record.service.OperationRecordService;
 import com.kratos.common.AbstractCrudService;
@@ -33,7 +36,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     private final OrderFormRepository orderFormRepository;
     private final MemberService memberService;
     private final OperationRecordService operationRecordService;
-    private final OauthClientDetailsService oauthClientDetailsService;
+    private final ProductRepository productRepository;
     private final CouponService couponService;
 
     @Override
@@ -138,13 +141,19 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         if(OrderForm.OrderStatus.PAYED != orderForm.getStatus()) {
             throw new BusinessException("订单状态不正确");
         }
-        if(!MemberThread.getInstance().get().getId().equals(orderForm.getMember().getId())) {
-            throw new BusinessException("当前会员无权操作此订单");
-        }
         orderForm.setStatus(OrderForm.OrderStatus.DELIVERED);
         orderForm.setShippingCode(sendOutParam.getShippingCode());
         orderForm.setShippingDate(sendOutParam.getShippingDate());
         orderFormRepository.save(orderForm);
+        orderForm.getItems().forEach(orderItem -> {
+            Product product = orderItem.getProduct();
+            Long count = 0L;
+            if(product.getStockCount() != null) {
+                count = product.getStockCount();
+            }
+            product.setStockCount(count - 1);
+            productRepository.save(product);
+        });
         return orderForm;
     }
 
@@ -369,13 +378,13 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             OrderFormRepository orderFormRepository,
             MemberService memberService,
             OperationRecordService operationRecordService,
-            OauthClientDetailsService oauthClientDetailsService,
+            ProductRepository productRepository,
             CouponService couponService
     ) {
         this.orderFormRepository = orderFormRepository;
         this.memberService = memberService;
         this.operationRecordService = operationRecordService;
-        this.oauthClientDetailsService = oauthClientDetailsService;
+        this.productRepository = productRepository;
         this.couponService = couponService;
     }
 }

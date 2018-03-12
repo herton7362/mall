@@ -82,64 +82,72 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                         id: this.product.id
                     })
                 });
-                this.account.cash = this.getFinalTotal();
-                $.ajax({
-                    url: utils.patchUrl('/api/orderForm/unified'),
-                    contentType: 'application/json',
-                    type: 'post',
-                    data: JSON.stringify($.extend(self.orderForm, {
-                        cash: self.account.cash,
-                        balance: self.account.balance,
-                        point: self.account.point
-                    })),
-                    success: function (data) {
-                        function setupWebViewJavascriptBridge(callback) {
-                            var bridge = window.WebViewJavascriptBridge || window.WKWebViewJavascriptBridge;
-                            if (bridge) { return callback(bridge); }
-                            var callbacks = window.WVJBCallbacks || window.WKWVJBCallbacks;
-                            if (callbacks) { return callbacks.push(callback); }
-                            window.WVJBCallbacks = window.WKWVJBCallbacks = [callback];
-                            if (window.WKWebViewJavascriptBridge) {
-                                //for https://github.com/Lision/WKWebViewJavascriptBridge
-                                window.webkit.messageHandlers.iOS_Native_InjectJavascript.postMessage(null);
-                            } else {
-                                //for https://github.com/marcuswestin/WebViewJavascriptBridge
-                                var WVJBIframe = document.createElement('iframe');
-                                WVJBIframe.style.display = 'none';
-                                WVJBIframe.src = 'https://__bridge_loaded__';
-                                document.documentElement.appendChild(WVJBIframe);
-                                setTimeout(function() { document.documentElement.removeChild(WVJBIframe) }, 0);
-                            }
+                function pay() {
+                    $.ajax({
+                        url: utils.patchUrl('/api/orderForm/pay'),
+                        contentType: 'application/json',
+                        data: JSON.stringify($.extend(self.orderForm, {
+                            cash: self.account.cash,
+                            balance: self.account.balance,
+                            point: self.account.point
+                        })),
+                        type: 'POST',
+                        success: function() {
+                            messager.bubble("支付成功", 'success');
+                            setTimeout(function () {
+                                window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/list?page=all');
+                            }, 1000);
                         }
-
-                        setupWebViewJavascriptBridge(function(bridge) {
-                            /* Initialize your app here */
-                            bridge.callHandler('wechatpay', JSON.stringify(data), function responseCallback(responseData) {
-                                responseData = eval('('+responseData+')');
-                                if(responseData.result === 'ok') {
-                                    $.ajax({
-                                        url: utils.patchUrl('/api/orderForm/pay'),
-                                        contentType: 'application/json',
-                                        data: JSON.stringify($.extend(self.orderForm, {
-                                            cash: self.account.cash,
-                                            balance: self.account.balance,
-                                            point: self.account.point
-                                        })),
-                                        type: 'POST',
-                                        success: function() {
-                                            messager.bubble("支付成功", 'success');
-                                            setTimeout(function () {
-                                                window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/list?page=all');
-                                            }, 1000);
-                                        }
-                                    })
+                    })
+                }
+                this.account.cash = this.getFinalTotal();
+                if(self.account.cash === 0) {
+                    pay();
+                } else {
+                    $.ajax({
+                        url: utils.patchUrl('/api/orderForm/unified'),
+                        contentType: 'application/json',
+                        type: 'post',
+                        data: JSON.stringify($.extend(self.orderForm, {
+                            cash: self.account.cash,
+                            balance: self.account.balance,
+                            point: self.account.point
+                        })),
+                        success: function (data) {
+                            function setupWebViewJavascriptBridge(callback) {
+                                var bridge = window.WebViewJavascriptBridge || window.WKWebViewJavascriptBridge;
+                                if (bridge) { return callback(bridge); }
+                                var callbacks = window.WVJBCallbacks || window.WKWVJBCallbacks;
+                                if (callbacks) { return callbacks.push(callback); }
+                                window.WVJBCallbacks = window.WKWVJBCallbacks = [callback];
+                                if (window.WKWebViewJavascriptBridge) {
+                                    //for https://github.com/Lision/WKWebViewJavascriptBridge
+                                    window.webkit.messageHandlers.iOS_Native_InjectJavascript.postMessage(null);
                                 } else {
-                                    messager.bubble("支付失败", 'error');
+                                    //for https://github.com/marcuswestin/WebViewJavascriptBridge
+                                    var WVJBIframe = document.createElement('iframe');
+                                    WVJBIframe.style.display = 'none';
+                                    WVJBIframe.src = 'https://__bridge_loaded__';
+                                    document.documentElement.appendChild(WVJBIframe);
+                                    setTimeout(function() { document.documentElement.removeChild(WVJBIframe) }, 0);
                                 }
+                            }
+
+                            setupWebViewJavascriptBridge(function(bridge) {
+                                /* Initialize your app here */
+                                bridge.callHandler('wechatpay', JSON.stringify(data), function responseCallback(responseData) {
+                                    responseData = eval('('+responseData+')');
+                                    if(responseData.result === 'ok') {
+                                        pay();
+                                    } else {
+                                        messager.bubble("支付失败", 'error');
+                                    }
+                                });
                             });
-                        });
-                    }
-                });
+                        }
+                    });
+                }
+
             }
         },
         mounted: function () {

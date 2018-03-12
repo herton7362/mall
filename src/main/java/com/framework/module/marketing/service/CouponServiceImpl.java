@@ -10,8 +10,6 @@ import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
 import com.kratos.exceptions.BusinessException;
 import com.kratos.module.auth.UserThread;
-import com.kratos.module.auth.domain.OauthClientDetails;
-import com.kratos.module.auth.service.OauthClientDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +28,6 @@ import java.util.stream.Collectors;
 @Transactional
 public class CouponServiceImpl extends AbstractCrudService<Coupon> implements CouponService {
     private final CouponRepository couponRepository;
-    private final OauthClientDetailsService oauthClientDetailsService;
     private final MemberService memberService;
     @Override
     protected PageRepository<Coupon> getRepository() {
@@ -53,14 +50,13 @@ public class CouponServiceImpl extends AbstractCrudService<Coupon> implements Co
         final Member member = memberService.findOne(memberId);
         final List<MemberCoupon> coupons = member.getCoupons();
         final String clientId = MemberThread.getInstance().getClientId();
-        final OauthClientDetails client = oauthClientDetailsService.findOneByClientId(clientId);
         // 匹配规则，查询活动期间内，当前登录系统，用户没有获取过的，有效的优惠券
         List<Coupon> newCoupons = couponRepository.findAll((Root<Coupon> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
             List<Predicate> predicate = new ArrayList<>();
             predicate.add(criteriaBuilder.lessThanOrEqualTo(root.get("startDate"), new Date().getTime()));
             predicate.add(criteriaBuilder.greaterThanOrEqualTo(root.get("endDate"), new Date().getTime()));
             predicate.add(criteriaBuilder.equal(root.get("logicallyDeleted"), false));
-            predicate.add(criteriaBuilder.equal(root.get("client"), client));
+            predicate.add(criteriaBuilder.equal(root.get("clientId"), clientId));
             return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
         });
 
@@ -122,11 +118,9 @@ public class CouponServiceImpl extends AbstractCrudService<Coupon> implements Co
     @Autowired
     public CouponServiceImpl(
             CouponRepository couponRepository,
-            OauthClientDetailsService oauthClientDetailsService,
             MemberService memberService
     ) {
         this.couponRepository = couponRepository;
-        this.oauthClientDetailsService = oauthClientDetailsService;
         this.memberService = memberService;
     }
 }

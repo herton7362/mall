@@ -77,7 +77,7 @@
                                     每单达到{{coupon.coupon.minAmount | price}}元可使用
                                 </div>
                                 <div class="status">
-                                    <i class="iconfont icon-expired" v-if="coupon.expired"></i>
+                                    <i class="iconfont icon-expired" v-if="coupon.expired && !coupon.used"></i>
                                     <i class="iconfont icon-used" v-if="coupon.used"></i>
                                     <span v-if="!coupon.expired && !coupon.used">立即使用</span>
                                     <a th:href="@{/}" class="weui-btn weui-btn_plain-primary" v-if="!coupon.expired && !coupon.used">去逛逛</a>
