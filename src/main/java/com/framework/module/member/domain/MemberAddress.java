@@ -31,8 +31,8 @@ public class MemberAddress extends BaseEntity {
     @Column(length = 20)
     private String postalCode;
     @ApiModelProperty("所属会员")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Member member;
+    @Column(length = 36)
+    private String memberId;
     @ApiModelProperty("地址")
     @ManyToOne(fetch = FetchType.EAGER)
     private Address address;
@@ -71,12 +71,12 @@ public class MemberAddress extends BaseEntity {
         this.postalCode = postalCode;
     }
 
-    public Member getMember() {
-        return member;
+    public String getMemberId() {
+        return memberId;
     }
 
-    public void setMember(Member member) {
-        this.member = member;
+    public void setMemberId(String memberId) {
+        this.memberId = memberId;
     }
 
     public Address getAddress() {

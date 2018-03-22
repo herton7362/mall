@@ -20,10 +20,10 @@ public class MemberAddressServiceImpl extends AbstractCrudService<MemberAddress>
 
     @Override
     public MemberAddress save(MemberAddress memberAddress) throws Exception {
-        if(memberAddress.getMember() == null) {
+        if(memberAddress.getMemberId() == null) {
             throw new BusinessException("会员不能为空");
         }
-        memberAddressRepository.clearDefaultAddress(memberAddress.getMember().getId());
+        memberAddressRepository.clearDefaultAddress(memberAddress.getMemberId());
         memberAddress.setDefaultAddress(true);
         return super.save(memberAddress);
     }
@@ -32,7 +32,7 @@ public class MemberAddressServiceImpl extends AbstractCrudService<MemberAddress>
     public void changeDefaultAddress(String id) {
         MemberAddress memberAddress = memberAddressRepository.findOne(id);
         memberAddress.setDefaultAddress(true);
-        memberAddressRepository.clearDefaultAddress(memberAddress.getMember().getId());
+        memberAddressRepository.clearDefaultAddress(memberAddress.getMemberId());
         memberAddressRepository.save(memberAddress);
     }
 

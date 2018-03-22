@@ -8,7 +8,11 @@ require([
     new Vue({
         el: '#content',
         data: {
-            products: []
+            products: [],
+            productCategories: [],// 四个一组
+            categoryMore: false,
+            newest: [],
+            recommend: []
         },
         filters: {
             coverPath: function (val) {
@@ -19,6 +23,23 @@ require([
             }
         },
         methods: {
+            loadProductCategory: function () {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/productCategory'),
+                    data: {
+                        sort: 'sortNumber,updatedDate',
+                        order: 'asc,desc'
+                    },
+                    success: function(data) {
+                        var result = [];
+                        for(var i=0,len=data.content.length;i<len;i+=4){
+                            result.push(data.content.slice(i,i+4));
+                        }
+                        self.productCategories = result;
+                    }
+                })
+            },
             loadProducts: function () {
                 var self = this;
                 $.ajax({
@@ -30,15 +51,31 @@ require([
                         pageSize: 10
                     },
                     success: function(data) {
-                        self.products = data.content
+                        self.products = data.content;
+                        for (var i = 0, l = data.content.length; i < l; i++) {
+                            if(self.newest.length > 3) {
+                                break;
+                            }
+                            if(data.content[i].newest) {
+                                self.newest.push(data.content[i]);
+                            }
+                        }
+                        for (var i = 0, l = data.content.length; i < l; i++) {
+                            if(self.recommend.length > 5) {
+                                break;
+                            }
+                            if(data.content[i].recommend) {
+                                self.recommend.push(data.content[i]);
+                            }
+                        }
                     }
                 });
             },
             productDetail: function (row) {
                 window.location.href = utils.patchUrlPrefixUrl('/wechat/product/detail?id=' + row.id);
             },
-            more: function () {
-                window.location.href = utils.patchUrlPrefixUrl('/wechat/product/all');
+            more: function (id) {
+                window.location.href = utils.patchUrlPrefixUrl('/wechat/product/all'+ (id? '?categoryId=' + id: ''));
             },
             addCart: function (product) {
                 productsheet.open(product);
@@ -65,6 +102,7 @@ require([
                     }
                 })
             }
+            this.loadProductCategory();
             this.loadProducts();
         }
     });

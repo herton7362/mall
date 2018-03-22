@@ -14,7 +14,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 items: [],
                 deliverToAddress: {},
                 remark: null,
-                member: null,
+                memberId: null,
                 coupon: {amount: 0}
             },
             member: {},
@@ -134,7 +134,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                     contentType: 'application/json',
                     type: 'POST',
                     dataType: 'JSON',
-                    data: JSON.stringify($.extend(this.memberAddressForm, {member: this.member})),
+                    data: JSON.stringify($.extend(this.memberAddressForm, {memberId: this.member.id})),
                     success: function(data) {
                         messager.bubble('保存成功！');
                         self.orderForm.deliverToAddress = data;
@@ -234,7 +234,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                         contentType: 'application/json',
                         data: JSON.stringify($.extend(self.orderForm,{
                             status: 'UN_PAY', // 下单未支付
-                            member: self.member,
+                            memberId: self.member.id,
                             cash: self.account.cash,
                             balance: self.account.balance || 0,
                             point: self.account.point || 0

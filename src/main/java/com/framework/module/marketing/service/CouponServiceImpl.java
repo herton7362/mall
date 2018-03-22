@@ -5,6 +5,8 @@ import com.framework.module.marketing.domain.Coupon;
 import com.framework.module.marketing.domain.CouponRepository;
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.domain.MemberCoupon;
+import com.framework.module.member.domain.MemberCouponRepository;
+import com.framework.module.member.service.MemberCouponService;
 import com.framework.module.member.service.MemberService;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
@@ -19,9 +21,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 public class CouponServiceImpl extends AbstractCrudService<Coupon> implements CouponService {
     private final CouponRepository couponRepository;
     private final MemberService memberService;
+    private final MemberCouponService memberCouponService;
     @Override
     protected PageRepository<Coupon> getRepository() {
         return couponRepository;
@@ -47,8 +48,9 @@ public class CouponServiceImpl extends AbstractCrudService<Coupon> implements Co
 
     @Override
     public List<Coupon> getUnClaimed(String memberId) throws Exception {
-        final Member member = memberService.findOne(memberId);
-        final List<MemberCoupon> coupons = member.getCoupons();
+        Map<String, String[]> params = new HashMap<>();
+        params.put("memberId", new String[]{memberId});
+        List<MemberCoupon> coupons = memberCouponService.findAll(params);
         final String clientId = MemberThread.getInstance().getClientId();
         // 匹配规则，查询活动期间内，当前登录系统，用户没有获取过的，有效的优惠券
         List<Coupon> newCoupons = couponRepository.findAll((Root<Coupon> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
@@ -63,11 +65,14 @@ public class CouponServiceImpl extends AbstractCrudService<Coupon> implements Co
         newCoupons = newCoupons
                 .stream()
                 .filter(coupon -> {
-                    for (MemberCoupon memberCoupon : coupons) {
-                        if(memberCoupon.getCoupon().getId().equals(coupon.getId())) {
-                            return false;
+                    if(coupons != null) {
+                        for (MemberCoupon memberCoupon : coupons) {
+                            if(memberCoupon.getCoupon().getId().equals(coupon.getId())) {
+                                return false;
+                            }
                         }
                     }
+
                     return true;
                 })
                 .collect(Collectors.toList());
@@ -93,9 +98,10 @@ public class CouponServiceImpl extends AbstractCrudService<Coupon> implements Co
     public Double useCoupon(final String couponId, String memberId, Double amount) throws Exception {
         validCouponUseAble(couponId, amount);
         Coupon coupon = couponRepository.findOne(couponId);
-        Member member = memberService.findOne(memberId);
         BigDecimal newAmount = new BigDecimal(amount).subtract(new BigDecimal(coupon.getAmount()));
-        List<MemberCoupon> coupons = member.getCoupons();
+        Map<String, String[]> params = new HashMap<>();
+        params.put("memberId", new String[]{memberId});
+        List<MemberCoupon> coupons = memberCouponService.findAll(params);
         coupons.forEach(memberCoupon -> {
             if(memberCoupon.getCoupon().getId().equals(couponId)) {
                 memberCoupon.setUsed(true);
@@ -107,20 +113,21 @@ public class CouponServiceImpl extends AbstractCrudService<Coupon> implements Co
     @Override
     public void claim(String memberId, Coupon coupon) throws Exception {
         Member member = memberService.findOne(memberId);
-        List<MemberCoupon> memberCoupons = member.getCoupons();
         MemberCoupon memberCoupon = new MemberCoupon();
         memberCoupon.setUsed(false);
-        memberCoupon.setMember(member);
+        memberCoupon.setMemberId(member.getId());
         memberCoupon.setCoupon(coupon);
-        memberCoupons.add(memberCoupon);
+        memberCouponService.save(memberCoupon);
     }
 
     @Autowired
     public CouponServiceImpl(
             CouponRepository couponRepository,
-            MemberService memberService
+            MemberService memberService,
+            MemberCouponService memberCouponService
     ) {
         this.couponRepository = couponRepository;
         this.memberService = memberService;
+        this.memberCouponService = memberCouponService;
     }
 }

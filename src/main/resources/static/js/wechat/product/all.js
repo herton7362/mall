@@ -74,9 +74,10 @@ require([
             }
         },
         mounted: function () {
+            var id = utils.getQueryString("categoryId");
             this.loadProductCategory(function(data) {
-                this.tabClick(data[0].id);
+                this.tabClick(id? id: data[0].id);
             });
         }
     });
-})
+});

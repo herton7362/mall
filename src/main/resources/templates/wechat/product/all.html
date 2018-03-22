@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <template th:include="wechat/common/header_statics :: header('蹄铁商城 - 全部商品')" th:remove="tag"></template>
+    <template th:include="wechat/common/header_statics :: header('鼎骏商城 - 全部商品')" th:remove="tag"></template>
     <link rel="stylesheet" th:href="@{/static/css/wechat.css}"/>
 </head>
 <!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
@@ -9,7 +9,7 @@
 <div class="wrapper" style="height: auto; min-height: 100%;">
 
     <!-- Full Width Column -->
-    <div class="content-wrapper product-list">
+    <div class="content-wrapper product-list product-category">
         <div class="container">
             <!-- Main content -->
             <section id="content" class="content" v-cloak>
@@ -23,20 +23,17 @@
                 <!-- Tab panes -->
                 <div class="tab-content wechat-tab-content">
                     <div v-for="row in productCategories" role="tabpanel" class="tab-pane" :class="{active: row.id === activeId}" :id="row.id">
-                        <div class="col-xs-6 col-md-4 padding-none" v-for="product in products[row.id]">
-                            <div class="thumbnail margin-5" @click="productDetail(product)">
-                                <img :alt="product.name" :src="product.coverImage.id | coverPath">
-                                <div class="caption">
-                                    <p class="product-title">{{product.name}}</p>
-                                    <p>
-                                        <em class="product-price">¥ {{product.price | price}}</em>
-                                        <a href="javascript:void(0)" class="pull-right add-cart-button" @click.stop="addCart(product)">
-                                            <i class="iconfont icon-cart"></i>
-                                        </a>
-                                    </p>
+                        <ul style="overflow: hidden" class="commodity_list ov" >
+                            <li style="float: left;" class="commodity" @click="productDetail(product)" v-for="product in products[row.id]">
+                                <div class="allgoods_img_b">
+                                    <img :alt="product.name" :src="product.coverImage.id | coverPath">
+                                    <div class="commodity_price">
+                                        <span>￥ {{product.price | price}}</span>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+                                <span class="commodity_name">{{product.name}}</span>
+                            </li>
+                        </ul>
                     </div>
                 </div>
 

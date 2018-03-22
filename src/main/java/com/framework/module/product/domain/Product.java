@@ -56,6 +56,8 @@ public class Product extends BaseEntity {
     private String description;
     @ApiModelProperty(value = "库存数量")
     private Long stockCount;
+    @ApiModelProperty(value = "是否最新商品")
+    private Boolean newest;
 
     public ProductCategory getProductCategory() {
         return productCategory;
@@ -159,5 +161,13 @@ public class Product extends BaseEntity {
 
     public void setStockCount(Long stockCount) {
         this.stockCount = stockCount;
+    }
+
+    public Boolean getNewest() {
+        return newest;
+    }
+
+    public void setNewest(Boolean newest) {
+        this.newest = newest;
     }
 }

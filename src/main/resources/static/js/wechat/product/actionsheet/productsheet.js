@@ -61,7 +61,7 @@ define([
                         contentType: 'application/json',
                         type: 'POST',
                         data: JSON.stringify({
-                            member: member,
+                            memberId: member.id,
                             items: [{
                                 product: self.product,
                                 count: self.count

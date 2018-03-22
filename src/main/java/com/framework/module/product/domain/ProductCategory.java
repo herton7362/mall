@@ -1,6 +1,7 @@
 package com.framework.module.product.domain;
 
 import com.kratos.entity.BaseEntity;
+import com.kratos.module.attachment.domain.Attachment;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -28,6 +29,9 @@ public class ProductCategory extends BaseEntity {
     @ManyToMany
     @JoinTable(name="product_category_product_standard",joinColumns={@JoinColumn(name="product_category_id")},inverseJoinColumns={@JoinColumn(name="product_standard_id")})
     private List<ProductStandard> productStandards;
+    @ApiModelProperty(value = "封面图片")
+    @ManyToOne
+    private Attachment coverImage;
 
     public ProductCategory getParent() {
         return parent;
@@ -59,5 +63,13 @@ public class ProductCategory extends BaseEntity {
 
     public void setProductStandards(List<ProductStandard> productStandards) {
         this.productStandards = productStandards;
+    }
+
+    public Attachment getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(Attachment coverImage) {
+        this.coverImage = coverImage;
     }
 }

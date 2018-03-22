@@ -45,10 +45,6 @@ public class Member extends BaseUser {
     @ApiModelProperty(value = "区域")
     @Column(length = 20)
     private String address;
-    @ApiModelProperty(value = "优惠券")
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "member")
-    @JsonIgnore
-    private List<MemberCoupon> coupons;
     @ApiModelProperty(value = "头像")
     @ManyToOne
     private Attachment headPhoto;
@@ -135,14 +131,6 @@ public class Member extends BaseUser {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public List<MemberCoupon> getCoupons() {
-        return coupons;
-    }
-
-    public void setCoupons(List<MemberCoupon> coupons) {
-        this.coupons = coupons;
     }
 
     public Attachment getHeadPhoto() {

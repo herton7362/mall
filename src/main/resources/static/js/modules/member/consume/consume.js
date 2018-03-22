@@ -226,7 +226,7 @@ define([
                     contentType: 'application/json',
                     data: JSON.stringify({
                         status: 'PAYED', // 完成支付
-                        member: this.member,
+                        memberId: this.member.id,
                         items: items,
                         cash: this.account.cash,
                         balance: this.account.balance,

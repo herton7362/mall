@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <template th:include="wechat/common/header_statics :: header('蹄铁商城')" th:remove="tag"></template>
+    <template th:include="wechat/common/header_statics :: header('鼎骏商城')" th:remove="tag"></template>
     <link rel="stylesheet" th:href="@{/static/css/wechat.css}"/>
 </head>
 <!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
@@ -10,7 +10,7 @@
 
     <!-- Full Width Column -->
     <div id="content" class="content-wrapper home product-list" v-cloak>
-        <div id="carousel-home-generic" class="carousel slide margin-bottom" data-ride="carousel" style="margin-bottom: 0">
+        <div id="carousel-home-generic" class="carousel slide margin-bottom" data-ride="carousel" style="margin-bottom: 1rem">
             <!-- Indicators -->
             <ol class="carousel-indicators">
                 <li data-target="#carousel-home-generic" data-slide-to="0" class="active"></li>
@@ -41,15 +41,95 @@
                 <span class="sr-only">Next</span>
             </a>
         </div>
+
+        <div class="container menus">
+            <div class="index_btn" v-if="index == 0" v-for="(row, index) in productCategories">
+                <div class="index_btn_n ov">
+                    <a href="#" v-for="item in row" @click="more(item.id)">
+                        <div class="index_btn_n ov">
+                            <div class="index_btn_bg">
+                                <img :src="item.coverImage.id | coverPath">
+                                <span>{{item.name}}</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="index_btn_xl" @click="categoryMore = !categoryMore">
+                    <div class="index_btn_xl_b">
+                        <img th:src="@{/static/image/wechat/index_btn_xl.png}">
+                    </div>
+                </div>
+            </div>
+            <div class="index_btn" v-if="index > 0" v-show="categoryMore" v-for="(row, index) in productCategories">
+                <div class="index_btn_n ov">
+                    <a href="#" v-for="item in row" @click="more(item.id)">
+                        <div class="index_btn_n ov">
+                            <div class="index_btn_bg">
+                                <img :src="item.coverImage.id | coverPath">
+                                <span>{{item.name}}</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="index_latestgoods_b">
+            <div class="index_latestgoods_s">
+                <div style="overflow: hidden" class="index_latestgoods_s_t  ">
+                    <img width="18" style="float: left;" th:src="@{/static/image/wechat/index_sp_icon.png}">
+                    <span style="float: left;" class="index_latestgoods_s_t_sp">最新商品</span>
+                    <a href="#" @click="more">
+                        <span style="float: right;" class="index_latestgoods_s_t_more">更多&gt;&gt;</span>
+                    </a>
+                </div>
+                <div class="index_latestgoods_content">
+                    <div class="index_latestgoods_label" v-if="product.newest" v-for="product in newest" @click="productDetail(product)">
+                        <img :src="product.coverImage.id | coverPath">
+                        <span class="index_latestgoods_name">{{product.name}}</span>
+                        <span class="index_latestgoods_price">￥{{product.price | price}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--广告-->
+        <div class="index_advertisement" @click="more('402881b65ed159a2015ed15a82ea0001')">
+            <img th:src="@{/static/image/wechat/index_advertisement.jpg}">
+        </div>
+
+        <div class="index_latestgoods_b">
+            <div class="index_latestgoods_s">
+                <div style="overflow: hidden" class="index_latestgoods_s_t ">
+                    <img width="18" style="float: left;" th:src="@{/static/image/wechat/index_bm_icon.png}">
+                    <span style="float: left;" class="index_latestgoods_s_t_sp">必买好货</span>
+                    <a href="#" @click="more">
+                        <span style="float: right;" class="index_latestgoods_s_t_more">更多&gt;&gt;</span>
+                    </a>
+                </div>
+                <div class="index_latestgoods_content">
+                    <div class="index_latestgoods_label index_needbuy_width" v-if="product.recommend" v-for="product in recommend" @click="productDetail(product)">
+                        <div class="index_needbuy_img_b">
+                            <img :src="product.coverImage.id | coverPath">
+                            <div class="index_needbuy_price_b">
+                                <span class="index_needbuy_price">￥{{product.price | price}}</span>
+                            </div>
+                        </div>
+                        <span class="index_latestgoods_name">{{product.name}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="container">
             <!-- Main content -->
             <section class="content">
                 <div class="panel">
                     <div class="panel-heading">
                         <h3 class="panel-title">
-                            蹄铁商城
+                            <img width="18" th:src="@{/static/image/wechat/index_shoppingmall_shopping_cart_icon_s.png}" style="margin-top: -4px;"> 鼎骏商城
                             <a href="#" class="more pull-right" @click="more">
-                                查看更多
+                                更多
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         </h3>

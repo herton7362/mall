@@ -19,8 +19,8 @@ public class OperationRecord extends BaseEntity {
     @Column(length = 2000)
     private String content;
     @ApiModelProperty(value = "操作会员")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Member member;
+    @Column(length = 36)
+    private String memberId;
     @ApiModelProperty(value = "操作管理员")
     @ManyToOne(fetch = FetchType.EAGER)
     private Admin admin;
@@ -44,12 +44,12 @@ public class OperationRecord extends BaseEntity {
         this.content = content;
     }
 
-    public Member getMember() {
-        return member;
+    public String getMemberId() {
+        return memberId;
     }
 
-    public void setMember(Member member) {
-        this.member = member;
+    public void setMemberId(String memberId) {
+        this.memberId = memberId;
     }
 
     public Admin getAdmin() {

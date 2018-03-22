@@ -1,5 +1,6 @@
 package com.framework.module.member.service;
 
+import com.framework.module.member.domain.MemberCoupon;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
 import com.kratos.exceptions.BusinessException;
@@ -22,13 +23,15 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-@Component("memberService")
+@Component
 @Transactional
 public class MemberServiceImpl extends AbstractCrudService<Member> implements MemberService {
     private final MemberRepository repository;
-    private final OauthClientDetailsService oauthClientDetailsService;
+    private final MemberCouponService memberCouponService;
     private final OperationRecordService operationRecordService;
 
     @Override
@@ -78,7 +81,7 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
      */
     private void record(Member member, String content, OperationRecord.BusinessType businessType) throws Exception {
         OperationRecord rechargeRecord = new OperationRecord();
-        rechargeRecord.setMember(member);
+        rechargeRecord.setMemberId(member.getId());
         rechargeRecord.setBusinessType(businessType.name());
         rechargeRecord.setClientId(MemberThread.getInstance().getClientId());
         rechargeRecord.setIpAddress(MemberThread.getInstance().getIpAddress());
@@ -125,6 +128,22 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
         );
     }
 
+    @Override
+    public Integer getAvailableCouponCount(String memberId) throws Exception {
+        Map<String, String[]> params = new HashMap<>();
+        params.put("memberId", new String[]{memberId});
+        List<MemberCoupon> coupons = memberCouponService.findAll(params);
+        Integer count = 0;
+        if(coupons != null) {
+            for (MemberCoupon memberCoupon : coupons) {
+                if(!memberCoupon.getUsed()) {
+                    count ++;
+                }
+            }
+        }
+        return count;
+    }
+
     private Integer increaseNumber(Integer sourcePoint, Integer point) {
         if(sourcePoint == null) {
             sourcePoint = 0;
@@ -149,11 +168,11 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
     @Autowired
     public MemberServiceImpl(
             MemberRepository repository,
-            OauthClientDetailsService oauthClientDetailsService,
+            MemberCouponService memberCouponService,
             OperationRecordService operationRecordService
     ) {
         this.repository = repository;
-        this.oauthClientDetailsService = oauthClientDetailsService;
+        this.memberCouponService = memberCouponService;
         this.operationRecordService = operationRecordService;
     }
 }

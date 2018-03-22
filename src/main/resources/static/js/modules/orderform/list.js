@@ -38,7 +38,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 },
                 form: {
                     deliverToAddress: {},
-                    member: {},
+                    memberId: null,
                     items: []
                 }
             }

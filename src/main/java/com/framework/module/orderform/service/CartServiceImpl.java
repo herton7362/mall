@@ -32,12 +32,12 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
 
     @Override
     public void addProduct(final Cart cart) throws Exception {
-        if(cart.getMember() == null || StringUtils.isBlank(cart.getMember().getId())) {
+        if(StringUtils.isBlank(cart.getMemberId())) {
             throw new BusinessException("会员不能为空");
         }
         List<Cart> carts = cartRepository.findAll((Root<Cart> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
             List<Predicate> predicate = new ArrayList<>();
-            predicate.add(criteriaBuilder.equal(root.get("member"), cart.getMember()));
+            predicate.add(criteriaBuilder.equal(root.get("memberId"), cart.getMemberId()));
             return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
         });
         if(carts == null || carts.isEmpty()) {

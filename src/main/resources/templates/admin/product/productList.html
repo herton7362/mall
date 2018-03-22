@@ -92,6 +92,14 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>是否最新：<input type="checkbox" v-model="props.form.newest"></label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>是否推荐：<input type="checkbox" v-model="props.form.recommend"></label>
+                                </div>
+                            </div>
                             <div class="form-group" v-for="productStandard in getSelectedProductStandards()">
                                 <label>{{productStandard.name}}：</label>
                                 <div class="checkbox">

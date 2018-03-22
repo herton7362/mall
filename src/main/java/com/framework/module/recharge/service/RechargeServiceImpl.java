@@ -54,7 +54,7 @@ public class RechargeServiceImpl implements RechargeService {
      */
     private void record(String memberId, Double amount, Double extAmount) throws Exception {
         OperationRecord rechargeRecord = new OperationRecord();
-        rechargeRecord.setMember(memberService.findOne(memberId));
+        rechargeRecord.setMemberId(memberId);
         rechargeRecord.setBusinessType(OperationRecord.BusinessType.RECHARGE.name());
         rechargeRecord.setClientId(MemberThread.getInstance().getClientId());
         rechargeRecord.setIpAddress(MemberThread.getInstance().getIpAddress());

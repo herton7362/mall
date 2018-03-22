@@ -4,6 +4,13 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
         data: {
             crudgrid: {
                 columns: [
+                    {field:'coverImage', title:'封面', formatter: function(value) {
+                        if(value) {
+                            return '<img width="50" src="'+utils.patchUrl('/attachment/download/' + value.id)+'">';
+                        }  else {
+                            return '无';
+                        }
+                    }},
                     {field:'name', title:'名称'},
                     {field:'remark', title:'备注'}
                 ]
@@ -25,6 +32,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 parent: {},
                 name: null,
                 remark: null,
+                coverImage: null,
                 productStandards: []
             }
         },

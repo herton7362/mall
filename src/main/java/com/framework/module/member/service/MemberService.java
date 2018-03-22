@@ -43,4 +43,11 @@ public interface MemberService extends CrudService<Member> {
      * @return 会员总数
      */
     Long count();
+
+    /**
+     * 获取当前用户优惠券数量
+     * @param memberId 会员id
+     * @return 数量
+     */
+    Integer getAvailableCouponCount(String memberId) throws Exception;
 }

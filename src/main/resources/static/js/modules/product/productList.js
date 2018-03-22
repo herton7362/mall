@@ -45,7 +45,9 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 },
                 coverImage: null,
                 styleImages: [],
-                detailImages: []
+                detailImages: [],
+                recommend: true,
+                newest: true
             }
         },
         methods: {
@@ -87,6 +89,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 this.crudgrid.$instance.load(param);
             },
             comboboxChange: function (val) {
+
             },
             hasStandard: function () {
                 var productStandards = this.getSelectedProductStandards();

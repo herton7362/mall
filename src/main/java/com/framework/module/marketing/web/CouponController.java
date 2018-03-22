@@ -5,6 +5,7 @@ import com.framework.module.marketing.domain.Coupon;
 import com.framework.module.marketing.service.CouponService;
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.domain.MemberCoupon;
+import com.framework.module.member.service.MemberCouponService;
 import com.framework.module.member.service.MemberService;
 import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
@@ -19,14 +20,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Api(value = "优惠券管理")
 @RestController
 @RequestMapping("/api/coupon")
 public class CouponController extends AbstractCrudController<Coupon> {
     private final CouponService couponService;
-    private final OauthClientDetailsService oauthClientDetailsService;
+    private final MemberCouponService memberCouponService;
     private final MemberService memberService;
     @Override
     protected CrudService<Coupon> getService() {
@@ -59,14 +62,7 @@ public class CouponController extends AbstractCrudController<Coupon> {
     @ApiOperation(value="获取当前用户优惠券数量")
     @RequestMapping(value = "/count/{memberId}", method = RequestMethod.GET)
     public ResponseEntity<Integer> count(@PathVariable String memberId) throws Exception {
-        Member member = memberService.findOne(memberId);
-        Integer count = 0;
-        for (MemberCoupon memberCoupon : member.getCoupons()) {
-            if(!memberCoupon.getUsed()) {
-                count ++;
-            }
-        }
-        return new ResponseEntity<>(count, HttpStatus.OK);
+        return new ResponseEntity<>(memberService.getAvailableCouponCount(memberId), HttpStatus.OK);
     }
 
     /**
@@ -75,8 +71,10 @@ public class CouponController extends AbstractCrudController<Coupon> {
     @ApiOperation(value="获取当前用户优惠券")
     @RequestMapping(value = "/member/{memberId}", method = RequestMethod.GET)
     public ResponseEntity<List<MemberCoupon>> getMemberCoupons(@PathVariable String memberId) throws Exception {
-        Member member = memberService.findOne(memberId);
-        return new ResponseEntity<>(member.getCoupons(), HttpStatus.OK);
+        Map<String, String[]> params = new HashMap<>();
+        params.put("memberId", new String[]{memberId});
+        List<MemberCoupon> memberCoupons = memberCouponService.findAll(params);
+        return new ResponseEntity<>(memberCoupons, HttpStatus.OK);
     }
 
     /**
@@ -92,11 +90,11 @@ public class CouponController extends AbstractCrudController<Coupon> {
     @Autowired
     public CouponController(
             CouponService couponService,
-            OauthClientDetailsService oauthClientDetailsService,
+            MemberCouponService memberCouponService,
             MemberService memberService
     ) {
         this.couponService = couponService;
-        this.oauthClientDetailsService = oauthClientDetailsService;
+        this.memberCouponService = memberCouponService;
         this.memberService = memberService;
     }
 }

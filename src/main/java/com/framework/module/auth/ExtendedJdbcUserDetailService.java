@@ -1,6 +1,7 @@
 package com.framework.module.auth;
 
 import com.framework.module.member.domain.MemberRepository;
+import com.framework.module.member.service.MemberService;
 import com.kratos.entity.BaseUser;
 import com.kratos.module.auth.JdbcUserDetailService;
 import com.kratos.module.auth.service.UserService;
@@ -16,19 +17,19 @@ import java.util.Collections;
 
 @Component
 public class ExtendedJdbcUserDetailService extends JdbcUserDetailService implements UserDetailsService {
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     @Autowired
-    public ExtendedJdbcUserDetailService(UserService adminService, MemberRepository memberRepository) {
+    public ExtendedJdbcUserDetailService(UserService adminService, MemberService memberService) {
         super(adminService);
-        this.memberRepository = memberRepository;
+        this.memberService = memberService;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserDetails userDetails = super.loadUserByUsername(username);
         if(userDetails == null) {
-            BaseUser user = memberRepository.findOneByLoginName(username);
+            BaseUser user = memberService.findOneByLoginName(username);
             return new User(username, user.getPassword(), Collections.singletonList(new SimpleGrantedAuthority(user.getUserType())));
         } else {
             return userDetails;
