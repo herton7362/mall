@@ -19,6 +19,7 @@
                             <p>
                                 <i class="iconfont icon-form"></i>
                                 订单状态：{{orderForm.status | status}}
+                                <span v-if="orderForm.status == 'PAYED'">等待发货</span>
                             </p>
                         </div>
                     </div>
@@ -129,6 +130,17 @@
                         </div>
                         <div class="weui-cell__bd" style="text-align: right">
                             <p> {{orderForm.createdDate | date}}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="weui-cells" v-if="orderForm.status == 'PAYED'">
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd">
+                            <p>运单号</p>
+                        </div>
+                        <div class="weui-cell__bd" style="text-align: right">
+                            <p>等待发货</p>
                         </div>
                     </div>
                 </div>

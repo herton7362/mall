@@ -204,7 +204,7 @@
     background-color: #fff;
 }
 
-.wechat-tabs.nav-tabs {
+.product-category .wechat-tabs.nav-tabs {
     background-color: #fff;
     border-top: 1px solid #e5e5e5;
     border-bottom: 1px solid #e5e5e5;
@@ -215,18 +215,20 @@
     height: 100%;
 }
 
-.wechat-tabs.nav-tabs>li {
+.product-category .wechat-tabs.nav-tabs>li {
     flex: 1;
     border-bottom: 1px solid #cccccc;
 }
 
-.wechat-tabs.nav-tabs>li>a {
+.product-category .wechat-tabs.nav-tabs>li>a {
     border: none;
     text-align: center;
     color: #333;
 }
 
-.wechat-tabs.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+.product-category .wechat-tabs.nav-tabs>li.active>a,
+.product-category .nav-tabs>li.active>a:focus,
+.product-category .nav-tabs>li.active>a:hover {
     background-color: #d0b769;
     color: #ffffff;
     border: 1px solid #d0b769;
@@ -234,7 +236,7 @@
     border-radius: 0;
 }
 
-.wechat-tab-content {
+.product-category .wechat-tab-content {
     padding: 5px;
     flex: 1;
     border-left: 1px solid #e5e5e5;
@@ -280,6 +282,36 @@
     margin: 8% 0 0 0;
     overflow: hidden;
     height: 24px;
+}
+
+
+.orderform-list .wechat-tabs.nav-tabs {
+    background-color: #fff;
+    border-top: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
+    display: flex;
+}
+
+.orderform-list .wechat-tabs.nav-tabs>li {
+    flex: 1;
+}
+
+.orderform-list .wechat-tabs.nav-tabs>li>a {
+    border: none;
+    text-align: center;
+    color: #333;
+}
+
+.orderform-list .wechat-tabs.nav-tabs>li.active>a,
+.orderform-list .nav-tabs>li.active>a:focus,
+.orderform-list .nav-tabs>li.active>a:hover {
+    color: #ed5050;
+    border: none;
+    border-bottom: 1px solid #ed5050;
+}
+
+.orderform-list .wechat-tab-content {
+    padding: 5px;
 }
 
 /********************************************

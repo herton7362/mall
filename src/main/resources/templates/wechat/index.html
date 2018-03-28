@@ -56,7 +56,8 @@
                 </div>
                 <div class="index_btn_xl" @click="categoryMore = !categoryMore">
                     <div class="index_btn_xl_b">
-                        <img th:src="@{/static/image/wechat/index_btn_xl.png}">
+                        <img v-if="categoryMore" th:src="@{/static/image/wechat/index_btn_xl.png}">
+                        <img v-if="!categoryMore" th:src="@{/static/image/wechat/WeChat Image_20180322172122.png}">
                     </div>
                 </div>
             </div>
@@ -79,7 +80,7 @@
                 <div style="overflow: hidden" class="index_latestgoods_s_t  ">
                     <img width="18" style="float: left;" th:src="@{/static/image/wechat/index_sp_icon.png}">
                     <span style="float: left;" class="index_latestgoods_s_t_sp">最新商品</span>
-                    <a href="#" @click="more">
+                    <a href="#" @click="more()">
                         <span style="float: right;" class="index_latestgoods_s_t_more">更多&gt;&gt;</span>
                     </a>
                 </div>
@@ -103,7 +104,7 @@
                 <div style="overflow: hidden" class="index_latestgoods_s_t ">
                     <img width="18" style="float: left;" th:src="@{/static/image/wechat/index_bm_icon.png}">
                     <span style="float: left;" class="index_latestgoods_s_t_sp">必买好货</span>
-                    <a href="#" @click="more">
+                    <a href="#" @click="more()">
                         <span style="float: right;" class="index_latestgoods_s_t_more">更多&gt;&gt;</span>
                     </a>
                 </div>
@@ -128,7 +129,7 @@
                     <div class="panel-heading">
                         <h3 class="panel-title">
                             <img width="18" th:src="@{/static/image/wechat/index_shoppingmall_shopping_cart_icon_s.png}" style="margin-top: -4px;"> 鼎骏商城
-                            <a href="#" class="more pull-right" @click="more">
+                            <a href="#" class="more pull-right" @click="more()">
                                 更多
                                 <i class="fa fa-angle-right"></i>
                             </a>
@@ -149,7 +150,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-block btn-sm btn-more" @click="more">查看更多</button>
+                        <button type="button" class="btn btn-block btn-sm btn-more" @click="more()">查看更多</button>
                     </div>
                 </div>
             </section>
