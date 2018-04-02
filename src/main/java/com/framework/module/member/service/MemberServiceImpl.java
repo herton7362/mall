@@ -22,10 +22,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Transactional
@@ -136,7 +133,7 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
         Integer count = 0;
         if(coupons != null) {
             for (MemberCoupon memberCoupon : coupons) {
-                if(!memberCoupon.getUsed()) {
+                if(!memberCoupon.getUsed() && (memberCoupon.getCoupon().getEndDate() > new Date().getTime())) {
                     count ++;
                 }
             }

@@ -200,6 +200,8 @@
                  tab
 *********************************************/
 .product-category .content {
+    display: -webkit-box;
+    display: -moz-box;
     display: flex;
     background-color: #fff;
 }
@@ -208,6 +210,8 @@
     background-color: #fff;
     border-top: 1px solid #e5e5e5;
     border-bottom: 1px solid #e5e5e5;
+    display: -webkit-box;
+    display: -moz-box;
     display: flex;
     display: -webkit-flex;
     flex-direction: column;
@@ -216,7 +220,11 @@
 }
 
 .product-category .wechat-tabs.nav-tabs>li {
-    flex: 1;
+    -webkit-flex: 1; /* Chrome */
+    -ms-flex: 1; /* IE 10 */
+    flex: 1; /* NEW, Spec - Opera 12.1, Firefox 20+ */
+    -webkit-box-flex: 1; /* OLD - iOS 6-, Safari 3.1-6 */
+    -moz-box-flex: 1; /* OLD - Firefox 19- */
     border-bottom: 1px solid #cccccc;
 }
 
@@ -238,7 +246,11 @@
 
 .product-category .wechat-tab-content {
     padding: 5px;
-    flex: 1;
+    -webkit-flex: 1; /* Chrome */
+    -ms-flex: 1; /* IE 10 */
+    flex: 1; /* NEW, Spec - Opera 12.1, Firefox 20+ */
+    -webkit-box-flex: 1; /* OLD - iOS 6-, Safari 3.1-6 */
+    -moz-box-flex: 1; /* OLD - Firefox 19- */
     border-left: 1px solid #e5e5e5;
 }
 
@@ -289,11 +301,17 @@
     background-color: #fff;
     border-top: 1px solid #e5e5e5;
     border-bottom: 1px solid #e5e5e5;
+    display: -webkit-box;
+    display: -moz-box;
     display: flex;
 }
 
 .orderform-list .wechat-tabs.nav-tabs>li {
-    flex: 1;
+    -webkit-flex: 1; /* Chrome */
+    -ms-flex: 1; /* IE 10 */
+    flex: 1; /* NEW, Spec - Opera 12.1, Firefox 20+ */
+    -webkit-box-flex: 1; /* OLD - iOS 6-, Safari 3.1-6 */
+    -moz-box-flex: 1; /* OLD - Firefox 19- */
 }
 
 .orderform-list .wechat-tabs.nav-tabs>li>a {
@@ -515,6 +533,8 @@
 .home .index_btn_n{
     width: 90%;
     margin: 0 auto;
+    display: -webkit-box;
+    display: -moz-box;
     display: flex;
     display: -webkit-flex;
     justify-content: space-between;
@@ -585,6 +605,8 @@
     color: #999;
 }
 .home .index_latestgoods_content{
+    display: -webkit-box;
+    display: -moz-box;
     display: flex;
     display: -webkit-flex;
     justify-content: space-between;
@@ -594,7 +616,11 @@
     flex-direction: column;
     margin: 0 1%;
     padding-bottom: 3%;
-    flex: 1;
+    -webkit-flex: 1; /* Chrome */
+    -ms-flex: 1; /* IE 10 */
+    flex: 1; /* NEW, Spec - Opera 12.1, Firefox 20+ */
+    -webkit-box-flex: 1; /* OLD - iOS 6-, Safari 3.1-6 */
+    -moz-box-flex: 1; /* OLD - Firefox 19- */
     overflow: hidden;
 }
 .home .index_latestgoods_label img{
@@ -866,6 +892,7 @@
 .cart-list .weui-cell_swiped {
     display: -webkit-box;
     display: -webkit-flex;
+    display: -moz-box;
     display: flex;
 }
 
@@ -1035,6 +1062,8 @@
 }
 
 .coupon-list .coupon-card .coupon-body {
+    display: -webkit-box;
+    display: -moz-box;
     display: flex;
     border-bottom: 1px #999 dashed;
     padding: 10px 20px;
@@ -1042,7 +1071,11 @@
 }
 
 .coupon-list .coupon-card .coupon-body .description {
-    flex: 1;
+    -webkit-flex: 1; /* Chrome */
+    -ms-flex: 1; /* IE 10 */
+    flex: 1; /* NEW, Spec - Opera 12.1, Firefox 20+ */
+    -webkit-box-flex: 1; /* OLD - iOS 6-, Safari 3.1-6 */
+    -moz-box-flex: 1; /* OLD - Firefox 19- */
     font-size: 12px;
     padding: 0 15px;
 }

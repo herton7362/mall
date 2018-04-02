@@ -39,6 +39,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 form: {
                     deliverToAddress: {},
                     memberId: null,
+                    member: {},
                     items: []
                 }
             }
@@ -219,6 +220,13 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     url: utils.patchUrl('/api/orderForm/' + row.id),
                     cache: false,
                     success: function (data) {
+                        data.member = {};
+                        $.ajax({
+                            url: utils.patchUrl('/api/member/' + data.memberId),
+                            success: function (member) {
+                                data.member = member;
+                            }
+                        });
                         self.formDetail.form = data;
                         self.formDetail.modal.$instance.open();
                     }
