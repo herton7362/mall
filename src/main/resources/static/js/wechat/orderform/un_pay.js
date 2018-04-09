@@ -210,18 +210,17 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 }
                 this.account.cash = this.getFinalTotal();
                 var ua = navigator.userAgent;
-
                 if(self.account.cash === 0) {
                     pay();
                 } else {
                     if(this.payType === 'wechat') {
-                        if(ua.indexOf('Android_WebView') > -1) {
+                        if(ua.indexOf('Android_WebView') > -1 || ua.indexOf('iPhone_WebView')) {
                             wechatAppPay();
                         } else {
                             wechatWebPay();
                         }
                     } else {
-                        if(ua.indexOf('Android_WebView') > -1) {
+                        if(ua.indexOf('Android_WebView') > -1 || ua.indexOf('iPhone_WebView')) {
                             aliAppPay();
                         } else {
                             aliWebPay()
