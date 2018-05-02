@@ -22,6 +22,7 @@ public class OAuth2Properties {
     private String getMemberCouponsUrl; // 获取当前用户优惠券
     private String claimCouponUrl; // 领取优惠券
     private String useCouponUrl; // 使用优惠券
+    private String memberLevelUrl; // 会员等级
 
     public String getAccessTokenUri() {
         return accessTokenUri;
@@ -149,5 +150,13 @@ public class OAuth2Properties {
 
     public void setUseCouponUrl(String useCouponUrl) {
         this.useCouponUrl = useCouponUrl;
+    }
+
+    public String getMemberLevelUrl() {
+        return memberLevelUrl;
+    }
+
+    public void setMemberLevelUrl(String memberLevelUrl) {
+        this.memberLevelUrl = memberLevelUrl;
     }
 }

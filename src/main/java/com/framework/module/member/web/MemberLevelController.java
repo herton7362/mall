@@ -2,6 +2,7 @@ package com.framework.module.member.web;
 
 import com.framework.module.member.domain.MemberLevel;
 import com.framework.module.member.service.MemberLevelService;
+import com.framework.module.member.service.MemberService;
 import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
 import io.swagger.annotations.Api;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/memberLevel")
 public class MemberLevelController extends AbstractCrudController<MemberLevel> {
     private final MemberLevelService memberLevelService;
+    private final MemberService memberService;
     @Override
     protected CrudService<MemberLevel> getService() {
         return memberLevelService;
@@ -30,11 +32,15 @@ public class MemberLevelController extends AbstractCrudController<MemberLevel> {
     @ApiOperation(value="查询会员的等级")
     @RequestMapping(value = "/member/{memberId}", method = RequestMethod.GET)
     public ResponseEntity<MemberLevel> getMemberMemberLevel(@PathVariable String memberId) throws Exception {
-        return new ResponseEntity<>(memberLevelService.getMemberMemberLevel(memberId), HttpStatus.OK);
+        return new ResponseEntity<>(memberService.getMemberLevel(memberId), HttpStatus.OK);
     }
 
     @Autowired
-    public MemberLevelController(MemberLevelService memberLevelService) {
+    public MemberLevelController(
+            MemberLevelService memberLevelService,
+            MemberService memberService
+    ) {
         this.memberLevelService = memberLevelService;
+        this.memberService = memberService;
     }
 }

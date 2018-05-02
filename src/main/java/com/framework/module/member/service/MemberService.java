@@ -1,5 +1,6 @@
 package com.framework.module.member.service;
 
+import com.framework.module.member.domain.MemberLevel;
 import com.kratos.common.CrudService;
 import com.framework.module.member.domain.Member;
 
@@ -50,4 +51,11 @@ public interface MemberService extends CrudService<Member> {
      * @return 数量
      */
     Integer getAvailableCouponCount(String memberId) throws Exception;
+
+    /**
+     * 获取会员等级
+     * @param memberId 会员id
+     * @return 会员等级
+     */
+    MemberLevel getMemberLevel(String memberId) throws Exception;
 }

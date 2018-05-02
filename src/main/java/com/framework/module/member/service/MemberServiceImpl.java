@@ -1,6 +1,7 @@
 package com.framework.module.member.service;
 
 import com.framework.module.member.domain.MemberCoupon;
+import com.framework.module.member.domain.MemberLevel;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
 import com.kratos.exceptions.BusinessException;
@@ -139,6 +140,11 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
             }
         }
         return count;
+    }
+
+    @Override
+    public MemberLevel getMemberLevel(String memberId) throws Exception {
+        return null;
     }
 
     private Integer increaseNumber(Integer sourcePoint, Integer point) {
