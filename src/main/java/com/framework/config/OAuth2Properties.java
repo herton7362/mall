@@ -23,6 +23,7 @@ public class OAuth2Properties {
     private String claimCouponUrl; // 领取优惠券
     private String useCouponUrl; // 使用优惠券
     private String memberLevelUrl; // 会员等级
+    private String memberCardDomainUri; // 会员
 
     public String getAccessTokenUri() {
         return accessTokenUri;
@@ -158,5 +159,13 @@ public class OAuth2Properties {
 
     public void setMemberLevelUrl(String memberLevelUrl) {
         this.memberLevelUrl = memberLevelUrl;
+    }
+
+    public String getMemberCardDomainUri() {
+        return memberCardDomainUri;
+    }
+
+    public void setMemberCardDomainUri(String memberCardDomainUri) {
+        this.memberCardDomainUri = memberCardDomainUri;
     }
 }

@@ -30,6 +30,22 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             coverPath: function (val) {
                 return utils.patchUrl('/attachment/download/' + val);
             },
+            productPrice: function (val) {
+                if(val.skus && val.skus.length > 0) {
+                    var min = 999999999999;
+                    var max = 0;
+                    $.each(val.skus, function () {
+                        if(min > this.price) {
+                            min = this.price;
+                        }
+                        if(max < this.price) {
+                            max = this.price;
+                        }
+                    });
+                    return utils.formatMoney(min) + '-' +  utils.formatMoney(max);;
+                }
+                return utils.formatMoney(val.price);
+            },
             price: function (val) {
                 return utils.formatMoney(val);
             },
@@ -54,7 +70,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                     data: $.extend({
                         sort: 'updatedDate',
                         order: 'desc',
-                        'member.id': this.member.id
+                        memberId: this.member.id
                     }, status? {status: status}: {}),
                     success: function(data) {
                         self.orderForms = data.content;
@@ -65,9 +81,24 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             getTotal: function (orderItems) {
                 var total = 0;
                 $.each(orderItems, function () {
-                    total += this.product.price * this.count;
+                    if(this.sku) {
+                        total += this.sku.price * this.count;
+                    } else {
+                        total += this.product.price * this.count;
+                    }
                 });
                 return total;
+            },
+            getDiscountedTotal: function (orderItems, orderForm) {
+                var total = 0;
+                $.each(orderItems, function () {
+                    total += this.product.price * this.count;
+                });
+                var discount = 1;
+                if(orderForm.memberCard) {
+                    discount = orderForm.memberCard.discount;
+                }
+                return total * discount;
             },
             getAmount: function (orderItems) {
                 var amount = 0;

@@ -55,7 +55,7 @@
                         <div class="weui-cell__bd">
                             <div class="weui-media-box weui-media-box_appmsg">
                                 <div class="weui-media-box__hd">
-                                    <img class="weui-media-box__thumb" :src="item.product.coverImage.id | coverPath" alt="item.product.name">
+                                    <img class="weui-media-box__thumb" :src="item.product.coverImage.id | coverPath" :alt="item.product.name">
                                 </div>
                                 <div class="weui-media-box__bd">
                                     <div class="row">
@@ -63,11 +63,24 @@
                                             <p class="weui-media-box__title">{{item.product.name}}</p>
                                         </div>
                                         <div class="col-xs-4">
-                                            <p class="weui-media-box__title">￥ {{item.product.price | price}}</p>
+                                            <p class="weui-media-box__title price">￥ {{item.sku || item.product | productPrice}}</p>
                                         </div>
                                     </div>
 
-                                    <p class="weui-media-box__title" style="text-align: right">x {{item.count}}</p>
+                                    <div class="row">
+                                        <div class="col-xs-8">
+                                            <div class="space">
+                                                <template v-for="standardItem in (item.sku||{productStandardItems:[]}).productStandardItems">
+                                                    {{standardItem.name}}
+                                                </template>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <p class="weui-media-box__title" style="text-align: right">
+                                                x {{item.count}}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -95,6 +108,18 @@
                             <p class="main-text-color">￥{{getTotal() | price}}</p>
                         </div>
                     </div>
+                </div>
+                <div class="weui-cells__title" v-if="orderForm.memberCardId">会员卡</div>
+                <div class="weui-cells weui-cells_radio" v-if="orderForm.memberCardId">
+                    <label class="weui-cell weui-check__label" v-for="memberCard in memberCards" v-if="orderForm.memberCardId == memberCard.id">
+                        <div class="weui-cell__bd">
+                            <p>{{memberCard.name}}({{memberCard.cardNumber}}) {{memberCard.discount}} 折</p>
+                        </div>
+                        <div class="weui-cell__ft">
+                            <input type="radio" class="weui-check" name="memberCard" checked>
+                            <span class="weui-icon-checked"></span>
+                        </div>
+                    </label>
                 </div>
                 <div class="weui-cells">
                     <div class="weui-cell">
@@ -130,17 +155,6 @@
                         </div>
                         <div class="weui-cell__bd" style="text-align: right">
                             <p> {{orderForm.createdDate | date}}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="weui-cells" v-if="orderForm.status == 'PAYED'">
-                    <div class="weui-cell">
-                        <div class="weui-cell__hd">
-                            <p>运单号</p>
-                        </div>
-                        <div class="weui-cell__bd" style="text-align: right">
-                            <p>等待发货</p>
                         </div>
                     </div>
                 </div>

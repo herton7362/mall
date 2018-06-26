@@ -88,7 +88,7 @@
                     <div class="index_latestgoods_label" v-if="product.newest" v-for="product in newest" @click="productDetail(product)">
                         <img :src="product.coverImage.id | coverPath">
                         <span class="index_latestgoods_name">{{product.name}}</span>
-                        <span class="index_latestgoods_price">￥{{product.price | price}}</span>
+                        <span class="index_latestgoods_price">￥{{product | price}}</span>
                     </div>
                 </div>
             </div>
@@ -113,7 +113,7 @@
                         <div class="index_needbuy_img_b">
                             <img :src="product.coverImage.id | coverPath">
                             <div class="index_needbuy_price_b">
-                                <span class="index_needbuy_price">￥{{product.price | price}}</span>
+                                <span class="index_needbuy_price">￥{{product | price}}</span>
                             </div>
                         </div>
                         <span class="index_latestgoods_name">{{product.name}}</span>
@@ -142,7 +142,7 @@
                                 <div class="caption">
                                     <p class="product-title">{{product.name}}</p>
                                     <p>
-                                        <em class="product-price">¥ {{product.price | price}}</em>
+                                        <em class="product-price">¥ {{product | price}}</em>
                                         <a href="javascript:void(0)" class="pull-right add-cart-button" @click.stop="addCart(product)">
                                             <i class="iconfont icon-cart"></i>
                                         </a>

@@ -2,6 +2,7 @@ package com.framework.module.orderform.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.framework.module.product.domain.Product;
+import com.framework.module.product.domain.Sku;
 import com.kratos.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -18,8 +19,15 @@ public class OrderItem extends BaseEntity{
     @ApiModelProperty(value = "购买的商品")
     @ManyToOne(fetch = FetchType.EAGER)
     private Product product;
+    @ApiModelProperty(value = "购买的商品sku")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Sku sku;
     @ApiModelProperty(value = "购买的数量")
-    private Integer count;
+    @Column(length = 11, precision = 2)
+    private Double count;
+    @ApiModelProperty(value = "产品单价")
+    @Column(length = 11, precision = 2)
+    private Double price;
 
     public OrderForm getOrderForm() {
         return orderForm;
@@ -37,11 +45,27 @@ public class OrderItem extends BaseEntity{
         this.product = product;
     }
 
-    public Integer getCount() {
+    public Sku getSku() {
+        return sku;
+    }
+
+    public void setSku(Sku sku) {
+        this.sku = sku;
+    }
+
+    public Double getCount() {
         return count;
     }
 
-    public void setCount(Integer count) {
+    public void setCount(Double count) {
         this.count = count;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 }

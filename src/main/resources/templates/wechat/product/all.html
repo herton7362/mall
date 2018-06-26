@@ -28,7 +28,7 @@
                                 <div class="allgoods_img_b">
                                     <img :alt="product.name" :src="product.coverImage.id | coverPath">
                                     <div class="commodity_price">
-                                        <span>￥ {{product.price | price}}</span>
+                                        <span>￥ {{product | price}}</span>
                                     </div>
                                 </div>
                                 <span class="commodity_name">{{product.name}}</span>

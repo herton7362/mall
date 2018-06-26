@@ -12,11 +12,29 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 balance: 0,
                 point: 0
             },
-            payType: 'wechat'
+            payType: 'wechat',
+            member: {},
+            memberCards: []
         },
         filters: {
             coverPath: function (val) {
                 return utils.patchUrl('/attachment/download/' + val);
+            },
+            productPrice: function (val) {
+                if(val.skus && val.skus.length > 0) {
+                    var min = 999999999999;
+                    var max = 0;
+                    $.each(val.skus, function () {
+                        if(min > this.price) {
+                            min = this.price;
+                        }
+                        if(max < this.price) {
+                            max = this.price;
+                        }
+                    });
+                    return utils.formatMoney(min) + '-' +  utils.formatMoney(max);;
+                }
+                return utils.formatMoney(val.price);
             },
             price: function (val) {
                 return utils.formatMoney(val);
@@ -47,9 +65,24 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             getTotal: function () {
                 var total = 0;
                 $.each(this.orderForm.items, function () {
-                    total += this.product.price * this.count;
+                    if(this.sku) {
+                        total += this.sku.price * this.count;
+                    } else {
+                        total += this.product.price * this.count;
+                    }
                 });
-                return total;
+                var memberCard = null;
+                var self = this;
+                var discount = 1;
+                $.each(this.memberCards, function () {
+                    if(this.id === self.orderForm.memberCardId)  {
+                        memberCard = this;
+                    }
+                });
+                if(memberCard) {
+                    discount = memberCard.discount;
+                }
+                return total * discount;
             },
             getFinalTotal: function () {
                 var total = this.getTotal();
@@ -61,7 +94,10 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 if(this.account.balance) {
                     balance = this.account.balance;
                 }
-                return total - ((this.orderForm.coupon && this.orderForm.coupon.amount)||0) - point - balance;
+                return parseFloat(total).toFixed(2)
+                    - parseFloat((this.orderForm.coupon && this.orderForm.coupon.amount)||0).toFixed(2)
+                    - parseFloat(point).toFixed(2)
+                    - parseFloat(balance).toFixed(2);
             },
             loadOrderForm: function () {
                 var self = this;
@@ -228,10 +264,31 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                     }
                 }
 
+            },
+            loadMemberCards: function () {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/api/memberCard'),
+                    data: {
+                        logicallyDeleted: 0,
+                        'member.id': this.member.id
+                    }
+                }).then(function (memberCards) {
+                    for (var i = 0; i < memberCards.length; i++) {
+                        memberCards[i].name = memberCards[i].memberCardType.name;
+                    }
+                    self.memberCards = memberCards;
+                });
             }
         },
         mounted: function () {
-            this.loadOrderForm();
+            var self = this;
+            utils.getLoginMember(function (member) {
+                self.member = member;
+                self.loadMemberCards();
+                self.loadOrderForm();
+            });
+
         }
     });
 });

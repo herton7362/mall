@@ -61,6 +61,22 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             coverPath: function (val) {
                 return utils.patchUrl('/attachment/download/' + val);
             },
+            productPrice: function (val) {
+                if(val.skus && val.skus.length > 0) {
+                    var min = 999999999999;
+                    var max = 0;
+                    $.each(val.skus, function () {
+                        if(min > this.price) {
+                            min = this.price;
+                        }
+                        if(max < this.price) {
+                            max = this.price;
+                        }
+                    });
+                    return '￥' + utils.formatMoney(min) + '-' +  utils.formatMoney(max);;
+                }
+                return '￥' + utils.formatMoney(val.price);
+            },
             price: function (val) {
                 if(!val) {
                     return '￥0.00';
@@ -150,7 +166,11 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             getReceivable: function (row) {
                 var total = 0;
                 $.each(row.items, function () {
-                    total += this.count * this.product.price;
+                    if(this.sku) {
+                        total += this.sku.price * this.count;
+                    } else {
+                        total += this.product.price * this.count;
+                    }
                 });
                 return total;
             },

@@ -3,25 +3,29 @@ package com.framework.module.orderform.service;
 import com.framework.module.auth.MemberThread;
 import com.framework.module.marketing.service.CouponService;
 import com.framework.module.member.domain.Member;
+import com.framework.module.member.service.MemberCardService;
 import com.framework.module.member.service.MemberService;
 import com.framework.module.orderform.domain.OrderForm;
 import com.framework.module.orderform.domain.OrderFormRepository;
 import com.framework.module.orderform.domain.OrderItem;
 import com.framework.module.orderform.web.ApplyRejectParam;
+import com.framework.module.orderform.web.OrderFormResult;
 import com.framework.module.orderform.web.RejectParam;
 import com.framework.module.orderform.web.SendOutParam;
 import com.framework.module.product.domain.Product;
 import com.framework.module.product.domain.ProductRepository;
 import com.framework.module.product.domain.Sku;
-import com.framework.module.product.service.ProductService;
+import com.framework.module.product.domain.SkuRepository;
 import com.framework.module.record.domain.OperationRecord;
 import com.framework.module.record.service.OperationRecordService;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
+import com.kratos.common.PageResult;
 import com.kratos.exceptions.BusinessException;
-import com.kratos.module.auth.service.OauthClientDetailsService;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +42,8 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     private final OperationRecordService operationRecordService;
     private final ProductRepository productRepository;
     private final CouponService couponService;
+    private final MemberCardService memberCardService;
+    private final SkuRepository skuRepository;
 
     @Override
     protected PageRepository<OrderForm> getRepository() {
@@ -73,17 +79,17 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
      * @param orderForm 订单
      */
     private void consumeModifyMemberAccount(OrderForm orderForm) throws Exception {
-        Member member = memberService.findOne(orderForm.getMemberId());
+        Member oldMember = memberService.findOne(orderForm.getMemberId());
         Integer productPoints = 0;
         for (OrderItem orderItem : orderForm.getItems()) {
             productPoints += orderItem.getProduct().getPoints();
         }
-        member.setSalePoint(subtractNumber(member.getSalePoint(), orderForm.getPoint()));
-        member.setPoint(increaseNumber(member.getPoint(), productPoints));
-        member.setSalePoint(increaseNumber(member.getSalePoint(), productPoints));
-        member.setBalance(subtractMoney(member.getBalance(), orderForm.getBalance()));
-        memberService.save(member);
-        recordConsume(member, orderForm.getCash(), orderForm.getBalance(), orderForm.getPoint(), orderForm.getItems());
+        oldMember.setSalePoint(subtractNumber(oldMember.getSalePoint(), orderForm.getPoint()));
+        oldMember.setPoint(increaseNumber(oldMember.getPoint(), productPoints));
+        oldMember.setSalePoint(increaseNumber(oldMember.getSalePoint(), productPoints));
+        oldMember.setBalance(subtractMoney(oldMember.getBalance(), orderForm.getBalance()));
+        memberService.save(oldMember);
+        recordConsume(oldMember, orderForm.getCash(), orderForm.getBalance(), orderForm.getPoint(), orderForm.getDiscount(), orderForm.getItems());
     }
 
     /**
@@ -91,16 +97,16 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
      * @param orderForm 订单
      */
     private void rejectModifyMemberAccount(OrderForm orderForm) throws Exception {
-        Member member = memberService.findOne(orderForm.getMemberId());
+        Member oldMember = memberService.findOne(orderForm.getMemberId());
         Integer productPoints = 0;
         for (OrderItem orderItem : orderForm.getItems()) {
             productPoints += orderItem.getProduct().getPoints();
         }
-        member.setSalePoint(increaseNumber(member.getSalePoint(), orderForm.getReturnedPoint()));
-        member.setSalePoint(subtractNumber(member.getSalePoint(), productPoints));
-        member.setBalance(increaseMoney(member.getBalance(), orderForm.getReturnedBalance()));
-        memberService.save(member);
-        recordReject(member, orderForm.getReturnedMoney(), orderForm.getReturnedBalance(), orderForm.getReturnedPoint(), orderForm);
+        oldMember.setSalePoint(increaseNumber(oldMember.getSalePoint(), orderForm.getReturnedPoint()));
+        oldMember.setSalePoint(subtractNumber(oldMember.getSalePoint(), productPoints));
+        oldMember.setBalance(increaseMoney(oldMember.getBalance(), orderForm.getReturnedBalance()));
+        memberService.save(oldMember);
+        recordReject(oldMember, orderForm.getReturnedMoney(), orderForm.getReturnedBalance(), orderForm.getReturnedPoint(), orderForm);
     }
 
 
@@ -145,13 +151,23 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         orderForm.setShippingDate(sendOutParam.getShippingDate());
         orderFormRepository.save(orderForm);
         orderForm.getItems().forEach(orderItem -> {
-            Product product = orderItem.getProduct();
-            Long count = 0L;
-            if(product.getStockCount() != null) {
-                count = product.getStockCount();
+            Sku sku = orderItem.getSku();
+            if(sku!= null) {
+                Long count = 0L;
+                if(sku.getStockCount() != null) {
+                    count = sku.getStockCount();
+                }
+                sku.setStockCount(count - 1);
+                skuRepository.save(sku);
+            } else {
+                Product product = orderItem.getProduct();
+                Long count = 0L;
+                if(product.getStockCount() != null) {
+                    count = product.getStockCount();
+                }
+                product.setStockCount(count - 1);
+                productRepository.save(product);
             }
-            product.setStockCount(count - 1);
-            productRepository.save(product);
         });
         return orderForm;
     }
@@ -211,6 +227,17 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         orderFormRepository.save(orderForm);
         // 修改账户余额
         rejectModifyMemberAccount(orderForm);
+        orderForm.getItems().forEach(orderItem -> {
+            Sku sku = orderItem.getSku();
+            if(sku!= null) {
+                sku.setStockCount(sku.getStockCount() + 1);
+                skuRepository.save(sku);
+            } else {
+                Product product = orderItem.getProduct();
+                product.setStockCount(product.getStockCount() + 1);
+                productRepository.save(product);
+            }
+        });
         return orderForm;
     }
 
@@ -264,6 +291,38 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         }
     }
 
+    @Override
+    public PageResult<OrderFormResult> findAllTranslated(PageRequest pageRequest, Map<String, String[]> param) throws Exception {
+        PageResult<OrderForm> page = findAll(pageRequest, param);
+        PageResult<OrderFormResult> pageResult = new PageResult<>();
+        pageResult.setSize(page.getSize());
+        pageResult.setTotalElements(page.getTotalElements());
+        pageResult.setContent(translateResults(page.getContent()));
+        return pageResult;
+    }
+
+    @Override
+    public List<OrderFormResult> findAllTranslated(Map<String, String[]> param) throws Exception {
+        return translateResults(super.findAll(param));
+    }
+
+    private List<OrderFormResult> translateResults(List<OrderForm> orderForms) throws Exception {
+        List<OrderFormResult> orderFormResults = new ArrayList<>();
+        for (OrderForm orderForm : orderForms) {
+            orderFormResults.add(this.translateResult(orderForm));
+        }
+        return orderFormResults;
+    }
+
+    private OrderFormResult translateResult(OrderForm orderForm) throws Exception {
+        OrderFormResult orderFormResult = new OrderFormResult();
+        BeanUtils.copyProperties(orderForm, orderFormResult);
+        if(StringUtils.isNotBlank(orderForm.getMemberCardId())) {
+            orderFormResult.setMemberCard(memberCardService.findOne(orderForm.getMemberCardId()));
+        }
+        return orderFormResult;
+    }
+
     /**
      * 要求外部订单号必须唯一。
      * @return 订单号
@@ -287,29 +346,8 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
      * @throws Exception {@link com.kratos.exceptions.BusinessException}逻辑异常
      */
     private void validAccount(OrderForm orderForm) throws Exception {
-        BigDecimal balance = new BigDecimal(orderForm.getBalance()).setScale(2, RoundingMode.HALF_UP);
-        BigDecimal cash = new BigDecimal(orderForm.getCash()).setScale(2, RoundingMode.HALF_UP);
-        BigDecimal point = new BigDecimal(orderForm.getPoint());
-        BigDecimal customerPayAmount;
-        customerPayAmount = balance.add(cash).add(point.divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
-
-        BigDecimal actualTotalAmount = new BigDecimal(0);
-        Product product;
-        for (OrderItem orderItem : orderForm.getItems()) {
-            product = orderItem.getProduct();
-            actualTotalAmount = actualTotalAmount.add(new BigDecimal(product.getPrice()).multiply(new BigDecimal(orderItem.getCount())));
-        }
-
-        if(orderForm.getCoupon() != null && StringUtils.isNotBlank(orderForm.getCoupon().getId())) {
-            actualTotalAmount = new BigDecimal(couponService.useCoupon(orderForm.getCoupon().getId(), orderForm.getMemberId(), actualTotalAmount.doubleValue()));
-        } else {
+        if(orderForm.getCoupon() == null || StringUtils.isBlank(orderForm.getCoupon().getId())) {
             orderForm.setCoupon(null);
-        }
-
-        actualTotalAmount = actualTotalAmount.setScale(2, RoundingMode.HALF_UP);
-
-        if(customerPayAmount.setScale(2, BigDecimal.ROUND_HALF_UP).compareTo(actualTotalAmount) != 0) {
-            throw new BusinessException("结算金额不正确");
         }
     }
 
@@ -318,14 +356,14 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
      * @param member 会员
      * @param items 消费项
      */
-    private void recordConsume(Member member, Double cash, Double balance, Integer point, List<OrderItem> items) throws Exception {
+    private void recordConsume(Member member, Double cash, Double balance, Integer point, Double discount, List<OrderItem> items) throws Exception {
         OperationRecord rechargeRecord = new OperationRecord();
         rechargeRecord.setMemberId(member.getId());
         rechargeRecord.setBusinessType(OperationRecord.BusinessType.CONSUME.name());
         rechargeRecord.setClientId(MemberThread.getInstance().getClientId());
         rechargeRecord.setIpAddress(MemberThread.getInstance().getIpAddress());
         StringBuilder content = new StringBuilder();
-        content.append(String.format("现金消费 %s 元，余额消费 %s 元，积分消费 %s 分", cash, balance, point));
+        content.append(String.format("现金消费 %s 元，余额消费 %s 元，积分消费 %s 分，折扣 %s", cash, balance, point, discount));
         content.append("  消费项：");
         items.forEach(item -> {
             Product product = item.getProduct();
@@ -392,12 +430,16 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             MemberService memberService,
             OperationRecordService operationRecordService,
             ProductRepository productRepository,
-            CouponService couponService
+            CouponService couponService,
+            MemberCardService memberCardService,
+            SkuRepository skuRepository
     ) {
         this.orderFormRepository = orderFormRepository;
         this.memberService = memberService;
         this.operationRecordService = operationRecordService;
         this.productRepository = productRepository;
         this.couponService = couponService;
+        this.memberCardService = memberCardService;
+        this.skuRepository = skuRepository;
     }
 }

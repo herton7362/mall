@@ -14,8 +14,8 @@ require(['jquery', 'vue', 'messager', 'utils', _appConf.ctx + '/static/js/module
                     {field:'client.name', title:'客户端'},
                     {field:'content', title:'内容'},
                     {field:'updatedDate', title:'时间', formatter: function(val) {
-                        return new Date(val).format("yyyy-MM-dd HH:mm:ss");
-                    }}
+                            return new Date(val).format("yyyy-MM-dd HH:mm:ss");
+                        }}
                 ],
                 data: []
             },
@@ -135,7 +135,7 @@ require(['jquery', 'vue', 'messager', 'utils', _appConf.ctx + '/static/js/module
                                 }
                             });
                             self.datagrid.$instance.loadData([], 0);
-                           return;
+                            return;
                         }
                         // 如果获取到的对象比为空则给对象除了cardNo赋值
                         $.each(data, function(key, value) {

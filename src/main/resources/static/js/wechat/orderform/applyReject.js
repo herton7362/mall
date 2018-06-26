@@ -6,7 +6,9 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 deliverToAddress: {},
                 items: []
             },
-            applyRejectRemark: ''
+            applyRejectRemark: '',
+            member: {},
+            memberCards: []
         },
         filters: {
             coverPath: function (val) {
@@ -23,9 +25,24 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             getTotal: function () {
                 var total = 0;
                 $.each(this.orderForm.items, function () {
-                    total += this.product.price * this.count;
+                    if(this.sku) {
+                        total += this.sku.price * this.count;
+                    } else {
+                        total += this.product.price * this.count;
+                    }
                 });
-                return total;
+                var memberCard = null;
+                var self = this;
+                var discount = 1;
+                $.each(this.memberCards, function () {
+                    if(this.id === self.orderForm.memberCardId)  {
+                        memberCard = this;
+                    }
+                });
+                if(memberCard) {
+                    discount = memberCard.discount;
+                }
+                return total * discount;
             },
             loadOrderForm: function () {
                 var self = this;
@@ -56,10 +73,30 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                         }, 1000);
                     }
                 })
+            },
+            loadMemberCards: function () {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/api/memberCard'),
+                    data: {
+                        logicallyDeleted: 0,
+                        'member.id': this.member.id
+                    }
+                }).then(function (memberCards) {
+                    for (var i = 0; i < memberCards.length; i++) {
+                        memberCards[i].name = memberCards[i].memberCardType.name;
+                    }
+                    self.memberCards = memberCards;
+                });
             }
         },
         mounted: function () {
-            this.loadOrderForm();
+            var self = this;
+            utils.getLoginMember(function (member) {
+                self.member = member;
+                self.loadMemberCards();
+                self.loadOrderForm();
+            });
         }
     });
 });

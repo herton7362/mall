@@ -58,6 +58,14 @@ public class Product extends BaseEntity {
     private Long stockCount;
     @ApiModelProperty(value = "是否最新商品")
     private Boolean newest;
+    @ApiModelProperty(value = "商品规格")
+    @OneToMany(mappedBy = "product")
+    private List<ProductProductStandard> productProductStandards;
+    @ApiModelProperty(value = "sku")
+    @OneToMany(mappedBy = "product")
+    @Where(clause="logically_deleted=0")
+    @org.hibernate.annotations.OrderBy(clause="sort_number asc")
+    private List<Sku> skus;
 
     public ProductCategory getProductCategory() {
         return productCategory;
@@ -169,5 +177,21 @@ public class Product extends BaseEntity {
 
     public void setNewest(Boolean newest) {
         this.newest = newest;
+    }
+
+    public List<ProductProductStandard> getProductProductStandards() {
+        return productProductStandards;
+    }
+
+    public void setProductProductStandards(List<ProductProductStandard> productProductStandards) {
+        this.productProductStandards = productProductStandards;
+    }
+
+    public List<Sku> getSkus() {
+        return skus;
+    }
+
+    public void setSkus(List<Sku> skus) {
+        this.skus = skus;
     }
 }
