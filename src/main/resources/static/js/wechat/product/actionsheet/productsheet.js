@@ -184,7 +184,9 @@ define([
                             matched = this;
                         }
                     });
-                    this.product.coverImage = matched.coverImage;
+                    if(matched && matched.coverImage) {
+                        this.product.coverImage = matched.coverImage;
+                    }
                 },
                 deep: true
             }
