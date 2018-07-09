@@ -166,6 +166,28 @@ define([
                     this.selectedSku = skuMap[itemIds.join(',')];
                 }
             }
+        },
+        watch: {
+            selectedProductProductStandardItems: {
+                handler: function (val) {
+                    var matched;
+                    $.each(this.product.skus, function () {
+                        var match = true;
+                        $.each(this.productStandardItems, function (i, v) {
+                            $.each(val, function () {
+                                if(this.id !== v.id) {
+                                    match = false;
+                                }
+                            })
+                        });
+                        if(match) {
+                            matched = this;
+                        }
+                    });
+                    this.product.coverImage = matched.coverImage;
+                },
+                deep: true
+            }
         }
     });
 });

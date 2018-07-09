@@ -124,6 +124,7 @@
                                             <thead>
                                             <tr>
                                                 <!-- <th width="30" style="text-align: center">默认</th>-->
+                                                <th width="50" style="text-align: center">封面</th>
                                                 <th :colspan="props.form.productProductStandards.length" style="text-align: center">规格</th>
                                                 <th width="50" style="text-align: center">库存</th>
                                                 <th width="50" style="text-align: center">价格</th>
@@ -134,6 +135,9 @@
                                                 <!--   <td style="text-align: center">
                                                        <radio :value="true" name="defaultSku" v-model="sku.isDefault"></radio>
                                                    </td>-->
+                                                <td style="text-align: center">
+                                                    <uploader v-model="sku.coverImage"></uploader>
+                                                </td>
                                                 <td v-for="productStandardItem in sku.productStandardItems">
                                                     {{productStandardItem.name}}
                                                 </td>

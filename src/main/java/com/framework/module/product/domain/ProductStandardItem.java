@@ -2,6 +2,7 @@ package com.framework.module.product.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.kratos.entity.BaseEntity;
+import com.kratos.module.attachment.domain.Attachment;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 

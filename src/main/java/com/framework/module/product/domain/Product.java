@@ -60,6 +60,7 @@ public class Product extends BaseEntity {
     private Boolean newest;
     @ApiModelProperty(value = "商品规格")
     @OneToMany(mappedBy = "product")
+    @Where(clause="logically_deleted=0")
     private List<ProductProductStandard> productProductStandards;
     @ApiModelProperty(value = "sku")
     @OneToMany(mappedBy = "product")
