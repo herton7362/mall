@@ -48,7 +48,7 @@
                     <a href="#" v-for="item in row" @click="more(item.id)">
                         <div class="index_btn_n ov">
                             <div class="index_btn_bg">
-                                <img :src="item.coverImage.id | coverPath">
+                                <img :src="item.coverImage | coverPath">
                                 <span>{{item.name}}</span>
                             </div>
                         </div>
@@ -66,7 +66,7 @@
                     <a href="#" v-for="item in row" @click="more(item.id)">
                         <div class="index_btn_n ov">
                             <div class="index_btn_bg">
-                                <img :src="item.coverImage.id | coverPath">
+                                <img :src="item.coverImage | coverPath">
                                 <span>{{item.name}}</span>
                             </div>
                         </div>
@@ -86,7 +86,7 @@
                 </div>
                 <div class="index_latestgoods_content">
                     <div class="index_latestgoods_label" v-if="product.newest" v-for="product in newest" @click="productDetail(product)">
-                        <img :src="product.coverImage.id | coverPath">
+                        <img :src="product.coverImage | coverPath">
                         <span class="index_latestgoods_name">{{product.name}}</span>
                         <span class="index_latestgoods_price">￥{{product | price}}</span>
                     </div>
@@ -111,7 +111,7 @@
                 <div class="index_latestgoods_content">
                     <div class="index_latestgoods_label index_needbuy_width" v-if="product.recommend" v-for="product in recommend" @click="productDetail(product)">
                         <div class="index_needbuy_img_b">
-                            <img :src="product.coverImage.id | coverPath">
+                            <img :src="product.coverImage | coverPath">
                             <div class="index_needbuy_price_b">
                                 <span class="index_needbuy_price">￥{{product | price}}</span>
                             </div>
@@ -138,7 +138,7 @@
                     <div class="panel-body">
                         <div class="col-xs-6 col-md-4 padding-none" v-for="product in products">
                             <div class="thumbnail margin-5" @click="productDetail(product)">
-                                <img :alt="product.name" :src="product.coverImage.id | coverPath">
+                                <img :alt="product.name" :src="product.coverImage | coverPath">
                                 <div class="caption">
                                     <p class="product-title">{{product.name}}</p>
                                     <p>

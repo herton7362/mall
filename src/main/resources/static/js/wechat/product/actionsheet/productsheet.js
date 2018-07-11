@@ -44,6 +44,9 @@ define([
                             max = this.price;
                         }
                     });
+                    if(min === max) {
+                        return utils.formatMoney(min);
+                    }
                     return utils.formatMoney(min) + '-' +  utils.formatMoney(max);;
                 }
                 return utils.formatMoney(val.price);

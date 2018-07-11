@@ -16,7 +16,11 @@ require([
         },
         filters: {
             coverPath: function (val) {
-                return utils.patchUrl('/attachment/download/' + val);
+                if(val) {
+                    return utils.patchUrl('/attachment/download/' + val.id);
+                } else {
+                    return null;
+                }
             },
             price: function (val) {
                 if(val.skus && val.skus.length > 0) {
@@ -30,6 +34,9 @@ require([
                             max = this.price;
                         }
                     });
+                    if(min === max) {
+                        return utils.formatMoney(min);
+                    }
                     return utils.formatMoney(min) + '-' +  utils.formatMoney(max);;
                 }
                 return utils.formatMoney(val.price);
