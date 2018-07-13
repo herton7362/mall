@@ -13,21 +13,23 @@
         <div id="carousel-home-generic" class="carousel slide margin-bottom" data-ride="carousel" style="margin-bottom: 1rem">
             <!-- Indicators -->
             <ol class="carousel-indicators">
-                <li data-target="#carousel-home-generic" data-slide-to="0" class="active"></li>
-                <li data-target="#carousel-home-generic" data-slide-to="1"></li>
-                <li data-target="#carousel-home-generic" data-slide-to="2"></li>
+                <li
+                        data-target="#carousel-home-generic"
+                        :data-slide-to="index"
+                        :class="{active: index === 0}"
+                        v-for="(img, index) in carouselImgs"
+                ></li>
             </ol>
 
             <!-- Wrapper for slides -->
             <div class="carousel-inner" role="listbox">
-                <div class="item active">
-                    <img th:src="@{/static/image/wechat/1_03.png}" alt="...">
-                </div>
-                <div class="item">
-                    <img th:src="@{/static/image/wechat/2_03.png}" alt="...">
-                </div>
-                <div class="item">
-                    <img th:src="@{/static/image/wechat/3_03.png}" alt="...">
+                <div
+                        class="item"
+                        :class="{active: index === 0}"
+                        v-for="(img, index) in carouselImgs"
+                        @click="clickAdvertisement(img)"
+                >
+                    <img :src="img.image | coverPath" alt="...">
                 </div>
             </div>
 
@@ -80,7 +82,7 @@
                 <div style="overflow: hidden" class="index_latestgoods_s_t  ">
                     <img width="18" style="float: left;" th:src="@{/static/image/wechat/index_sp_icon.png}">
                     <span style="float: left;" class="index_latestgoods_s_t_sp">最新商品</span>
-                    <a href="#" @click="more()">
+                    <a href="#" @click="more('newest')">
                         <span style="float: right;" class="index_latestgoods_s_t_more">更多&gt;&gt;</span>
                     </a>
                 </div>
@@ -95,8 +97,8 @@
         </div>
 
         <!--广告-->
-        <div class="index_advertisement" @click="more('402881b65ed159a2015ed15a82ea0001')">
-            <img th:src="@{/static/image/wechat/index_advertisement.jpg}">
+        <div v-if="bannerImgs.length > 0" class="index_advertisement" @click="clickAdvertisement(bannerImgs[0])">
+            <img :src="bannerImgs[0].image | coverPath">
         </div>
 
         <div class="index_latestgoods_b">
@@ -104,7 +106,7 @@
                 <div style="overflow: hidden" class="index_latestgoods_s_t ">
                     <img width="18" style="float: left;" th:src="@{/static/image/wechat/index_bm_icon.png}">
                     <span style="float: left;" class="index_latestgoods_s_t_sp">必买好货</span>
-                    <a href="#" @click="more()">
+                    <a href="#" @click="more('recommend')">
                         <span style="float: right;" class="index_latestgoods_s_t_more">更多&gt;&gt;</span>
                     </a>
                 </div>

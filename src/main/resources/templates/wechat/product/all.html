@@ -14,19 +14,19 @@
             <!-- Main content -->
             <section id="content" class="content" v-cloak>
                 <!-- Nav tabs -->
-                <ul class="nav nav-tabs wechat-tabs" role="tablist">
+                <ul v-if="productCategories.length > 0" class="nav nav-tabs wechat-tabs" role="tablist">
                     <li role="presentation" :class="{active: row.id === activeId}" v-for="row in productCategories">
                         <a :href="'#'+row.id" @click="tabClick(row.id)" :aria-controls="row.id" role="tab" data-toggle="tab">{{row.name}}</a>
                     </li>
                 </ul>
 
                 <!-- Tab panes -->
-                <div class="tab-content wechat-tab-content">
+                <div v-if="productCategories.length > 0" class="tab-content wechat-tab-content">
                     <div v-for="row in productCategories" role="tabpanel" class="tab-pane" :class="{active: row.id === activeId}" :id="row.id">
                         <ul style="overflow: hidden" class="commodity_list ov" >
                             <li style="float: left;" class="commodity" @click="productDetail(product)" v-for="product in products[row.id]">
                                 <div class="allgoods_img_b">
-                                    <img :alt="product.name" :src="product.coverImage.id | coverPath">
+                                    <img :alt="product.name" :src="product.coverImage | coverPath">
                                     <div class="commodity_price">
                                         <span>￥ {{product | price}}</span>
                                     </div>
@@ -37,7 +37,7 @@
                     </div>
                 </div>
 
-                <div class="pagination" v-if="totalPage > 1">
+                <div v-if="productCategories.length > 0" class="pagination" v-if="totalPage > 1">
                     <div class="btn-group">
                         <button type="button"
                                 class="btn btn-default btn-sm"
@@ -51,7 +51,19 @@
                                 :disabled="currentPage >= totalPage">下一页</button>
                     </div>
                 </div>
-
+                <div v-if="flatProducts.length > 0">
+                    <ul style="overflow: hidden" class="commodity_list ov" >
+                        <li style="float: left;" class="commodity" @click="productDetail(product)" v-for="product in flatProducts">
+                            <div class="allgoods_img_b">
+                                <img :alt="product.name" :src="product.coverImage | coverPath">
+                                <div class="commodity_price">
+                                    <span>￥ {{product | price}}</span>
+                                </div>
+                            </div>
+                            <span class="commodity_name">{{product.name}}</span>
+                        </li>
+                    </ul>
+                </div>
             </section>
             <!-- /.content -->
         </div>

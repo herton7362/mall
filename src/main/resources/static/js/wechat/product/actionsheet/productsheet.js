@@ -131,7 +131,7 @@ define([
                 return this.validateProductProductStandardItems();
             },
             validateProductProductStandardItems: function (silence) {
-                if(this.selectedProductProductStandardItems) {
+                if(this.selectedProductProductStandardItems && this.product.skus && this.product.skus.length > 0) {
                     var itemsSelected = true;
                     var unSelectStandard = -1;
                     for(var i = 0, l = this.selectedProductProductStandardItems.length; i < l; i++) {

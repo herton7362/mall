@@ -17,7 +17,11 @@
             </div>
         </template>
         <template slot="body">
-            <div class="weui-cell product-category" v-for="(row, index) in product.productProductStandards">
+            <div
+                    v-if="product.skus && product.skus.length > 0"
+                    class="weui-cell product-category"
+                    v-for="(row, index) in product.productProductStandards"
+            >
                 <div class="weui-flex__item" >{{row.productStandard.name}}</div>
                 <ul class="weui-flex__item">
                     <li v-for="item in row.productStandardItems">

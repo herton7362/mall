@@ -95,6 +95,22 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
+                                        <label>是否最新商品：</label>
+                                        <checkbox :value="true"
+                                                  v-model="props.form.newest"></checkbox>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>是否推荐商品：</label>
+                                        <checkbox :value="true"
+                                                  v-model="props.form.recommend"></checkbox>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
                                         <label>备注：</label>
                                         <input type="text" class="form-control" v-model="props.form.remark" placeholder="输入商品备注">
                                     </div>

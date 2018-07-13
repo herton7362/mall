@@ -12,7 +12,9 @@ require([
             productCategories: [],// 四个一组
             categoryMore: false,
             newest: [],
-            recommend: []
+            recommend: [],
+            carouselImgs: [],
+            bannerImgs: []
         },
         filters: {
             coverPath: function (val) {
@@ -72,22 +74,38 @@ require([
                     },
                     success: function(data) {
                         self.products = data.content;
-                        for (var i = 0, l = data.content.length; i < l; i++) {
-                            if(self.newest.length > 3) {
-                                break;
-                            }
-                            if(data.content[i].newest) {
-                                self.newest.push(data.content[i]);
-                            }
-                        }
-                        for (var i = 0, l = data.content.length; i < l; i++) {
-                            if(self.recommend.length > 5) {
-                                break;
-                            }
-                            if(data.content[i].recommend) {
-                                self.recommend.push(data.content[i]);
-                            }
-                        }
+                    }
+                });
+            },
+            loadNewest: function() {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/product'),
+                    data: {
+                        sort: 'sortNumber,updatedDate',
+                        order: 'asc,desc',
+                        currentPage: 1,
+                        pageSize: 3,
+                        newest: true
+                    },
+                    success: function(data) {
+                        self.newest = data.content;
+                    }
+                });
+            },
+            loadRecommend: function() {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/product'),
+                    data: {
+                        sort: 'sortNumber,updatedDate',
+                        order: 'asc,desc',
+                        currentPage: 1,
+                        pageSize: 3,
+                        recommend: true
+                    },
+                    success: function(data) {
+                        self.recommend = data.content;
                     }
                 });
             },
@@ -97,8 +115,45 @@ require([
             more: function (id) {
                 window.location.href = utils.patchUrlPrefixUrl('/wechat/product/all'+ (id? '?categoryId=' + id: ''));
             },
+            clickAdvertisement: function(img) {
+                if(img.productId) {
+                    this.productDetail({id: img.productId});
+                } else if(img.url) {
+                    window.location.href = img.url;
+                }
+            },
             addCart: function (product) {
                 productsheet.open(product);
+            },
+            loadCarouselImg: function () {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/carouselImg'),
+                    data: {
+                        sort: 'sortNumber',
+                        order: 'asc',
+                        currentPage: 1,
+                        pageSize: 5
+                    },
+                    success: function (data) {
+                        self.carouselImgs = data.content;
+                    }
+                });
+            },
+            loadBannerImg: function () {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/bannerImg'),
+                    data: {
+                        sort: 'sortNumber',
+                        order: 'asc',
+                        currentPage: 1,
+                        pageSize: 5
+                    },
+                    success: function (data) {
+                        self.bannerImgs = data.content;
+                    }
+                });
             }
         },
         mounted: function () {
@@ -124,6 +179,10 @@ require([
             }
             this.loadProductCategory();
             this.loadProducts();
+            this.loadNewest();
+            this.loadRecommend();
+            this.loadCarouselImg();
+            this.loadBannerImg();
         }
     });
-})
+});

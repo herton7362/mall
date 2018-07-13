@@ -12,12 +12,14 @@ require([
             products: {},
             activeId: null,
             currentPage: 1,
-            pageSize: 15,
-            totalPage: 0
+            pageSize: 30,
+            totalPage: 0,
+            flatProducts: []
         },
         filters: {
             coverPath: function (val) {
-                return utils.patchUrl('/attachment/download/' + val);
+                if(val)
+                    return utils.patchUrl('/attachment/download/' + val.id);
             },
             price: function (val) {
                 if(val.skus && val.skus.length > 0) {
@@ -74,6 +76,19 @@ require([
                     }
                 });
             },
+            loadProduct: function (data) {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/product'),
+                    data: $.extend({
+                        sort: 'sortNumber,updatedDate',
+                        order: 'asc,desc',
+                    }, data),
+                    success: function(data) {
+                        self.flatProducts = data.content;
+                    }
+                });
+            },
             prev: function () {
                 this.currentPage = this.currentPage - 1;
                 this.tabClick(this.activeId);
@@ -91,9 +106,23 @@ require([
         },
         mounted: function () {
             var id = utils.getQueryString("categoryId");
-            this.loadProductCategory(function(data) {
-                this.tabClick(id? id: data[0].id);
-            });
+            var keyword = utils.getQueryString("keyword");
+            if(id === 'newest') {
+                this.loadProduct({
+                    newest: true
+                });
+            } else if(id === 'recommend') {
+                this.loadProduct({
+                    recommend: true
+                });
+            } else if(keyword) {
+
+            } else {
+                this.loadProductCategory(function(data) {
+                    this.tabClick(id? id: data[0].id);
+                });
+            }
+
         }
     });
 });

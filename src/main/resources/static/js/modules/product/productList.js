@@ -9,7 +9,10 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 },
                 columns: [
                     {field:'coverImage', title:'封面', formatter: function(value) {
+                        if(value)
                             return '<img width="50" src="'+utils.patchUrl('/attachment/download/' + value.id)+'">';
+                        else
+                            return null;
                         }},
                     {field:'productCategory.name', title:'分类'},
                     {field:'name', title:'名称'},
@@ -48,7 +51,9 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 styleImages: [],
                 detailImages: [],
                 productProductStandards: [],
-                sortNumber: null
+                sortNumber: null,
+                newest: false,
+                recommend:false
             },
             selectedProductStandards: {
                 data: []

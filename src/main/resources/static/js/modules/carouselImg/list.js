@@ -29,6 +29,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             tableTransformResponse: function (data) {
                 var self = this;
                 $.each(data, function (k, row) {
+                    row.product = {name: '无'};
                     $.each(self.products, function () {
                         if(row.productId === this.id)
                             row.product = this;
