@@ -3,6 +3,7 @@ package com.framework.module.product.web;
 import com.framework.module.product.domain.Product;
 import com.framework.module.product.domain.Sku;
 import com.framework.module.product.service.ProductService;
+import com.framework.module.product.web.vo.VoHomePage;
 import com.kratos.common.AbstractReadController;
 import com.kratos.common.CrudService;
 import io.swagger.annotations.Api;
@@ -41,4 +42,15 @@ public class GuestProductController extends AbstractReadController<Product> {
     public GuestProductController(ProductService productService) {
         this.productService = productService;
     }
+
+
+    /**
+     * 首页接口
+     */
+    @ApiOperation(value = "首页接口")
+    @RequestMapping(value = "/homePage", method = RequestMethod.GET)
+    public ResponseEntity<VoHomePage> homePage() throws Exception {
+        return new ResponseEntity<>(productService.homePage(), HttpStatus.OK);
+    }
+
 }

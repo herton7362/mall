@@ -2,6 +2,7 @@ package com.framework.module.product.service;
 
 import com.framework.module.product.domain.Product;
 import com.framework.module.product.domain.Sku;
+import com.framework.module.product.web.vo.VoHomePage;
 import com.kratos.common.CrudService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,4 +28,11 @@ public interface ProductService extends CrudService<Product> {
      * @return sku
      */
     Sku getSkuByProductStandardItemIds(String productId, String[] idArr) throws Exception;
+
+    /**
+     * 获得首页信息
+     * @return
+     * @throws Exception
+     */
+    VoHomePage homePage() throws Exception;
 }

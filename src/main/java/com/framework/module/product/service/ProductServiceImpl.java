@@ -1,19 +1,20 @@
 package com.framework.module.product.service;
 
 import com.framework.module.product.domain.*;
+import com.framework.module.product.web.vo.VoHomePage;
+import com.framework.module.product.web.vo.VoProduct;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
+import com.kratos.common.PageResult;
 import com.kratos.common.utils.IteratorUtils;
 import com.kratos.common.utils.SpringUtils;
 import com.kratos.entity.BaseEntity;
-import com.kratos.entity.BaseUser;
 import com.kratos.exceptions.BusinessException;
-import com.mysql.fabric.xmlrpc.base.Param;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -137,6 +138,32 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
     }
 
     @Override
+    public VoHomePage homePage() throws Exception {
+        VoHomePage voHomePage = new VoHomePage();
+        Map<String, String[]> param = new HashMap<>();
+        String[] newest = {"true"};
+        String[] recommendArray = {"true"};
+        List<Sort.Order> orders = new ArrayList<>();
+        orders.add(new Sort.Order(Sort.Direction.ASC, "sortNumber"));
+        orders.add(new Sort.Order(Sort.Direction.DESC, "updatedDate"));
+        PageRequest pageRequest = new PageRequest(0, 10, new Sort(orders));
+        PageResult<Product> allProductList = findAll(pageRequest, param);
+        setResultParam(voHomePage, allProductList, 1);
+
+        pageRequest = new PageRequest(0, 3, new Sort(orders));
+        param.put("newest", newest);
+        PageResult<Product> newestProductList = findAll(pageRequest, param);
+        setResultParam(voHomePage, newestProductList, 2);
+
+        param.remove("newest");
+        param.put("recommend", recommendArray);
+        PageResult<Product> recommendProductList = findAll(pageRequest, param);
+        setResultParam(voHomePage, recommendProductList, 3);
+
+        return voHomePage;
+    }
+
+    @Override
     public Long count() {
         return productRepository.count(
                 (Root<Product> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder)-> {
@@ -156,5 +183,24 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
         this.productRepository = productRepository;
         this.productProductStandardService = productProductStandardService;
         this.skuService = skuService;
+    }
+
+    private void setResultParam(VoHomePage voHomePage, PageResult<Product> allProductList, int productType) {
+        for (Product p : allProductList.getContent()) {
+            VoProduct voProduct = new VoProduct();
+            voProduct.setId(p.getId());
+            voProduct.setName(p.getName());
+            voProduct.setCoverImageUrl("/attachment/download/" + p.getCoverImage().getId());
+            voProduct.setPrice(p.getDisplayPrice());
+            if (productType == 1) {
+                voHomePage.getAllProduct().add(voProduct);
+            }
+            if (productType == 2) {
+                voHomePage.getNewestProduct().add(voProduct);
+            }
+            if (productType == 3) {
+                voHomePage.getRecommendProduct().add(voProduct);
+            }
+        }
     }
 }
