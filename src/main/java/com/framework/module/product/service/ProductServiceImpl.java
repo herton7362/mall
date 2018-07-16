@@ -6,7 +6,10 @@ import com.kratos.common.PageRepository;
 import com.kratos.common.utils.IteratorUtils;
 import com.kratos.common.utils.SpringUtils;
 import com.kratos.entity.BaseEntity;
+import com.kratos.entity.BaseUser;
+import com.kratos.exceptions.BusinessException;
 import com.mysql.fabric.xmlrpc.base.Param;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,10 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.criteria.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Transactional
@@ -103,6 +104,36 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
             }
             return criteriaBuilder.or(predicate.toArray(new Predicate[]{}));
         }, pageRequest);
+    }
+
+    @Override
+    public Sku getSkuByProductStandardItemIds(String productId, String[] idArr) throws Exception{
+        if(idArr == null || StringUtils.isBlank(idArr[0])) {
+            throw new BusinessException("规格条目不能为空");
+        }
+        Product product = findOne(productId);
+        List<String> idList = Arrays.asList(idArr);
+
+        List<ProductProductStandard> productProductStandards = product.getProductProductStandards();
+        if(productProductStandards.size() != idArr.length) {
+            List<ProductStandard> unChecked = new ArrayList<>();
+            for (ProductProductStandard productProductStandard : productProductStandards) {
+                Boolean matched = false;
+                for (ProductStandardItem productStandardItem : productProductStandard.getProductStandardItems()) {
+                    if(idList.contains(productStandardItem.getId())) {
+                        matched = true;
+                    }
+                }
+                if(!matched) {
+                    unChecked.add(productProductStandard.getProductStandard());
+                }
+            }
+
+            throw new BusinessException("请选择" + String.join(",", unChecked.stream()
+                    .map(ProductStandard::getName)
+                    .collect(Collectors.toList())));
+        }
+        return null;
     }
 
     @Override

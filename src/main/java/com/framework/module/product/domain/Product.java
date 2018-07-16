@@ -68,6 +68,10 @@ public class Product extends BaseEntity {
     @org.hibernate.annotations.OrderBy(clause="sort_number asc")
     private List<Sku> skus;
 
+    @Transient
+    @ApiModelProperty(value = "商品显示价格")
+    private String displayPrice;
+
     public ProductCategory getProductCategory() {
         return productCategory;
     }
@@ -194,5 +198,29 @@ public class Product extends BaseEntity {
 
     public void setSkus(List<Sku> skus) {
         this.skus = skus;
+    }
+
+    public String getDisplayPrice() {
+        if(skus != null && !skus.isEmpty()) {
+            Double min = Double.MAX_VALUE;
+            Double max = 0D;
+            for (Sku sku : skus) {
+                if(min > sku.getPrice()) {
+                    min = sku.getPrice();
+                }
+                if(max < sku.getPrice()) {
+                    max = sku.getPrice();
+                }
+            }
+            if(min.equals(max)) {
+                return String.valueOf(max);
+            }
+            return String.format("%s-%s", min, max);
+        }
+        return String.valueOf(price);
+    }
+
+    public void setDisplayPrice(String displayPrice) {
+        this.displayPrice = displayPrice;
     }
 }

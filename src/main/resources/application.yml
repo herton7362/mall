@@ -40,8 +40,7 @@ oauth2:
     domain: http://jifen.dldjshop.com
     accessTokenUri: ${oauth2.framework.domain}/oauth/token
     userAuthorizationUri: ${oauth2.framework.domain}/oauth/authorize
-    findMemberUrl: ${oauth2.framework.domain}/api/member/%s
-    saveMemberUrl: ${oauth2.framework.domain}/api/member
+    memberDomainUri: ${oauth2.framework.domain}/api/member
     findMemberByMobileUrl: ${oauth2.framework.domain}/user/mobile/%s
     findMemberByCardNoUrl: ${oauth2.framework.domain}/api/member/cardNo/%s
     fastIncreasePointUrl: ${oauth2.framework.domain}/api/member/fastIncreasePoint
@@ -55,8 +54,6 @@ oauth2:
     getMemberCouponsUrl: ${oauth2.framework.domain}/api/coupon/member/%s
     claimCouponUrl: ${oauth2.framework.domain}/api/coupon/claim
     useCouponUrl: ${oauth2.framework.domain}/api/coupon/use
-    memberLevelUrl: ${oauth2.framework.domain}/api/member/level/%s
-    oauth2.framework.memberCardDomainUri: ${oauth2.framework.domain}/api/memberCard
 ---
 spring:
   profiles: dev
