@@ -30,6 +30,7 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
     private final ProductRepository productRepository;
     private final ProductProductStandardService productProductStandardService;
     private final SkuService skuService;
+
     @Override
     protected PageRepository<Product> getRepository() {
         return productRepository;
@@ -39,12 +40,12 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
     public Product save(Product product) throws Exception {
         Product newProduct = productRepository.save(product);
         Map<String, String[]> params = new HashMap<>();
-        params.put("product.id", new String[]{ product.getId() });
+        params.put("product.id", new String[]{product.getId()});
         List<ProductProductStandard> oldProductProductStandards = productProductStandardService.findAll(params);
         List<ProductProductStandard> productProductStandards = product.getProductProductStandards();
         List<Sku> oldSkus = skuService.findAll(params);
-        if(productProductStandards != null) {
-            if(StringUtils.isNotBlank(product.getId())) {
+        if (productProductStandards != null) {
+            if (StringUtils.isNotBlank(product.getId())) {
                 for (ProductProductStandard productProductStandard : oldProductProductStandards) {
                     productProductStandardService.delete(productProductStandard.getId());
                 }
@@ -68,11 +69,11 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
         IteratorUtils.forEach(skus, (index, sku) -> {
             sku.setSortNumber(index);
             sku.setProduct(newProduct);
-            if(StringUtils.isNotBlank(sku.getId())) {
+            if (StringUtils.isNotBlank(sku.getId())) {
                 skuForCompare.add(sku);
             }
         });
-        if(StringUtils.isNotBlank(product.getId()) && !BaseEntity.compare(skuForCompare, oldSkus)) {
+        if (StringUtils.isNotBlank(product.getId()) && !BaseEntity.compare(skuForCompare, oldSkus)) {
             for (Sku sku : oldSkus) {
                 sku.setLogicallyDeleted(true);
                 skuService.save(sku);
@@ -88,10 +89,10 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
 
     @Override
     public Page<Product> getStock(PageRequest pageRequest, String maxStockCount) {
-        return productRepository.findAll((Root<Product> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder)->{
+        return productRepository.findAll((Root<Product> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
             List<Predicate> predicate = new ArrayList<>();
             Long count = 100L;
-            if(StringUtils.isNotBlank(maxStockCount)) {
+            if (StringUtils.isNotBlank(maxStockCount)) {
                 count = Long.parseLong(maxStockCount);
             }
             predicate.add(criteriaBuilder.lessThanOrEqualTo(root.get("stockCount"), count));
@@ -100,7 +101,7 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
             query.setParameter("maxStockCount", count);
             List list = query.getResultList();
             criteriaQuery.distinct(true);
-            if(!list.isEmpty()) {
+            if (!list.isEmpty()) {
                 predicate.add(criteriaBuilder.in(root.join("skus", JoinType.LEFT)).value(list));
             }
             return criteriaBuilder.or(predicate.toArray(new Predicate[]{}));
@@ -108,24 +109,24 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
     }
 
     @Override
-    public Sku getSkuByProductStandardItemIds(String productId, String[] idArr) throws Exception{
-        if(idArr == null || StringUtils.isBlank(idArr[0])) {
+    public Sku getSkuByProductStandardItemIds(String productId, String[] idArr) throws Exception {
+        if (idArr == null || StringUtils.isBlank(idArr[0])) {
             throw new BusinessException("规格条目不能为空");
         }
         Product product = findOne(productId);
         List<String> idList = Arrays.asList(idArr);
 
         List<ProductProductStandard> productProductStandards = product.getProductProductStandards();
-        if(productProductStandards.size() != idArr.length) {
+        if (productProductStandards.size() != idArr.length) {
             List<ProductStandard> unChecked = new ArrayList<>();
             for (ProductProductStandard productProductStandard : productProductStandards) {
                 Boolean matched = false;
                 for (ProductStandardItem productStandardItem : productProductStandard.getProductStandardItems()) {
-                    if(idList.contains(productStandardItem.getId())) {
+                    if (idList.contains(productStandardItem.getId())) {
                         matched = true;
                     }
                 }
-                if(!matched) {
+                if (!matched) {
                     unChecked.add(productProductStandard.getProductStandard());
                 }
             }
@@ -142,7 +143,7 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
         ).findFirst();
 
 
-        if(!optionalSku.isPresent())
+        if (!optionalSku.isPresent())
             throw new BusinessException("未找到商品sku");
         else
             return optionalSku.get();
@@ -175,9 +176,29 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
     }
 
     @Override
+    public List<VoProduct> getProductsByCategoryId(Integer page, String categoryId) throws Exception {
+        List<VoProduct> resultArray = new ArrayList<>();
+        Map<String, String[]> param = new HashMap<>();
+        String[] categoryIdArray = {categoryId};
+        param.put("productCategory.id", categoryIdArray);
+        List<Sort.Order> orders = new ArrayList<>();
+        orders.add(new Sort.Order(Sort.Direction.ASC, "sortNumber"));
+        orders.add(new Sort.Order(Sort.Direction.DESC, "updatedDate"));
+        PageRequest pageRequest = new PageRequest(page - 1, 30, new Sort(orders));
+        PageResult<Product> productList = findAll(pageRequest, param);
+        if (productList == null || productList.getContent() == null) {
+            return null;
+        }
+        for (Product product : productList.getContent()) {
+            resultArray.add(getVoProduct(product));
+        }
+        return resultArray;
+    }
+
+    @Override
     public Long count() {
         return productRepository.count(
-                (Root<Product> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder)-> {
+                (Root<Product> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
                     List<Predicate> predicate = new ArrayList<>();
                     predicate.add(criteriaBuilder.equal(root.get("logicallyDeleted"), false));
                     return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
@@ -198,11 +219,7 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
 
     private void setResultParam(VoHomePage voHomePage, PageResult<Product> allProductList, int productType) {
         for (Product p : allProductList.getContent()) {
-            VoProduct voProduct = new VoProduct();
-            voProduct.setId(p.getId());
-            voProduct.setName(p.getName());
-            voProduct.setCoverImageUrl("/attachment/download/" + p.getCoverImage().getId());
-            voProduct.setPrice(p.getDisplayPrice());
+            VoProduct voProduct = getVoProduct(p);
             if (productType == 1) {
                 voHomePage.getAllProduct().add(voProduct);
             }
@@ -213,5 +230,14 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
                 voHomePage.getRecommendProduct().add(voProduct);
             }
         }
+    }
+
+    private VoProduct getVoProduct(Product p) {
+        VoProduct voProduct = new VoProduct();
+        voProduct.setId(p.getId());
+        voProduct.setName(p.getName());
+        voProduct.setCoverImageUrl("/attachment/download/" + p.getCoverImage().getId() + "." + p.getCoverImage().getFormat());
+        voProduct.setPrice(p.getDisplayPrice());
+        return voProduct;
     }
 }
