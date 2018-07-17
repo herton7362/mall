@@ -8,5 +8,9 @@ import java.util.List;
 
 public interface ProductCategoryService extends CrudService<ProductCategory> {
 
+    /**
+     * 获取所有商品分类信息
+     * @return 商品分类信息
+     */
     List<VoProductCategory> getAllProductCategory();
 }

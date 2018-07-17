@@ -2,7 +2,6 @@ package com.framework.module.product.web;
 
 import com.framework.module.product.domain.ProductCategory;
 import com.framework.module.product.service.ProductCategoryService;
-import com.framework.module.product.web.vo.VoHomePage;
 import com.framework.module.product.web.vo.VoProductCategory;
 import com.kratos.common.AbstractReadController;
 import com.kratos.common.CrudService;

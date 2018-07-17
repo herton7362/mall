@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @Component
@@ -33,11 +32,9 @@ public class ProductCategoryServiceImpl extends AbstractCrudService<ProductCateg
     public List<VoProductCategory> getAllProductCategory() {
         List<VoProductCategory> resultList = new ArrayList<>();
         Iterable<ProductCategory> productCategoryList = productCategoryRepository.findAllByLogicallyDeletedFalseOrderBySortNumber();
-        Iterator<ProductCategory> iterator = productCategoryList.iterator();
-        while (iterator.hasNext()) {
+        for (ProductCategory aProductCategoryList : productCategoryList) {
             VoProductCategory voProductCategory = new VoProductCategory();
-            ProductCategory p = iterator.next();
-            BeanUtils.copyProperties(p, voProductCategory);
+            BeanUtils.copyProperties(aProductCategoryList, voProductCategory);
             resultList.add(voProductCategory);
         }
         return resultList;
