@@ -2,6 +2,7 @@ package com.framework.module.product.web;
 
 import com.framework.module.product.domain.Product;
 import com.framework.module.product.domain.Sku;
+import com.framework.module.product.dto.ProductDetailDTO;
 import com.framework.module.product.service.ProductService;
 import com.framework.module.product.web.vo.VoHomePage;
 import com.kratos.common.AbstractReadController;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/product")
 public class GuestProductController extends AbstractReadController<Product> {
     private final ProductService productService;
+    private final ProductDetailDTO productDetailDTO;
     @Override
     protected CrudService<Product> getService() {
         return productService;
@@ -35,14 +37,18 @@ public class GuestProductController extends AbstractReadController<Product> {
                                                               @PathVariable String productStandardItemIds) throws Exception {
         String[] idArr = productStandardItemIds.split(",");
         Sku sku = productService.getSkuByProductStandardItemIds(productId, idArr);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(sku, HttpStatus.OK);
     }
 
-    @Autowired
-    public GuestProductController(ProductService productService) {
-        this.productService = productService;
+    /**
+     * 查询一个
+     */
+    @ApiOperation(value="查询一个")
+    @RequestMapping(value = "/detail/{id}", method = RequestMethod.GET)
+    public ResponseEntity<ProductDetailDTO> getDetail(@PathVariable String id) throws Exception {
+        Product product = getService().findOne(id);
+        return new ResponseEntity<>(productDetailDTO.convertFor(product), HttpStatus.OK);
     }
-
 
     /**
      * 首页接口
@@ -53,4 +59,12 @@ public class GuestProductController extends AbstractReadController<Product> {
         return new ResponseEntity<>(productService.homePage(), HttpStatus.OK);
     }
 
+    @Autowired
+    public GuestProductController(
+            ProductService productService,
+            ProductDetailDTO productDetailDTO
+    ) {
+        this.productService = productService;
+        this.productDetailDTO = productDetailDTO;
+    }
 }

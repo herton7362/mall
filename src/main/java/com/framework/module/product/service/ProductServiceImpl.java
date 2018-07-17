@@ -87,7 +87,7 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
     }
 
     @Override
-    public Page<Product> getStock(PageRequest pageRequest, String maxStockCount) throws Exception {
+    public Page<Product> getStock(PageRequest pageRequest, String maxStockCount) {
         return productRepository.findAll((Root<Product> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder)->{
             List<Predicate> predicate = new ArrayList<>();
             Long count = 100L;
@@ -134,7 +134,18 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
                     .map(ProductStandard::getName)
                     .collect(Collectors.toList())));
         }
-        return null;
+
+        Optional<Sku> optionalSku = product.getSkus().stream().filter(sku ->
+                sku.getProductStandardItems()
+                        .stream()
+                        .allMatch(productStandardItem -> idList.contains(productStandardItem.getId()))
+        ).findFirst();
+
+
+        if(!optionalSku.isPresent())
+            throw new BusinessException("未找到商品sku");
+        else
+            return optionalSku.get();
     }
 
     @Override
