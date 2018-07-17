@@ -175,6 +175,26 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
     }
 
     @Override
+    public List<VoProduct> getProductsByCategoryId(Integer page, String categoryId) throws Exception {
+        List<VoProduct> resultArray = new ArrayList<>();
+        Map<String, String[]> param = new HashMap<>();
+        String[] categoryIdArray = {categoryId};
+        param.put("productCategory.id", categoryIdArray);
+        List<Sort.Order> orders = new ArrayList<>();
+        orders.add(new Sort.Order(Sort.Direction.ASC, "sortNumber"));
+        orders.add(new Sort.Order(Sort.Direction.DESC, "updatedDate"));
+        PageRequest pageRequest = new PageRequest(page - 1, 30, new Sort(orders));
+        PageResult<Product> productList = findAll(pageRequest, param);
+        if (productList == null || productList.getContent() == null) {
+            return null;
+        }
+        for (Product product : productList.getContent()) {
+            resultArray.add(getVoProduct(product));
+        }
+        return resultArray;
+    }
+
+    @Override
     public Long count() {
         return productRepository.count(
                 (Root<Product> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder)-> {
@@ -198,11 +218,7 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
 
     private void setResultParam(VoHomePage voHomePage, PageResult<Product> allProductList, int productType) {
         for (Product p : allProductList.getContent()) {
-            VoProduct voProduct = new VoProduct();
-            voProduct.setId(p.getId());
-            voProduct.setName(p.getName());
-            voProduct.setCoverImageUrl("/attachment/download/" + p.getCoverImage().getId());
-            voProduct.setPrice(p.getDisplayPrice());
+            VoProduct voProduct = getVoProduct(p);
             if (productType == 1) {
                 voHomePage.getAllProduct().add(voProduct);
             }
@@ -213,5 +229,14 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
                 voHomePage.getRecommendProduct().add(voProduct);
             }
         }
+    }
+
+    private VoProduct getVoProduct(Product p) {
+        VoProduct voProduct = new VoProduct();
+        voProduct.setId(p.getId());
+        voProduct.setName(p.getName());
+        voProduct.setCoverImageUrl("/attachment/download/" + p.getCoverImage().getId());
+        voProduct.setPrice(p.getDisplayPrice());
+        return voProduct;
     }
 }
