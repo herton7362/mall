@@ -237,7 +237,12 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             this.loadSidebar(function() {
                 this.sidebarClick(this.sidebar.root);
             });
-            this.crudgrid.$instance.$watch('form.productProductStandards', function () {
+            this.crudgrid.$instance.$watch('form.productProductStandards', function (val) {
+                $.each(self.crudgrid.$instance.getForm().productProductStandards, function (i) {
+                    if(!this.productStandard) {
+                        this.productStandard =  self.selectedProductStandards.data[i];
+                    }
+                });
                 self.makeSkus();
             }, {
                 deep: true
