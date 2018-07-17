@@ -1,6 +1,7 @@
 package com.framework.module.orderform.web;
 
 import com.framework.module.orderform.domain.Cart;
+import com.framework.module.orderform.dto.CartDTO;
 import com.framework.module.orderform.service.CartService;
 import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
@@ -27,6 +28,16 @@ public class CartController extends AbstractCrudController<Cart> {
     @ApiOperation(value="添加商品")
     @RequestMapping(value = "/addProduct", method = RequestMethod.POST)
     public ResponseEntity<?> makeOrder(@RequestBody Cart cart) throws Exception {
+        cartService.addProduct(cart);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * 添加商品
+     */
+    @ApiOperation(value="添加商品")
+    @RequestMapping(value = "/addProduct", method = RequestMethod.POST, headers = { "version=2.0.0" })
+    public ResponseEntity<?> makeOrder(@RequestBody CartDTO cart) throws Exception {
         cartService.addProduct(cart);
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -31,7 +31,7 @@ public class GuestProductController extends AbstractReadController<Product> {
     /**
      * 根据传入的 规格 条目id来匹配具体的sku
      */
-    @ApiOperation(value="查询一个")
+    @ApiOperation(value="根据传入的 规格 条目id来匹配具体的sku")
     @RequestMapping(value = "/{productId}/sku/{productStandardItemIds}", method = RequestMethod.GET)
     public ResponseEntity<Sku> getSkuByProductStandardItemIds(@PathVariable String productId,
                                                               @PathVariable String productStandardItemIds) throws Exception {
@@ -41,9 +41,9 @@ public class GuestProductController extends AbstractReadController<Product> {
     }
 
     /**
-     * 查询一个
+     * 商品详情
      */
-    @ApiOperation(value="查询一个")
+    @ApiOperation(value="商品详情")
     @RequestMapping(value = "/detail/{id}", method = RequestMethod.GET)
     public ResponseEntity<ProductDetailDTO> getDetail(@PathVariable String id) throws Exception {
         Product product = getService().findOne(id);

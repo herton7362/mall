@@ -3,6 +3,7 @@ package com.framework.module.orderform.service;
 import com.framework.module.member.domain.Member;
 import com.framework.module.orderform.domain.Cart;
 import com.framework.module.orderform.domain.CartItem;
+import com.framework.module.orderform.dto.CartDTO;
 import com.kratos.common.CrudService;
 
 public interface CartService extends CrudService<Cart> {
@@ -29,4 +30,9 @@ public interface CartService extends CrudService<Cart> {
      * @param id 购物车项id
      */
     void reduceItemCount(String id);
+    /**
+     * 添加商品
+     * @param cart {@link CartDTO}
+     */
+    void addProduct(CartDTO cart) throws Exception;
 }

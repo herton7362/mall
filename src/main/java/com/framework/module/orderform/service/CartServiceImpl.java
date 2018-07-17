@@ -4,8 +4,10 @@ import com.framework.module.orderform.domain.Cart;
 import com.framework.module.orderform.domain.CartItem;
 import com.framework.module.orderform.domain.CartItemRepository;
 import com.framework.module.orderform.domain.CartRepository;
+import com.framework.module.orderform.dto.CartDTO;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
+import com.kratos.dto.CascadePersistHelper;
 import com.kratos.exceptions.BusinessException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +90,13 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
             cartItemRepository.delete(id);
         }
 
+    }
+
+    @Override
+    public void addProduct(CartDTO cartDTO) throws Exception {
+        Cart cart = super.save(cartDTO.convert());
+        cartDTO.setId(cart.getId());
+        CascadePersistHelper.saveChildren(cartDTO);
     }
 
     @Override
