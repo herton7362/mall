@@ -1,5 +1,7 @@
-package com.framework.module.product.web.vo;
+package com.framework.module.product.dto;
 
+import com.framework.module.product.domain.Product;
+import com.kratos.entity.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
@@ -8,7 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
  * @Auther: 张庆贺
  * @Date: 2018/7/16 11:12
  */
-public class VoProduct {
+public class ProductVo implements BaseVo {
     @ApiModelProperty(value = "商品ID")
     private String id;
     @ApiModelProperty(value = "商品名称")
@@ -48,5 +50,14 @@ public class VoProduct {
 
     public void setPrice(String price) {
         this.price = price;
+    }
+
+    @Override
+    public <T extends BaseEntity> void convertFromPo(T po) {
+        Product p = (Product) po;
+        setId(p.getId());
+        setName(p.getName());
+        setCoverImageUrl("/attachment/download/" + p.getCoverImage().getId() + "." + p.getCoverImage().getFormat());
+        setPrice(p.getDisplayPrice());
     }
 }

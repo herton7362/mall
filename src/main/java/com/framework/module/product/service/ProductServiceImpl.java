@@ -1,8 +1,8 @@
 package com.framework.module.product.service;
 
 import com.framework.module.product.domain.*;
-import com.framework.module.product.web.vo.VoHomePage;
-import com.framework.module.product.web.vo.VoProduct;
+import com.framework.module.product.dto.ProductVo;
+import com.framework.module.product.vo.HomePageVo;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
 import com.kratos.common.PageResult;
@@ -150,8 +150,8 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
     }
 
     @Override
-    public VoHomePage homePage() throws Exception {
-        VoHomePage voHomePage = new VoHomePage();
+    public HomePageVo homePage() throws Exception {
+        HomePageVo voHomePage = new HomePageVo();
         Map<String, String[]> param = new HashMap<>();
         String[] newest = {"true"};
         String[] recommendArray = {"true"};
@@ -160,24 +160,24 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
         orders.add(new Sort.Order(Sort.Direction.DESC, "updatedDate"));
         PageRequest pageRequest = new PageRequest(0, 10, new Sort(orders));
         PageResult<Product> allProductList = findAll(pageRequest, param);
-        setResultParam(voHomePage, allProductList, 1);
+        voHomePage.addAllProduct(allProductList);
 
         pageRequest = new PageRequest(0, 3, new Sort(orders));
         param.put("newest", newest);
         PageResult<Product> newestProductList = findAll(pageRequest, param);
-        setResultParam(voHomePage, newestProductList, 2);
+        voHomePage.addNewestProduct(newestProductList);
 
         param.remove("newest");
         param.put("recommend", recommendArray);
         PageResult<Product> recommendProductList = findAll(pageRequest, param);
-        setResultParam(voHomePage, recommendProductList, 3);
+        voHomePage.addRecommendProduct(recommendProductList);
 
         return voHomePage;
     }
 
     @Override
-    public List<VoProduct> getProductsByCategoryId(Integer page, String categoryId) throws Exception {
-        List<VoProduct> resultArray = new ArrayList<>();
+    public List<ProductVo> getProductsByCategoryId(Integer page, String categoryId) throws Exception {
+        List<ProductVo> resultArray = new ArrayList<>();
         Map<String, String[]> param = new HashMap<>();
         String[] categoryIdArray = {categoryId};
         param.put("productCategory.id", categoryIdArray);
@@ -190,7 +190,9 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
             return null;
         }
         for (Product product : productList.getContent()) {
-            resultArray.add(getVoProduct(product));
+            ProductVo voProduct = new ProductVo();
+            voProduct.convertFromPo(product);
+            resultArray.add(voProduct);
         }
         return resultArray;
     }
@@ -215,29 +217,5 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
         this.productRepository = productRepository;
         this.productProductStandardService = productProductStandardService;
         this.skuService = skuService;
-    }
-
-    private void setResultParam(VoHomePage voHomePage, PageResult<Product> allProductList, int productType) {
-        for (Product p : allProductList.getContent()) {
-            VoProduct voProduct = getVoProduct(p);
-            if (productType == 1) {
-                voHomePage.getAllProduct().add(voProduct);
-            }
-            if (productType == 2) {
-                voHomePage.getNewestProduct().add(voProduct);
-            }
-            if (productType == 3) {
-                voHomePage.getRecommendProduct().add(voProduct);
-            }
-        }
-    }
-
-    private VoProduct getVoProduct(Product p) {
-        VoProduct voProduct = new VoProduct();
-        voProduct.setId(p.getId());
-        voProduct.setName(p.getName());
-        voProduct.setCoverImageUrl("/attachment/download/" + p.getCoverImage().getId() + "." + p.getCoverImage().getFormat());
-        voProduct.setPrice(p.getDisplayPrice());
-        return voProduct;
     }
 }

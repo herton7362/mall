@@ -2,12 +2,11 @@ package com.framework.module.product.service;
 
 import com.framework.module.product.domain.Product;
 import com.framework.module.product.domain.Sku;
-import com.framework.module.product.web.vo.VoHomePage;
-import com.framework.module.product.web.vo.VoProduct;
+import com.framework.module.product.dto.ProductVo;
+import com.framework.module.product.vo.HomePageVo;
 import com.kratos.common.CrudService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -42,7 +41,7 @@ public interface ProductService extends CrudService<Product> {
      * @return 首页产品信息
      * @throws Exception 异常
      */
-    VoHomePage homePage() throws Exception;
+    HomePageVo homePage() throws Exception;
 
     /**
      * 根据产品类别获取产品列表
@@ -50,5 +49,5 @@ public interface ProductService extends CrudService<Product> {
      * @param categoryId 产品列表ID
      * @return 产品信息
      */
-    List<VoProduct> getProductsByCategoryId(Integer page, String categoryId) throws Exception;
+    List<ProductVo> getProductsByCategoryId(Integer page, String categoryId) throws Exception;
 }
