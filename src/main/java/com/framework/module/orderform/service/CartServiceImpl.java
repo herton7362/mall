@@ -5,6 +5,7 @@ import com.framework.module.orderform.domain.CartItem;
 import com.framework.module.orderform.domain.CartItemRepository;
 import com.framework.module.orderform.domain.CartRepository;
 import com.framework.module.orderform.dto.CartDTO;
+import com.framework.module.orderform.dto.CartItemDTO;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
 import com.kratos.dto.CascadePersistHelper;
@@ -94,13 +95,26 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
 
     @Override
     public void addProduct(CartDTO cartDTO) throws Exception {
+        List<CartItemDTO> cartItemDTOS = cartDTO.getItems();
+        CartItem cartItem;
+        for (CartItemDTO cartItemDTO : cartItemDTOS) {
+            cartItem = cartItemDTO.convert();
+            if(cartItem.getProduct() == null) {
+                throw new BusinessException("您购买商品未找到，或已下架");
+            }
+            if(cartItem.getProduct().getSkus() != null
+                    && !cartItem.getProduct().getSkus().isEmpty()
+                    && cartItem.getSku() == null) {
+                throw new BusinessException("您没有选中具体的商品规格");
+            }
+        }
         Cart cart = super.save(cartDTO.convert());
         cartDTO.setId(cart.getId());
         CascadePersistHelper.saveChildren(cartDTO);
     }
 
     @Override
-    public void delete(String id) throws Exception {
+    public void delete(String id) {
         cartRepository.delete(id);
     }
 

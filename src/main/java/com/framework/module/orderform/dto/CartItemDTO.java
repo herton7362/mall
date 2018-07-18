@@ -15,6 +15,8 @@ public class CartItemDTO extends BaseDTO<CartItemDTO, CartItem> {
     private String productId;
     @ApiModelProperty(value = "数量")
     private Integer count;
+    @ApiModelProperty(value = "sku")
+    private String skuId;
 
     public String getCartId() {
         return cartId;
@@ -38,5 +40,13 @@ public class CartItemDTO extends BaseDTO<CartItemDTO, CartItem> {
 
     public void setCount(Integer count) {
         this.count = count;
+    }
+
+    public String getSkuId() {
+        return skuId;
+    }
+
+    public void setSkuId(String skuId) {
+        this.skuId = skuId;
     }
 }

@@ -4,7 +4,6 @@ import com.framework.module.orderform.domain.Cart;
 import com.framework.module.orderform.dto.CartDTO;
 import com.framework.module.orderform.service.CartService;
 import com.kratos.common.AbstractCrudController;
-import com.kratos.common.CrudService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +16,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/cart")
 public class CartController extends AbstractCrudController<Cart> {
     private final CartService cartService;
-    @Override
-    protected CrudService<Cart> getService() {
-        return cartService;
-    }
 
     /**
      * 添加商品
@@ -47,7 +42,7 @@ public class CartController extends AbstractCrudController<Cart> {
      */
     @ApiOperation(value="增加购物车项数量")
     @RequestMapping(value = "/item/increase/{id}", method = RequestMethod.POST)
-    public ResponseEntity<?> increaseItem(@PathVariable String id) throws Exception {
+    public ResponseEntity<?> increaseItem(@PathVariable String id) {
         cartService.increaseItemCount(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -57,7 +52,7 @@ public class CartController extends AbstractCrudController<Cart> {
      */
     @ApiOperation(value="增加购物车项数量")
     @RequestMapping(value = "/item/reduce/{id}", method = RequestMethod.POST)
-    public ResponseEntity<?> reduceItem(@PathVariable String id) throws Exception {
+    public ResponseEntity<?> reduceItem(@PathVariable String id) {
         cartService.reduceItemCount(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -67,7 +62,7 @@ public class CartController extends AbstractCrudController<Cart> {
      */
     @ApiOperation(value="删除购物车项")
     @RequestMapping(value = "/item/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteItem(@PathVariable String id) throws Exception {
+    public ResponseEntity<?> deleteItem(@PathVariable String id) {
         String[] ids = id.split(",");
         for (String s : ids) {
             cartService.deleteItem(s);

@@ -3,6 +3,7 @@ package com.framework.module.orderform.dto;
 import com.framework.module.orderform.domain.CartItem;
 import com.framework.module.orderform.service.CartService;
 import com.framework.module.product.service.ProductService;
+import com.framework.module.product.service.SkuService;
 import com.kratos.dto.SimpleDTOConverter;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ public class CartItemDTOConverter extends SimpleDTOConverter<CartItemDTO, CartIt
     private final Logger LOG = LoggerFactory.getLogger(CartItemDTOConverter.class);
     private final CartService cartService;
     private final ProductService productService;
+    private final SkuService skuService;
 
     @Override
     protected CartItem doForward(CartItemDTO cartItemDTO) {
@@ -26,6 +28,9 @@ public class CartItemDTOConverter extends SimpleDTOConverter<CartItemDTO, CartIt
             if(StringUtils.isNotBlank(cartItemDTO.getProductId())) {
                 cartItem.setProduct(productService.findOne(cartItemDTO.getProductId()));
             }
+            if(StringUtils.isNotBlank(cartItemDTO.getSkuId())) {
+                cartItem.setSku(skuService.findOne(cartItemDTO.getSkuId()));
+            }
         } catch (Exception e) {
             LOG.error("dto 转换出错", e);
         }
@@ -35,9 +40,11 @@ public class CartItemDTOConverter extends SimpleDTOConverter<CartItemDTO, CartIt
     @Autowired
     public CartItemDTOConverter(
             CartService cartService,
-            ProductService productService
+            ProductService productService,
+            SkuService skuService
     ) {
         this.cartService = cartService;
         this.productService = productService;
+        this.skuService = skuService;
     }
 }
