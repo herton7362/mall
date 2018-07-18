@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
  * @Auther: 张庆贺
  * @Date: 2018/7/16 11:12
  */
-public class ProductVo implements BaseVo {
+public class ProductDTO implements BaseDTO {
     @ApiModelProperty(value = "商品ID")
     private String id;
     @ApiModelProperty(value = "商品名称")

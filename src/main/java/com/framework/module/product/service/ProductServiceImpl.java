@@ -1,7 +1,7 @@
 package com.framework.module.product.service;
 
 import com.framework.module.product.domain.*;
-import com.framework.module.product.dto.ProductVo;
+import com.framework.module.product.dto.ProductDTO;
 import com.framework.module.product.vo.HomePageVo;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
@@ -176,8 +176,8 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
     }
 
     @Override
-    public List<ProductVo> getProductsByCategoryId(Integer page, String categoryId) throws Exception {
-        List<ProductVo> resultArray = new ArrayList<>();
+    public List<ProductDTO> getProductsByCategoryId(Integer page, String categoryId) throws Exception {
+        List<ProductDTO> resultArray = new ArrayList<>();
         Map<String, String[]> param = new HashMap<>();
         String[] categoryIdArray = {categoryId};
         param.put("productCategory.id", categoryIdArray);
@@ -190,7 +190,7 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
             return null;
         }
         for (Product product : productList.getContent()) {
-            ProductVo voProduct = new ProductVo();
+            ProductDTO voProduct = new ProductDTO();
             voProduct.convertFromPo(product);
             resultArray.add(voProduct);
         }

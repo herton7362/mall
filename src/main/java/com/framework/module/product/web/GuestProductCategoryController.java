@@ -1,7 +1,7 @@
 package com.framework.module.product.web;
 
 import com.framework.module.product.domain.ProductCategory;
-import com.framework.module.product.dto.ProductCategoryVo;
+import com.framework.module.product.dto.ProductCategoryDTO;
 import com.framework.module.product.service.ProductCategoryService;
 import com.kratos.common.AbstractReadController;
 import com.kratos.common.CrudService;
@@ -37,7 +37,7 @@ public class GuestProductCategoryController extends AbstractReadController<Produ
      */
     @ApiOperation(value = "获得所有产品分类")
     @RequestMapping(value = "/getAllProductCategory", method = RequestMethod.GET)
-    public ResponseEntity<List<ProductCategoryVo>> getAllProductCategory() {
+    public ResponseEntity<List<ProductCategoryDTO>> getAllProductCategory() {
         return new ResponseEntity<>(productCategoryService.getAllProductCategory(), HttpStatus.OK);
     }
 }

@@ -1,7 +1,7 @@
 package com.framework.module.product.vo;
 
 import com.framework.module.product.domain.Product;
-import com.framework.module.product.dto.ProductVo;
+import com.framework.module.product.dto.ProductDTO;
 import com.kratos.common.PageResult;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -16,39 +16,39 @@ import java.util.List;
  */
 public class HomePageVo {
     @ApiModelProperty(value = "所有首页商品")
-    List<ProductVo> allProduct = new ArrayList<>();
+    List<ProductDTO> allProduct = new ArrayList<>();
     @ApiModelProperty(value = "最新商品")
-    List<ProductVo> newestProduct = new ArrayList<>();
+    List<ProductDTO> newestProduct = new ArrayList<>();
     @ApiModelProperty(value = "必买好货")
-    List<ProductVo> recommendProduct = new ArrayList<>();
+    List<ProductDTO> recommendProduct = new ArrayList<>();
 
-    public List<ProductVo> getAllProduct() {
+    public List<ProductDTO> getAllProduct() {
         return allProduct;
     }
 
-    public void setAllProduct(List<ProductVo> allProduct) {
+    public void setAllProduct(List<ProductDTO> allProduct) {
         this.allProduct = allProduct;
     }
 
-    public List<ProductVo> getNewestProduct() {
+    public List<ProductDTO> getNewestProduct() {
         return newestProduct;
     }
 
-    public void setNewestProduct(List<ProductVo> newestProduct) {
+    public void setNewestProduct(List<ProductDTO> newestProduct) {
         this.newestProduct = newestProduct;
     }
 
-    public List<ProductVo> getRecommendProduct() {
+    public List<ProductDTO> getRecommendProduct() {
         return recommendProduct;
     }
 
-    public void setRecommendProduct(List<ProductVo> recommendProduct) {
+    public void setRecommendProduct(List<ProductDTO> recommendProduct) {
         this.recommendProduct = recommendProduct;
     }
 
     public void addAllProduct(PageResult<Product> productList) {
         for (Product p : productList.getContent()) {
-            ProductVo voProduct = new ProductVo();
+            ProductDTO voProduct = new ProductDTO();
             voProduct.convertFromPo(p);
             getAllProduct().add(voProduct);
         }
@@ -56,7 +56,7 @@ public class HomePageVo {
 
     public void addNewestProduct(PageResult<Product> productList) {
         for (Product p : productList.getContent()) {
-            ProductVo voProduct = new ProductVo();
+            ProductDTO voProduct = new ProductDTO();
             voProduct.convertFromPo(p);
             getNewestProduct().add(voProduct);
         }
@@ -64,7 +64,7 @@ public class HomePageVo {
 
     public void addRecommendProduct(PageResult<Product> productList) {
         for (Product p : productList.getContent()) {
-            ProductVo voProduct = new ProductVo();
+            ProductDTO voProduct = new ProductDTO();
             voProduct.convertFromPo(p);
             getRecommendProduct().add(voProduct);
         }

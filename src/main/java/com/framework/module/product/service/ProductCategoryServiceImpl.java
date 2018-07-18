@@ -2,7 +2,7 @@ package com.framework.module.product.service;
 
 import com.framework.module.product.domain.ProductCategory;
 import com.framework.module.product.domain.ProductCategoryRepository;
-import com.framework.module.product.dto.ProductCategoryVo;
+import com.framework.module.product.dto.ProductCategoryDTO;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +28,11 @@ public class ProductCategoryServiceImpl extends AbstractCrudService<ProductCateg
     }
 
     @Override
-    public List<ProductCategoryVo> getAllProductCategory() {
-        List<ProductCategoryVo> resultList = new ArrayList<>();
+    public List<ProductCategoryDTO> getAllProductCategory() {
+        List<ProductCategoryDTO> resultList = new ArrayList<>();
         Iterable<ProductCategory> productCategoryList = productCategoryRepository.findAllByLogicallyDeletedFalseOrderBySortNumber();
         for (ProductCategory aProductCategory : productCategoryList) {
-            ProductCategoryVo voProductCategory = new ProductCategoryVo();
+            ProductCategoryDTO voProductCategory = new ProductCategoryDTO();
             voProductCategory.convertFromPo(aProductCategory);
             resultList.add(voProductCategory);
         }

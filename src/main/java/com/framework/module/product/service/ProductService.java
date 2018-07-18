@@ -2,7 +2,7 @@ package com.framework.module.product.service;
 
 import com.framework.module.product.domain.Product;
 import com.framework.module.product.domain.Sku;
-import com.framework.module.product.dto.ProductVo;
+import com.framework.module.product.dto.ProductDTO;
 import com.framework.module.product.vo.HomePageVo;
 import com.kratos.common.CrudService;
 import org.springframework.data.domain.Page;
@@ -49,5 +49,5 @@ public interface ProductService extends CrudService<Product> {
      * @param categoryId 产品列表ID
      * @return 产品信息
      */
-    List<ProductVo> getProductsByCategoryId(Integer page, String categoryId) throws Exception;
+    List<ProductDTO> getProductsByCategoryId(Integer page, String categoryId) throws Exception;
 }

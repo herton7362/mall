@@ -8,7 +8,7 @@ import com.kratos.entity.BaseEntity;
  * @Auther: 张庆贺
  * @Date: 2018/7/18 09:37
  */
-public interface BaseVo {
+public interface BaseDTO {
     /**
      * 将DO转换为VO
      * @param po

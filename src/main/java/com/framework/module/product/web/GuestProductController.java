@@ -3,7 +3,7 @@ package com.framework.module.product.web;
 import com.framework.module.product.domain.Product;
 import com.framework.module.product.domain.Sku;
 import com.framework.module.product.dto.ProductDetailDTO;
-import com.framework.module.product.dto.ProductVo;
+import com.framework.module.product.dto.ProductDTO;
 import com.framework.module.product.service.ProductService;
 import com.framework.module.product.vo.HomePageVo;
 import com.kratos.common.AbstractReadController;
@@ -64,7 +64,7 @@ public class GuestProductController extends AbstractReadController<Product> {
      */
     @ApiOperation(value = "根据类别获取产品")
     @RequestMapping(value = "/getProductsByCategoryId/{page}/{categoryId}", method = RequestMethod.GET)
-    public ResponseEntity<List<ProductVo>> getProductsByCategoryId(@PathVariable("page") Integer page, @PathVariable("categoryId") String categoryId) throws Exception {
+    public ResponseEntity<List<ProductDTO>> getProductsByCategoryId(@PathVariable("page") Integer page, @PathVariable("categoryId") String categoryId) throws Exception {
         return new ResponseEntity<>(productService.getProductsByCategoryId(page, categoryId), HttpStatus.OK);
     }
 
