@@ -3,6 +3,7 @@ package com.framework.module.product.dto;
 import com.framework.module.product.domain.ProductCategory;
 import com.kratos.entity.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.beans.BeanUtils;
 
 /**
  * <p>Description: </p>
@@ -45,8 +46,7 @@ public class ProductCategoryDTO implements BaseDTO {
     @Override
     public <T extends BaseEntity> void convertFromPo(T po) {
         ProductCategory productCategory = (ProductCategory) po;
-        setId(po.getId());
-        setName(productCategory.getName());
+        BeanUtils.copyProperties(po, this);
         setCoverImageUrl("/attachment/download/" + productCategory.getCoverImage().getId() + "." + productCategory.getCoverImage().getFormat());
     }
 }

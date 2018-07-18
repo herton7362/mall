@@ -103,4 +103,6 @@ public class ProductDetailDTO extends BaseDTO<ProductDetailDTO, Product> {
     public void setProductStandards(List<ProductProductStandardDTO> productStandards) {
         this.productStandards = productStandards;
     }
+
+
 }
