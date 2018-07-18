@@ -2,24 +2,20 @@ package com.framework.module.marketing.web;
 
 import com.framework.module.auth.MemberThread;
 import com.framework.module.marketing.domain.Coupon;
+import com.framework.module.marketing.dto.CouponDTO;
 import com.framework.module.marketing.service.CouponService;
-import com.framework.module.member.domain.Member;
 import com.framework.module.member.domain.MemberCoupon;
 import com.framework.module.member.service.MemberCouponService;
 import com.framework.module.member.service.MemberService;
 import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
-import com.kratos.module.auth.domain.Module;
-import com.kratos.module.auth.service.OauthClientDetailsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +70,16 @@ public class CouponController extends AbstractCrudController<Coupon> {
         Map<String, String[]> params = new HashMap<>();
         params.put("memberId", new String[]{memberId});
         List<MemberCoupon> memberCoupons = memberCouponService.findAll(params);
+        return new ResponseEntity<>(memberCoupons, HttpStatus.OK);
+    }
+
+    /**
+     * 获取当前用户可用优惠券
+     */
+    @ApiOperation(value="获取当前用户可用优惠券")
+    @RequestMapping(value = "/available", method = RequestMethod.POST)
+    public ResponseEntity<List<CouponDTO>> getAvailableCoupons(@RequestBody GetAvailableCouponsParam param) throws Exception {
+        List<CouponDTO> memberCoupons = memberCouponService.getAvailableCoupons(param);
         return new ResponseEntity<>(memberCoupons, HttpStatus.OK);
     }
 

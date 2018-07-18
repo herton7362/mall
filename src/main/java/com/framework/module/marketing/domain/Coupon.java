@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -112,6 +113,15 @@ public class Coupon extends BaseEntity {
 
     public void setMembers(List<MemberCoupon> members) {
         this.members = members;
+    }
+
+    public Boolean ifExpired() {
+        Long now = new Date().getTime();
+        return !(this.startDate <= now && now <= this.endDate);
+    }
+
+    public Boolean ifAvailable(Double price) {
+        return this.minAmount <= price;
     }
 
     public enum MarketingType {

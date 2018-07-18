@@ -54,6 +54,8 @@ oauth2:
     getMemberCouponsUrl: ${oauth2.framework.domain}/api/coupon/member/%s
     claimCouponUrl: ${oauth2.framework.domain}/api/coupon/claim
     useCouponUrl: ${oauth2.framework.domain}/api/coupon/use
+    memberLevelUrl: ${oauth2.framework.domain}/api/member/level/%s
+    memberCardDomainUri: ${oauth2.framework.domain}/api/memberCard
 ---
 spring:
   profiles: dev

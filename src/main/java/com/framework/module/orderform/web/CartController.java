@@ -4,6 +4,7 @@ import com.framework.module.orderform.domain.Cart;
 import com.framework.module.orderform.dto.CartDTO;
 import com.framework.module.orderform.service.CartService;
 import com.kratos.common.AbstractCrudController;
+import com.kratos.common.CrudService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/cart")
 public class CartController extends AbstractCrudController<Cart> {
     private final CartService cartService;
+
+    @Override
+    protected CrudService<Cart> getService() {
+        return cartService;
+    }
 
     /**
      * 添加商品
