@@ -11,7 +11,7 @@ import org.springframework.beans.BeanUtils;
  * @Auther: 张庆贺
  * @Date: 2018/7/17 11:23
  */
-public class ProductCategoryDTO implements BaseDTO {
+public class ProductCategoryDTO {
     @ApiModelProperty(value = "商品分类ID")
     private String id;
     @ApiModelProperty(value = "商品分类名称")
@@ -43,10 +43,8 @@ public class ProductCategoryDTO implements BaseDTO {
         this.coverImageUrl = coverImageUrl;
     }
 
-    @Override
-    public <T extends BaseEntity> void convertFromPo(T po) {
-        ProductCategory productCategory = (ProductCategory) po;
-        BeanUtils.copyProperties(po, this);
+    public <T extends BaseEntity> void convertFromPo(ProductCategory productCategory) {
+        BeanUtils.copyProperties(productCategory, this);
         setCoverImageUrl("/attachment/download/" + productCategory.getCoverImage().getId() + "." + productCategory.getCoverImage().getFormat());
     }
 }

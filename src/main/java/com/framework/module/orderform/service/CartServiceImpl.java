@@ -15,6 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -29,6 +30,8 @@ import java.util.stream.Collectors;
 public class CartServiceImpl extends AbstractCrudService<Cart> implements CartService {
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
+    private final CartDTO cartDTO;
+
     @Override
     protected PageRepository<Cart> getRepository() {
         return cartRepository;
@@ -36,7 +39,7 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
 
     @Override
     public void addProduct(final Cart cart) throws Exception {
-        if(StringUtils.isBlank(cart.getMemberId())) {
+        if (StringUtils.isBlank(cart.getMemberId())) {
             throw new BusinessException("会员不能为空");
         }
         List<Cart> carts = cartRepository.findAll((Root<Cart> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
@@ -44,7 +47,7 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
             predicate.add(criteriaBuilder.equal(root.get("memberId"), cart.getMemberId()));
             return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
         });
-        if(carts == null || carts.isEmpty()) {
+        if (carts == null || carts.isEmpty()) {
             cartRepository.save(cart);
             List<CartItem> cartItems = cart.getItems();
             CartItem cartItem = cartItems.get(0);
@@ -85,7 +88,7 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
     @Override
     public void reduceItemCount(String id) {
         CartItem cartItem = cartItemRepository.findOne(id);
-        if(cartItem.getCount() > 0) {
+        if (cartItem.getCount() > 0) {
             cartItem.setCount(cartItem.getCount() - 1);
             cartItemRepository.save(cartItem);
         } else {
@@ -100,10 +103,10 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
         CartItem cartItem;
         for (CartItemDTO cartItemDTO : cartItemDTOS) {
             cartItem = cartItemDTO.convert();
-            if(cartItem.getProduct() == null) {
+            if (cartItem.getProduct() == null) {
                 throw new BusinessException("您购买商品未找到，或已下架");
             }
-            if(cartItem.getProduct().getSkus() != null
+            if (cartItem.getProduct().getSkus() != null
                     && !cartItem.getProduct().getSkus().isEmpty()
                     && cartItem.getSku() == null) {
                 throw new BusinessException("您没有选中具体的商品规格");
@@ -116,12 +119,25 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
 
     @Override
     public void editCount(String id, EditCountParam param) throws Exception {
-        if(param.getCount() == null || param.getCount() <= 0) {
+        if (param.getCount() == null || param.getCount() <= 0) {
             throw new BusinessException("请设置数量");
         }
         CartItem cartItem = cartItemRepository.findOne(id);
         cartItem.setCount(param.getCount());
         cartItemRepository.save(cartItem);
+    }
+
+    @Override
+    public CartDTO getCartList(String memberId) {
+        List<Cart> carts = cartRepository.findAll((Root<Cart> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
+            List<Predicate> predicate = new ArrayList<>();
+            predicate.add(criteriaBuilder.equal(root.get("memberId"), memberId));
+            return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
+        });
+        if (CollectionUtils.isEmpty(carts)) {
+            return null;
+        }
+        return cartDTO.convertFor(carts.get(0));
     }
 
     @Override
@@ -132,9 +148,9 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
     @Autowired
     public CartServiceImpl(
             CartRepository cartRepository,
-            CartItemRepository cartItemRepository
-    ) {
+            CartItemRepository cartItemRepository, CartDTO cartDTO) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
+        this.cartDTO = cartDTO;
     }
 }

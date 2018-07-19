@@ -1,11 +1,11 @@
 package com.framework.module.product.web;
 
+import com.framework.module.product.domain.HomePageVo;
 import com.framework.module.product.domain.Product;
 import com.framework.module.product.domain.Sku;
 import com.framework.module.product.dto.ProductDetailDTO;
 import com.framework.module.product.dto.ProductDTO;
 import com.framework.module.product.service.ProductService;
-import com.framework.module.product.vo.HomePageVo;
 import com.kratos.common.AbstractReadController;
 import com.kratos.common.CrudService;
 import io.swagger.annotations.Api;

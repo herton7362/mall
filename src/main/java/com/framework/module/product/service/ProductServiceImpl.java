@@ -2,7 +2,6 @@ package com.framework.module.product.service;
 
 import com.framework.module.product.domain.*;
 import com.framework.module.product.dto.ProductDTO;
-import com.framework.module.product.vo.HomePageVo;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
 import com.kratos.common.PageResult;

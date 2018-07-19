@@ -5,6 +5,7 @@ import com.framework.module.orderform.dto.CartDTO;
 import com.framework.module.orderform.service.CartService;
 import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
+import com.kratos.module.auth.UserThread;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class CartController extends AbstractCrudController<Cart> {
     /**
      * 添加商品
      */
-    @ApiOperation(value="添加商品")
+    @ApiOperation(value = "添加商品")
     @RequestMapping(value = "/addProduct", method = RequestMethod.POST)
     public ResponseEntity<?> makeOrder(@RequestBody Cart cart) throws Exception {
         cartService.addProduct(cart);
@@ -36,8 +37,8 @@ public class CartController extends AbstractCrudController<Cart> {
     /**
      * 添加商品
      */
-    @ApiOperation(value="添加商品")
-    @RequestMapping(value = "/addProduct", method = RequestMethod.POST, headers = { "version=2.0.0" })
+    @ApiOperation(value = "添加商品")
+    @RequestMapping(value = "/addProduct", method = RequestMethod.POST, headers = {"version=2.0.0"})
     public ResponseEntity<?> makeOrder(@RequestBody CartDTO cart) throws Exception {
         cartService.addProduct(cart);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -46,7 +47,7 @@ public class CartController extends AbstractCrudController<Cart> {
     /**
      * 增加购物车项数量
      */
-    @ApiOperation(value="增加购物车项数量")
+    @ApiOperation(value = "增加购物车项数量")
     @RequestMapping(value = "/item/increase/{id}", method = RequestMethod.POST)
     public ResponseEntity<?> increaseItem(@PathVariable String id) {
         cartService.increaseItemCount(id);
@@ -56,7 +57,7 @@ public class CartController extends AbstractCrudController<Cart> {
     /**
      * 增加购物车项数量
      */
-    @ApiOperation(value="增加购物车项数量")
+    @ApiOperation(value = "增加购物车项数量")
     @RequestMapping(value = "/item/reduce/{id}", method = RequestMethod.POST)
     public ResponseEntity<?> reduceItem(@PathVariable String id) {
         cartService.reduceItemCount(id);
@@ -66,7 +67,7 @@ public class CartController extends AbstractCrudController<Cart> {
     /**
      * 修改购物车项数量
      */
-    @ApiOperation(value="修改购物车项数量")
+    @ApiOperation(value = "修改购物车项数量")
     @RequestMapping(value = "/item/count/{id}", method = RequestMethod.POST)
     public ResponseEntity<?> editCount(@PathVariable String id, @RequestBody EditCountParam param) throws Exception {
         cartService.editCount(id, param);
@@ -76,7 +77,7 @@ public class CartController extends AbstractCrudController<Cart> {
     /**
      * 删除购物车项
      */
-    @ApiOperation(value="删除购物车项")
+    @ApiOperation(value = "删除购物车项")
     @RequestMapping(value = "/item/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteItem(@PathVariable String id) {
         String[] ids = id.split(",");
@@ -84,6 +85,14 @@ public class CartController extends AbstractCrudController<Cart> {
             cartService.deleteItem(s);
         }
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "获取购物车中的商品")
+    @RequestMapping(value = "/getCartList", method = RequestMethod.GET)
+    public ResponseEntity<CartDTO> getCartList() {
+        String memberId = UserThread.getInstance().get().getId();
+        CartDTO result = cartService.getCartList(memberId);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @Autowired

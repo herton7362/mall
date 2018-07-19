@@ -11,7 +11,7 @@ import org.springframework.beans.BeanUtils;
  * @Auther: 张庆贺
  * @Date: 2018/7/16 11:12
  */
-public class ProductDTO implements BaseDTO {
+public class ProductDTO {
     @ApiModelProperty(value = "商品ID")
     private String id;
     @ApiModelProperty(value = "商品名称")
@@ -53,10 +53,8 @@ public class ProductDTO implements BaseDTO {
         this.price = price;
     }
 
-    @Override
-    public <T extends BaseEntity> void convertFromPo(T po) {
-        Product p = (Product) po;
-        BeanUtils.copyProperties(po, this);
+    public <T extends BaseEntity> void convertFromPo(Product p) {
+        BeanUtils.copyProperties(p, this);
         setCoverImageUrl("/attachment/download/" + p.getCoverImage().getId() + "." + p.getCoverImage().getFormat());
         setPrice(p.getDisplayPrice());
     }

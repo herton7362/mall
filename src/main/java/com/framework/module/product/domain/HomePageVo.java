@@ -1,6 +1,5 @@
-package com.framework.module.product.vo;
+package com.framework.module.product.domain;
 
-import com.framework.module.product.domain.Product;
 import com.framework.module.product.dto.ProductDTO;
 import com.kratos.common.PageResult;
 import io.swagger.annotations.ApiModelProperty;

@@ -13,6 +13,8 @@ public class CartItemDTO extends BaseDTO<CartItemDTO, CartItem> {
     private String cartId;
     @ApiModelProperty(value = "商品")
     private String productId;
+    @ApiModelProperty(value = "商品展示图片地址")
+    private String coverImageUrl;
     @ApiModelProperty(value = "数量")
     private Integer count;
     @ApiModelProperty(value = "sku")
@@ -48,5 +50,13 @@ public class CartItemDTO extends BaseDTO<CartItemDTO, CartItem> {
 
     public void setSkuId(String skuId) {
         this.skuId = skuId;
+    }
+
+    public String getCoverImageUrl() {
+        return coverImageUrl;
+    }
+
+    public void setCoverImageUrl(String coverImageUrl) {
+        this.coverImageUrl = coverImageUrl;
     }
 }

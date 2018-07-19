@@ -43,4 +43,11 @@ public interface CartService extends CrudService<Cart> {
      * @param param 参数
      */
     void editCount(String id, EditCountParam param) throws Exception;
+
+    /**
+     * 获取购物车
+     * @param memberId 会员ID
+     * @return 购物车列表
+     */
+    CartDTO getCartList(String memberId);
 }

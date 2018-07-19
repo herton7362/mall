@@ -1,9 +1,9 @@
 package com.framework.module.product.service;
 
+import com.framework.module.product.domain.HomePageVo;
 import com.framework.module.product.domain.Product;
 import com.framework.module.product.domain.Sku;
 import com.framework.module.product.dto.ProductDTO;
-import com.framework.module.product.vo.HomePageVo;
 import com.kratos.common.CrudService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
