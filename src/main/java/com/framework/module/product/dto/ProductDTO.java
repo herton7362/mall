@@ -1,7 +1,6 @@
 package com.framework.module.product.dto;
 
 import com.framework.module.product.domain.Product;
-import com.kratos.entity.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 
@@ -53,7 +52,7 @@ public class ProductDTO {
         this.price = price;
     }
 
-    public <T extends BaseEntity> void convertFromPo(Product p) {
+    public void convertFromPo(Product p) {
         BeanUtils.copyProperties(p, this);
         setCoverImageUrl("/attachment/download/" + p.getCoverImage().getId() + "." + p.getCoverImage().getFormat());
         setPrice(p.getDisplayPrice());

@@ -1,7 +1,6 @@
 package com.framework.module.product.dto;
 
 import com.framework.module.product.domain.ProductCategory;
-import com.kratos.entity.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 
@@ -43,7 +42,7 @@ public class ProductCategoryDTO {
         this.coverImageUrl = coverImageUrl;
     }
 
-    public <T extends BaseEntity> void convertFromPo(ProductCategory productCategory) {
+    public void convertFromPo(ProductCategory productCategory) {
         BeanUtils.copyProperties(productCategory, this);
         setCoverImageUrl("/attachment/download/" + productCategory.getCoverImage().getId() + "." + productCategory.getCoverImage().getFormat());
     }
