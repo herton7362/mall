@@ -6,6 +6,7 @@ import com.framework.module.orderform.domain.CartItemRepository;
 import com.framework.module.orderform.domain.CartRepository;
 import com.framework.module.orderform.dto.CartDTO;
 import com.framework.module.orderform.dto.CartItemDTO;
+import com.framework.module.orderform.web.EditCountParam;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
 import com.kratos.dto.CascadePersistHelper;
@@ -111,6 +112,16 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
         Cart cart = super.save(cartDTO.convert());
         cartDTO.setId(cart.getId());
         CascadePersistHelper.saveChildren(cartDTO);
+    }
+
+    @Override
+    public void editCount(String id, EditCountParam param) throws Exception {
+        if(param.getCount() == null || param.getCount() <= 0) {
+            throw new BusinessException("请设置数量");
+        }
+        CartItem cartItem = cartItemRepository.findOne(id);
+        cartItem.setCount(param.getCount());
+        cartItemRepository.save(cartItem);
     }
 
     @Override

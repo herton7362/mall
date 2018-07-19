@@ -4,6 +4,7 @@ import com.framework.module.member.domain.Member;
 import com.framework.module.orderform.domain.Cart;
 import com.framework.module.orderform.domain.CartItem;
 import com.framework.module.orderform.dto.CartDTO;
+import com.framework.module.orderform.web.EditCountParam;
 import com.kratos.common.CrudService;
 
 public interface CartService extends CrudService<Cart> {
@@ -35,4 +36,11 @@ public interface CartService extends CrudService<Cart> {
      * @param cart {@link CartDTO}
      */
     void addProduct(CartDTO cart) throws Exception;
+
+    /**
+     * 修改购物车数量
+     * @param id 购物车项id
+     * @param param 参数
+     */
+    void editCount(String id, EditCountParam param) throws Exception;
 }

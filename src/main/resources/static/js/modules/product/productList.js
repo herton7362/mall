@@ -144,22 +144,36 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 });
                 return productCategory.productStandards;
             },
-            getSkuTotalLength: function () {
+            getAvailableProductProductStandards: function() {
                 var $form = this.crudgrid.$instance.getForm();
-                if($form.productProductStandards.length <= 0) {
+                var productProductStandards = [];
+                if(!$form.productProductStandards) {
+                    return $form.productProductStandards;
+                }
+                $.each($form.productProductStandards, function () {
+                    if(this.productStandardItems
+                        && this.productStandardItems.length > 0) {
+                        productProductStandards.push(this);
+                    }
+                });
+                return productProductStandards;
+            },
+            getSkuTotalLength: function () {
+                var productProductStandards = this.getAvailableProductProductStandards();
+                if(productProductStandards.length <= 0) {
                     return 0;
                 }
-                var count = $form.productProductStandards.length;
-                var total = $form.productProductStandards[0].productStandardItems.length;
+                var count = productProductStandards.length;
+                var total = productProductStandards[0].productStandardItems.length;
                 for(var i = 1, l = count; i < l; i++) {
-                    total = total * $form.productProductStandards[i].productStandardItems.length;
+                    total = total * productProductStandards[i].productStandardItems.length;
                 }
                 return total;
             },
             increaseProductStandardsIndex: function (hex, index) {
-                var $form = this.crudgrid.$instance.getForm();
+                var productProductStandards = this.getAvailableProductProductStandards();
                 if(hex[index] + 1
-                    >= $form.productProductStandards[index].productStandardItems.length) {
+                    >= productProductStandards[index].productStandardItems.length) {
                     if(index > 0) {
                         this.increaseProductStandardsIndex(hex, index - 1);
                     }
@@ -188,21 +202,23 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 return null;
             },
             makeSkus: function () {
+                var productProductStandards = this.getAvailableProductProductStandards();
                 var $form = this.crudgrid.$instance.getForm();
                 var skus = [];
                 var productStandardItems;
                 var hex = [];
                 var oldSku;
-                $.each($form.productProductStandards, function (i) {
+                $.each(productProductStandards, function (i) {
                     hex[i] = 0;
                 });
                 if(!$form.skus) {
                     Vue.set($form, 'skus', []);
                 }
+
                 for(var i = 0, l = this.getSkuTotalLength(); i < l; i++) {
                     productStandardItems = [];
-                    for(var j = 0, jl = $form.productProductStandards.length; j < jl; j++) {
-                        productStandardItems.push($form.productProductStandards[j].productStandardItems[hex[j]]);
+                    for(var j = 0, jl = productProductStandards.length; j < jl; j++) {
+                        productStandardItems.push(productProductStandards[j].productStandardItems[hex[j]]);
                     }
                     this.increaseProductStandardsIndex(hex, jl - 1);
                     oldSku = this.matchSku($form.skus, productStandardItems);
@@ -224,6 +240,11 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     $form.skus.push(this)
                 })
             },
+            transformSaveData: function(data) {
+                return $.extend({}, data, {
+                    productProductStandards: this.getAvailableProductProductStandards()
+                });
+            },
             bindParts: function (row) {
                 this.parts.modal.$instance.open();
                 this.parts.data = row;
@@ -238,11 +259,17 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 this.sidebarClick(this.sidebar.root);
             });
             this.crudgrid.$instance.$watch('form.productProductStandards', function (val) {
-                $.each(self.crudgrid.$instance.getForm().productProductStandards, function (i) {
-                    if(!this.productStandard) {
-                        this.productStandard =  self.selectedProductStandards.data[i];
+                var productProductStandards = self.crudgrid.$instance.getForm().productProductStandards;
+                for(var i = productProductStandards.length -1; i >= 0; i--) {
+                    // if(!productProductStandards[i].productStandardItems
+                    //     || productProductStandards[i].productStandardItems.length <= 0) {
+                    //     productProductStandards.splice(i, 1);
+                    //     continue;
+                    // }
+                    if(!productProductStandards[i].productStandard) {
+                        productProductStandards[i].productStandard =  self.selectedProductStandards.data[i];
                     }
-                });
+                }
                 self.makeSkus();
             }, {
                 deep: true

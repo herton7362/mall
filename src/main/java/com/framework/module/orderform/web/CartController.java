@@ -64,6 +64,16 @@ public class CartController extends AbstractCrudController<Cart> {
     }
 
     /**
+     * 修改购物车项数量
+     */
+    @ApiOperation(value="修改购物车项数量")
+    @RequestMapping(value = "/item/count/{id}", method = RequestMethod.POST)
+    public ResponseEntity<?> editCount(@PathVariable String id, @RequestBody EditCountParam param) throws Exception {
+        cartService.editCount(id, param);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
      * 删除购物车项
      */
     @ApiOperation(value="删除购物车项")
