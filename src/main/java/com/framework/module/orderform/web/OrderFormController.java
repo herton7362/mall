@@ -1,7 +1,12 @@
 package com.framework.module.orderform.web;
 
 import com.framework.module.orderform.domain.OrderForm;
+import com.framework.module.orderform.dto.OrderFormDTO;
 import com.framework.module.orderform.service.OrderFormService;
+import com.framework.module.orderform.web.param.ApplyRejectParam;
+import com.framework.module.orderform.web.param.PreOrderParam;
+import com.framework.module.orderform.web.param.RejectParam;
+import com.framework.module.orderform.web.param.SendOutParam;
 import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
 import com.kratos.common.PageParam;
@@ -35,7 +40,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
         return orderFormService;
     }
 
-    public ResponseEntity<?> searchPagedList(@ModelAttribute PageParam pageParam, HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> searchPagedList(@ModelAttribute PageParam pageParam, HttpServletRequest request)  {
         Map<String, String[]> param = request.getParameterMap();
         if(pageParam.isPageAble()) {
             PageResult<OrderFormResult> page = orderFormService.findAllTranslated(pageParam.getPageRequest(), param);
@@ -46,11 +51,20 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
     }
 
     /**
+     * 预下单
+     */
+    @ApiOperation(value="预下单")
+    @RequestMapping(value = "/preOrder", method = RequestMethod.POST)
+    public ResponseEntity<OrderFormDTO> preOrder(@RequestBody PreOrderParam param) {
+        return new ResponseEntity<>(orderFormService.createPreOrder(param), HttpStatus.OK);
+    }
+
+    /**
      * 下订单
      */
     @ApiOperation(value="下订单")
     @RequestMapping(value = "/makeOrder", method = RequestMethod.POST)
-    public ResponseEntity<OrderForm> makeOrder(@RequestBody OrderForm orderForm) throws Exception {
+    public ResponseEntity<OrderForm> makeOrder(@RequestBody OrderForm orderForm)  {
         return new ResponseEntity<>(orderFormService.makeOrder(orderForm), HttpStatus.OK);
     }
 
@@ -59,7 +73,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
      */
     @ApiOperation(value="支付")
     @RequestMapping(value = "/pay", method = RequestMethod.POST)
-    public ResponseEntity<OrderForm> pay(@RequestBody OrderForm orderForm) throws Exception {
+    public ResponseEntity<OrderForm> pay(@RequestBody OrderForm orderForm)  {
         return new ResponseEntity<>(orderFormService.pay(orderForm), HttpStatus.OK);
     }
 
@@ -68,7 +82,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
      */
     @ApiOperation(value="获取订单数量")
     @RequestMapping(value = "/count/{memberId}", method = RequestMethod.GET)
-    public ResponseEntity<Map<String, Integer>> getOrderCounts(@PathVariable String memberId) throws Exception {
+    public ResponseEntity<Map<String, Integer>> getOrderCounts(@PathVariable String memberId)  {
         return new ResponseEntity<>(orderFormService.getOrderCounts(memberId), HttpStatus.OK);
     }
 
@@ -77,7 +91,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
      */
     @ApiOperation(value="获取订单所有状态及对应编码")
     @RequestMapping(value = "/status", method = RequestMethod.GET)
-    public ResponseEntity<List<Map<String, String>>> getOrderStatus() throws Exception {
+    public ResponseEntity<List<Map<String, String>>> getOrderStatus()  {
         List<Map<String, String>> result = new ArrayList<>();
         Map<String, String> map;
         OrderForm.OrderStatus[] orderStatuses = OrderForm.OrderStatus.values();
@@ -95,7 +109,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
      */
     @ApiOperation(value="发货")
     @RequestMapping(value = "/sendOut", method = RequestMethod.POST)
-    public ResponseEntity<OrderForm> sendOut(@RequestBody SendOutParam sendOutParam) throws Exception {
+    public ResponseEntity<OrderForm> sendOut(@RequestBody SendOutParam sendOutParam)  {
         return new ResponseEntity<>(orderFormService.saveShippingInfo(sendOutParam), HttpStatus.OK);
     }
 
@@ -104,7 +118,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
      */
     @ApiOperation(value="确认收货")
     @RequestMapping(value = "/receive/{id}", method = RequestMethod.POST)
-    public ResponseEntity<OrderForm> receive(@PathVariable String id) throws Exception {
+    public ResponseEntity<OrderForm> receive(@PathVariable String id)  {
         return new ResponseEntity<>(orderFormService.receive(id), HttpStatus.OK);
     }
 
@@ -113,7 +127,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
      */
     @ApiOperation(value="申请退货")
     @RequestMapping(value = "/applyReject", method = RequestMethod.POST)
-    public ResponseEntity<OrderForm> applyReject(@RequestBody ApplyRejectParam applyRejectParam) throws Exception {
+    public ResponseEntity<OrderForm> applyReject(@RequestBody ApplyRejectParam applyRejectParam)  {
         return new ResponseEntity<>(orderFormService.applyReject(applyRejectParam), HttpStatus.OK);
     }
 
@@ -122,7 +136,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
      */
     @ApiOperation(value="申请退货")
     @RequestMapping(value = "/reject", method = RequestMethod.POST)
-    public ResponseEntity<OrderForm> reject(@RequestBody RejectParam rejectParam) throws Exception {
+    public ResponseEntity<OrderForm> reject(@RequestBody RejectParam rejectParam)  {
         return new ResponseEntity<>(orderFormService.reject(rejectParam), HttpStatus.OK);
     }
 
@@ -131,7 +145,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
      */
     @ApiOperation(value="今日销售额")
     @RequestMapping(value = "/todaySale", method = RequestMethod.GET)
-    public ResponseEntity<Double> getTodaySale() throws Exception {
+    public ResponseEntity<Double> getTodaySale()  {
         Double result = orderFormService.getTodaySale();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -141,7 +155,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
      */
     @ApiOperation(value="本月销售额")
     @RequestMapping(value = "/monthSale", method = RequestMethod.GET)
-    public ResponseEntity<Double> getMonthSale() throws Exception {
+    public ResponseEntity<Double> getMonthSale()  {
         Double result = orderFormService.getMonthSale();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -151,7 +165,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
      */
     @ApiOperation(value="每日销售额")
     @RequestMapping(value = "/everydaySale", method = RequestMethod.GET)
-    public ResponseEntity<List<Map<String, Object>>> getEverydaySale() throws Exception {
+    public ResponseEntity<List<Map<String, Object>>> getEverydaySale()  {
         List<Map<String, Object>> result = orderFormService.getEverydaySale();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -161,7 +175,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
      */
     @ApiOperation(value="获取预付订单")
     @RequestMapping(value = "/wechat/unified", method = RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> unified(@RequestBody OrderForm orderForm, HttpServletRequest request) throws Exception {
+    public ResponseEntity<Map<String, Object>> unified(@RequestBody OrderForm orderForm, HttpServletRequest request) throws Exception  {
         return new ResponseEntity<>(weChatAPI.makeAppUnifiedOrder(orderForm.getOrderNumber(), request, ((Double)(orderForm.getCash()*100D)).intValue()), HttpStatus.OK);
     }
 
@@ -171,7 +185,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
     @ApiOperation(value="获取预付订单")
     @RequestMapping(value = "/wechat/web/unified", method = RequestMethod.GET)
     public void webUnified(HttpServletRequest request,
-                                                          HttpServletResponse response) throws Exception {
+                                                          HttpServletResponse response) throws Exception  {
         Map<String, String[]> param = request.getParameterMap();
         Map<String, Object> map = weChatAPI.makeWebUnifiedOrder(param.get("orderNumber")[0], request, ((Double)(Double.valueOf(param.get("cash")[0])*100D)).intValue());
         System.out.println((String) map.get("mwebUrl"));

@@ -128,6 +128,26 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
     }
 
     @Override
+    public void checkItem(String id) {
+        if(StringUtils.isBlank(id)) {
+            return;
+        }
+        CartItem cartItem = cartItemRepository.findOne(id);
+        cartItem.setChecked(true);
+        cartItemRepository.save(cartItem);
+    }
+
+    @Override
+    public void unCheckItem(String id) {
+        if(StringUtils.isBlank(id)) {
+            return;
+        }
+        CartItem cartItem = cartItemRepository.findOne(id);
+        cartItem.setChecked(false);
+        cartItemRepository.save(cartItem);
+    }
+
+    @Override
     public CartDTO getCartList(String memberId) {
         List<Cart> carts = cartRepository.findAll((Root<Cart> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
             List<Predicate> predicate = new ArrayList<>();
@@ -148,7 +168,8 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
     @Autowired
     public CartServiceImpl(
             CartRepository cartRepository,
-            CartItemRepository cartItemRepository, CartDTO cartDTO) {
+            CartItemRepository cartItemRepository,
+            CartDTO cartDTO) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
         this.cartDTO = cartDTO;

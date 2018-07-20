@@ -26,6 +26,8 @@ public class CartItem extends BaseEntity {
     @ApiModelProperty(value = "sku")
     @ManyToOne(fetch = FetchType.EAGER)
     private Sku sku;
+    @ApiModelProperty(value = "选中")
+    private Boolean checked;
 
     public Cart getCart() {
         return cart;
@@ -57,5 +59,13 @@ public class CartItem extends BaseEntity {
 
     public void setSku(Sku sku) {
         this.sku = sku;
+    }
+
+    public Boolean getChecked() {
+        return checked;
+    }
+
+    public void setChecked(Boolean checked) {
+        this.checked = checked;
     }
 }

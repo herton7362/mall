@@ -3,6 +3,7 @@ package com.framework.module.orderform.web;
 import com.framework.module.orderform.domain.Cart;
 import com.framework.module.orderform.dto.CartDTO;
 import com.framework.module.orderform.service.CartService;
+import com.framework.module.orderform.web.param.EditCountParam;
 import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
 import com.kratos.module.auth.UserThread;
@@ -61,6 +62,26 @@ public class CartController extends AbstractCrudController<Cart> {
     @RequestMapping(value = "/item/reduce/{id}", method = RequestMethod.POST)
     public ResponseEntity<?> reduceItem(@PathVariable String id) {
         cartService.reduceItemCount(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * 选中购物车项
+     */
+    @ApiOperation(value="选中购物车项")
+    @RequestMapping(value = "/item/check/{id}", method = RequestMethod.POST)
+    public ResponseEntity<?> checkItem(@PathVariable String id) {
+        cartService.checkItem(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * 取消选中购物车项
+     */
+    @ApiOperation(value="取消选中购物车项")
+    @RequestMapping(value = "/item/unCheck/{id}", method = RequestMethod.POST)
+    public ResponseEntity<?> unCheckItem(@PathVariable String id) {
+        cartService.unCheckItem(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

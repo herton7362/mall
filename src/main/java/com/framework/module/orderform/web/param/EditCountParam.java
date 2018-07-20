@@ -1,4 +1,4 @@
-package com.framework.module.orderform.web;
+package com.framework.module.orderform.web.param;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

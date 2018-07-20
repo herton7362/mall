@@ -4,7 +4,7 @@ import com.framework.module.member.domain.Member;
 import com.framework.module.orderform.domain.Cart;
 import com.framework.module.orderform.domain.CartItem;
 import com.framework.module.orderform.dto.CartDTO;
-import com.framework.module.orderform.web.EditCountParam;
+import com.framework.module.orderform.web.param.EditCountParam;
 import com.kratos.common.CrudService;
 
 public interface CartService extends CrudService<Cart> {
@@ -50,4 +50,16 @@ public interface CartService extends CrudService<Cart> {
      * @return 购物车列表
      */
     CartDTO getCartList(String memberId);
+
+    /**
+     * 选中购物车项
+     * @param id 购物车项id
+     */
+    void checkItem(String id);
+
+    /**
+     * 取消选中购物车项
+     * @param id 购物车项id
+     */
+    void unCheckItem(String id);
 }

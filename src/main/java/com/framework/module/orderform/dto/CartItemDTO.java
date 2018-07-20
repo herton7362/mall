@@ -19,6 +19,8 @@ public class CartItemDTO extends BaseDTO<CartItemDTO, CartItem> {
     private Integer count;
     @ApiModelProperty(value = "sku")
     private String skuId;
+    @ApiModelProperty(value = "选中")
+    private Boolean checked;
 
     public String getCartId() {
         return cartId;
@@ -50,6 +52,14 @@ public class CartItemDTO extends BaseDTO<CartItemDTO, CartItem> {
 
     public void setSkuId(String skuId) {
         this.skuId = skuId;
+    }
+
+    public Boolean getChecked() {
+        return checked;
+    }
+
+    public void setChecked(Boolean checked) {
+        this.checked = checked;
     }
 
     public String getCoverImageUrl() {
