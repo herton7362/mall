@@ -6,7 +6,7 @@ import com.framework.module.orderform.domain.CartItemRepository;
 import com.framework.module.orderform.domain.CartRepository;
 import com.framework.module.orderform.dto.CartDTO;
 import com.framework.module.orderform.dto.CartItemDTO;
-import com.framework.module.orderform.web.EditCountParam;
+import com.framework.module.orderform.web.param.EditCountParam;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
 import com.kratos.dto.CascadePersistHelper;
@@ -38,7 +38,7 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
     }
 
     @Override
-    public void addProduct(final Cart cart) throws Exception {
+    public void addProduct(final Cart cart) {
         if (StringUtils.isBlank(cart.getMemberId())) {
             throw new BusinessException("会员不能为空");
         }
@@ -118,7 +118,7 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
     }
 
     @Override
-    public void editCount(String id, EditCountParam param) throws Exception {
+    public void editCount(String id, EditCountParam param) {
         if (param.getCount() == null || param.getCount() <= 0) {
             throw new BusinessException("请设置数量");
         }
@@ -155,7 +155,10 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
             return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
         });
         if (CollectionUtils.isEmpty(carts)) {
-            return null;
+            Cart cart = new Cart();
+            cart.setMemberId(memberId);
+            cartRepository.save(cart);
+            return cartDTO.convertFor(cart);
         }
         return cartDTO.convertFor(carts.get(0));
     }

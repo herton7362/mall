@@ -37,7 +37,7 @@ public class CouponController extends AbstractCrudController<Coupon> {
      */
     @ApiOperation(value="保存")
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Coupon> save(@RequestBody Coupon coupon) throws Exception {
+    public ResponseEntity<Coupon> save(@RequestBody Coupon coupon) {
         coupon = couponService.save(coupon);
         return new ResponseEntity<>(coupon, HttpStatus.OK);
     }

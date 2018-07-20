@@ -3,6 +3,8 @@ package com.framework.module.orderform.dto;
 import com.framework.module.orderform.domain.Cart;
 import com.framework.module.orderform.domain.CartItem;
 import com.framework.module.orderform.service.CartService;
+import com.framework.module.product.domain.ProductProductStandard;
+import com.framework.module.product.domain.ProductStandardItem;
 import com.kratos.dto.SimpleDTOConverter;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -42,9 +44,19 @@ public class CartDTOConverter extends SimpleDTOConverter<CartDTO, Cart> {
             for (CartItem item : cart.getItems()) {
                 CartItemDTO itemDTO = cartItemDTO.convertFor(item);
                 itemDTO.setProductId(item.getProduct().getId());
-                itemDTO.setCoverImageUrl("/attachment/download/" + item.getProduct().getCoverImage().getId() + "." + item.getProduct().getCoverImage().getFormat());
+                itemDTO.setProductName(item.getProduct().getName());
                 if (item.getSku() != null) {
                     itemDTO.setSkuId(item.getSku().getId());
+                    itemDTO.setPrice(item.getSku().getPrice());
+                    itemDTO.setCoverImageUrl("/attachment/download/" + item.getSku().getId() + "." + item.getSku().getCoverImage().getFormat());
+                    if (!CollectionUtils.isEmpty(item.getProduct().getProductProductStandards()) && !CollectionUtils.isEmpty(item.getProduct().getProductProductStandards().get(0).getProductStandardItems())) {
+                        StringBuilder builder = new StringBuilder();
+                        for (ProductStandardItem d : item.getProduct().getProductProductStandards().get(0).getProductStandardItems()) {
+                            builder.append(d.getName());
+                        }
+                        itemDTO.setProductStandardNames(builder.toString());
+
+                    }
                 }
                 itemDTO.setCartId(item.getCart().getId());
                 cartItemDTOS.add(itemDTO);

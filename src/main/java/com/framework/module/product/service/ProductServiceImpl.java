@@ -36,7 +36,7 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
     }
 
     @Override
-    public Product save(Product product) throws Exception {
+    public Product save(Product product) {
         Product newProduct = productRepository.save(product);
         Map<String, String[]> params = new HashMap<>();
         params.put("product.id", new String[]{product.getId()});

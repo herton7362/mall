@@ -5,7 +5,6 @@ import com.framework.module.marketing.domain.Coupon;
 import com.framework.module.marketing.domain.CouponRepository;
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.domain.MemberCoupon;
-import com.framework.module.member.domain.MemberCouponRepository;
 import com.framework.module.member.service.MemberCouponService;
 import com.framework.module.member.service.MemberService;
 import com.kratos.common.AbstractCrudService;
@@ -36,7 +35,7 @@ public class CouponServiceImpl extends AbstractCrudService<Coupon> implements Co
     }
 
     @Override
-    public Coupon save(Coupon coupon) throws Exception {
+    public Coupon save(Coupon coupon) {
         if(coupon.getClientId() == null) {
             coupon.setClientId(MemberThread.getInstance().getClientId());
         }
@@ -47,7 +46,7 @@ public class CouponServiceImpl extends AbstractCrudService<Coupon> implements Co
     }
 
     @Override
-    public List<Coupon> getUnClaimed(String memberId) throws Exception {
+    public List<Coupon> getUnClaimed(String memberId) {
         Map<String, String[]> params = new HashMap<>();
         params.put("memberId", new String[]{memberId});
         List<MemberCoupon> coupons = memberCouponService.findAll(params);
@@ -80,7 +79,7 @@ public class CouponServiceImpl extends AbstractCrudService<Coupon> implements Co
     }
 
     @Override
-    public void validCouponUseAble(String couponId, Double amount) throws Exception {
+    public void validCouponUseAble(String couponId, Double amount) {
         Coupon coupon = couponRepository.findOne(couponId);
         String clientId = UserThread.getInstance().getClientId();
         if(!clientId.equals(coupon.getClientId())) {
@@ -95,7 +94,7 @@ public class CouponServiceImpl extends AbstractCrudService<Coupon> implements Co
     }
 
     @Override
-    public Double useCoupon(final String couponId, String memberId, Double amount) throws Exception {
+    public Double useCoupon(final String couponId, String memberId, Double amount) {
         validCouponUseAble(couponId, amount);
         Coupon coupon = couponRepository.findOne(couponId);
         BigDecimal newAmount = new BigDecimal(amount).subtract(new BigDecimal(coupon.getAmount()));
@@ -111,7 +110,7 @@ public class CouponServiceImpl extends AbstractCrudService<Coupon> implements Co
     }
 
     @Override
-    public void claim(String memberId, Coupon coupon) throws Exception {
+    public void claim(String memberId, Coupon coupon) {
         Member member = memberService.findOne(memberId);
         MemberCoupon memberCoupon = new MemberCoupon();
         memberCoupon.setUsed(false);

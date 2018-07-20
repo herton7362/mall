@@ -33,7 +33,7 @@ public class ProductController extends AbstractCrudController<Product> {
      */
     @ApiOperation(value="保存")
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Product> save(@RequestBody Product product) throws Exception {
+    public ResponseEntity<Product> save(@RequestBody Product product) {
         if(product.getProductCategory() != null && StringUtils.isNotBlank(product.getProductCategory().getId())) {
             product.setProductCategory(productCategoryService.findOne(product.getProductCategory().getId()));
         } else {
