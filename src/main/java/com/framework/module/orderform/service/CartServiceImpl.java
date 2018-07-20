@@ -13,6 +13,7 @@ import com.kratos.dto.CascadePersistHelper;
 import com.kratos.exceptions.BusinessException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -169,6 +170,7 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
     }
 
     @Autowired
+    @Lazy
     public CartServiceImpl(
             CartRepository cartRepository,
             CartItemRepository cartItemRepository,
