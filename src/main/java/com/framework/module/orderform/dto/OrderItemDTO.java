@@ -24,39 +24,44 @@ public class OrderItemDTO extends BaseDTO<OrderItemDTO, OrderItem> {
         return orderId;
     }
 
-    public void setOrderId(String orderId) {
+    public OrderItemDTO setOrderId(String orderId) {
         this.orderId = orderId;
+        return this;
     }
 
     public String getProductId() {
         return productId;
     }
 
-    public void setProductId(String productId) {
+    public OrderItemDTO setProductId(String productId) {
         this.productId = productId;
+        return this;
     }
 
     public String getSkuId() {
         return skuId;
     }
 
-    public void setSkuId(String skuId) {
+    public OrderItemDTO setSkuId(String skuId) {
         this.skuId = skuId;
+        return this;
     }
 
     public Double getCount() {
         return count;
     }
 
-    public void setCount(Double count) {
+    public OrderItemDTO setCount(Double count) {
         this.count = count;
+        return this;
     }
 
     public Double getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public OrderItemDTO setPrice(Double price) {
         this.price = price;
+        return this;
     }
 }

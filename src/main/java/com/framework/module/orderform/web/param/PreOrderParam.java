@@ -5,22 +5,12 @@ import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel("预下单参数")
 public class PreOrderParam {
-    @ApiModelProperty("购物车 id")
-    private String cartId;
     @ApiModelProperty("商品 id")
     private String productId;
     @ApiModelProperty("sku id")
     private String skuId;
     @ApiModelProperty("count")
     private Integer count;
-
-    public String getCartId() {
-        return cartId;
-    }
-
-    public void setCartId(String cartId) {
-        this.cartId = cartId;
-    }
 
     public String getProductId() {
         return productId;

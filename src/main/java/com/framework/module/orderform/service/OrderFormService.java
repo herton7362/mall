@@ -87,9 +87,23 @@ public interface OrderFormService extends CrudService<OrderForm> {
     List<OrderFormResult> findAllTranslated(Map<String, String[]> param) ;
 
     /**
-     * 创建预订单
-     * @param param
-     * @return
+     * 单品预下单
+     * @param param 参数
+     * @return 订单
      */
-    OrderFormDTO createPreOrder(PreOrderParam param);
+    OrderFormDTO createOneProductPreOrder(PreOrderParam param);
+
+    /**
+     * 计算订单价格
+     * @param orderFormDTO 订单
+     * @return 价格
+     */
+    Double calculateTotalPrice(OrderFormDTO orderFormDTO);
+
+    /**
+     * 购物车预下单
+     * @param cartId 购物车id
+     * @return 订单
+     */
+    OrderFormDTO createCartPreOrder(String cartId);
 }

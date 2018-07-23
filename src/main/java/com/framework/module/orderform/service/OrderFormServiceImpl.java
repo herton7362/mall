@@ -1,14 +1,19 @@
 package com.framework.module.orderform.service;
 
 import com.framework.module.auth.MemberThread;
+import com.framework.module.marketing.domain.Coupon;
 import com.framework.module.marketing.service.CouponService;
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.service.MemberCardService;
 import com.framework.module.member.service.MemberService;
+import com.framework.module.orderform.domain.Cart;
 import com.framework.module.orderform.domain.OrderForm;
 import com.framework.module.orderform.domain.OrderFormRepository;
 import com.framework.module.orderform.domain.OrderItem;
+import com.framework.module.orderform.dto.CartDTO;
+import com.framework.module.orderform.dto.CartItemDTO;
 import com.framework.module.orderform.dto.OrderFormDTO;
+import com.framework.module.orderform.dto.OrderItemDTO;
 import com.framework.module.orderform.web.OrderFormResult;
 import com.framework.module.orderform.web.param.ApplyRejectParam;
 import com.framework.module.orderform.web.param.PreOrderParam;
@@ -34,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Transactional
@@ -46,6 +52,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     private final MemberCardService memberCardService;
     private final SkuRepository skuRepository;
     private final CartService cartService;
+    private final CartDTO cartDTO;
 
     @Override
     protected PageRepository<OrderForm> getRepository() {
@@ -309,17 +316,137 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     }
 
     @Override
-    public OrderFormDTO createPreOrder(PreOrderParam param) {
-        Boolean fromCart = false;
-        if(StringUtils.isNotBlank(param.getCartId())) {
-            fromCart = true;
+    public OrderFormDTO createCartPreOrder(String cartId) {
+        Cart cart = cartService.findOne(cartId);
+        CartDTO myCartDTO = cartDTO.convertFor(cart);
+        OrderFormDTO orderFormDTO = new OrderFormDTO();
+        List<CartItemDTO> cartItemDTOS = myCartDTO.getItems();
+        List<OrderItemDTO> orderItemDTOS = cartItemDTOS
+                .stream()
+                .filter(CartItemDTO::getChecked)
+                .map(cartItemDTO -> new OrderItemDTO()
+                        .setCount(Double.valueOf(cartItemDTO.getCount()))
+                        .setPrice(cartItemDTO.getPrice())
+                        .setProductId(cartItemDTO.getProductId())
+                        .setSkuId(cartItemDTO.getSkuId()))
+                .collect(Collectors.toList());
+        orderFormDTO.setItems(orderItemDTOS);
+        orderFormDTO.setTotal(this.calculateTotalPrice(orderFormDTO));
+        return orderFormDTO;
+    }
+
+    @Override
+    public OrderFormDTO createOneProductPreOrder(PreOrderParam param) {
+        OrderFormDTO orderFormDTO = new OrderFormDTO();
+        List<OrderItemDTO> orderItemDTOS;
+        if(StringUtils.isBlank(param.getProductId())) {
+            throw new BusinessException("商品id不能为空");
+        }
+        Product product = productRepository.findOne(param.getProductId());
+        if(product == null) {
+            throw new BusinessException("商品未找到");
+        }
+        if(product.getLogicallyDeleted()) {
+            throw new BusinessException("商品已下架");
+        }
+        if(param.getCount() == null || param.getCount() <= 0) {
+            throw new BusinessException("请提供商品数量");
+        }
+        if(product.getSkus() != null && !product.getSkus().isEmpty() && StringUtils.isBlank(param.getSkuId())) {
+            throw new BusinessException("请提供sku");
+        } else {
+            Sku sku = skuRepository.findOne(param.getSkuId());
+            if(sku == null) {
+                throw new BusinessException("sku未找到");
+            }
+        }
+        orderItemDTOS = new ArrayList<>();
+        OrderItemDTO orderItemDTO = new OrderItemDTO()
+                .setCount(Double.valueOf(param.getCount()))
+                .setProductId(param.getProductId())
+                .setSkuId(param.getSkuId());
+
+        orderItemDTOS.add(orderItemDTO);
+        orderFormDTO.setItems(orderItemDTOS);
+
+        orderFormDTO.setTotal(this.calculateTotalPrice(orderFormDTO));
+
+        return orderFormDTO;
+    }
+
+    @Override
+    public Double calculateTotalPrice(OrderFormDTO orderFormDTO) {
+        if(orderFormDTO.getItems() == null || orderFormDTO.getItems().isEmpty()) {
+            throw new BusinessException("商品不能为空");
         }
 
-        if(fromCart) {
-            cartService.findOne(param.getCartId());
+        Double total = getProductsTotalPrice(orderFormDTO.getItems());
+        total = calculateDiscountedPrice(orderFormDTO, total);
+        return total;
+    }
+
+    private Double getProductsTotalPrice(List<OrderItemDTO> items) {
+        return items.stream().map(item -> {
+            Double price;
+            if(StringUtils.isBlank(item.getProductId())) {
+                throw new BusinessException("商品id为空");
+            }
+            Product product = productRepository.findOne(item.getProductId());
+            if(product == null) {
+                throw new BusinessException("商品未找到");
+            }
+            if(product.getLogicallyDeleted()) {
+                throw new BusinessException("商品已下架");
+            }
+            if(item.getCount() == null || item.getCount() <= 0) {
+                throw new BusinessException("请提供商品数量");
+            }
+            Sku sku = null;
+            if(product.getSkus() != null && !product.getSkus().isEmpty() && StringUtils.isBlank(item.getSkuId())) {
+                throw new BusinessException("请提供sku");
+            } else if(StringUtils.isNotBlank(item.getSkuId())) {
+                sku = skuRepository.findOne(item.getSkuId());
+                if(sku == null) {
+                    throw new BusinessException("sku未找到");
+                }
+            }
+            if(sku != null) {
+                price = sku.getPrice();
+            } else {
+                price = product.getPrice();
+            }
+            return new BigDecimal(item.getCount()).multiply(new BigDecimal(price));
+        }).reduce(new BigDecimal(0), BigDecimal::add).doubleValue();
+    }
+
+    private Double calculateDiscountedPrice(OrderFormDTO orderFormDTO, Double totalPrice) {
+        if(StringUtils.isNotBlank(orderFormDTO.getCouponId())) {
+            Coupon coupon = couponService.findOne(orderFormDTO.getCouponId());
+            if(coupon == null) {
+                throw new BusinessException("优惠券未找到或已经失效");
+            }
+            long now = new Date().getTime();
+            if(coupon.getStartDate() > now) {
+                throw new BusinessException("优惠券活动未开始");
+            }
+            if(now > coupon.getEndDate()) {
+                throw new BusinessException("优惠券活动已结束");
+            }
+            if(coupon.getMinAmount() > totalPrice) {
+                throw new BusinessException("订单金额不符合条件");
+            }
+            totalPrice = totalPrice - coupon.getAmount();
         }
 
-        return null;
+        if(orderFormDTO.getBalance() != null) {
+            totalPrice = totalPrice - orderFormDTO.getBalance();
+        }
+
+        if(orderFormDTO.getPoint() != null) {
+            totalPrice = totalPrice - (orderFormDTO.getPoint() * 100);
+        }
+
+        return totalPrice;
     }
 
     private List<OrderFormResult> translateResults(List<OrderForm> orderForms)  {
@@ -449,7 +576,8 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             CouponService couponService,
             MemberCardService memberCardService,
             SkuRepository skuRepository,
-            CartService cartService
+            CartService cartService,
+            CartDTO cartDTO
     ) {
         this.orderFormRepository = orderFormRepository;
         this.memberService = memberService;
@@ -459,5 +587,6 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         this.memberCardService = memberCardService;
         this.skuRepository = skuRepository;
         this.cartService = cartService;
+        this.cartDTO = cartDTO;
     }
 }

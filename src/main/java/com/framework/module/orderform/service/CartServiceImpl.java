@@ -101,6 +101,14 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
     @Override
     public void addProduct(CartDTO cartDTO) throws Exception {
         List<CartItemDTO> cartItemDTOS = cartDTO.getItems();
+        if(StringUtils.isBlank(cartDTO.getMemberId())) {
+            throw new BusinessException("会员id不能为空");
+        }
+        List<Cart> carts = cartRepository.findAll((Root<Cart> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
+            List<Predicate> predicate = new ArrayList<>();
+            predicate.add(criteriaBuilder.equal(root.get("memberId"), cartDTO.getMemberId()));
+            return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
+        });
         CartItem cartItem;
         for (CartItemDTO cartItemDTO : cartItemDTOS) {
             cartItem = cartItemDTO.convert();
@@ -113,9 +121,17 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
                 throw new BusinessException("您没有选中具体的商品规格");
             }
         }
-        Cart cart = super.save(cartDTO.convert());
-        cartDTO.setId(cart.getId());
-        CascadePersistHelper.saveChildren(cartDTO);
+        Cart cart;
+        if(carts != null && !carts.isEmpty()) {
+            cart = carts.get(0);
+            CartDTO newDTO = cartDTO.convertFor(cart);
+            newDTO.getItems().addAll(cartDTO.getItems());
+            CascadePersistHelper.saveChildren(newDTO);
+        } else {
+            cart = super.save(cartDTO.convert());
+            cartDTO.setId(cart.getId());
+            CascadePersistHelper.saveChildren(cartDTO);
+        }
     }
 
     @Override

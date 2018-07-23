@@ -51,12 +51,30 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
     }
 
     /**
-     * 预下单
+     * 购物车预下单
      */
-    @ApiOperation(value="预下单")
-    @RequestMapping(value = "/preOrder", method = RequestMethod.POST)
-    public ResponseEntity<OrderFormDTO> preOrder(@RequestBody PreOrderParam param) {
-        return new ResponseEntity<>(orderFormService.createPreOrder(param), HttpStatus.OK);
+    @ApiOperation(value="购物车预下单")
+    @RequestMapping(value = "/cart/preOrder/{cartId}", method = RequestMethod.POST)
+    public ResponseEntity<OrderFormDTO> cartPreOrder(@PathVariable String cartId) {
+        return new ResponseEntity<>(orderFormService.createCartPreOrder(cartId), HttpStatus.OK);
+    }
+
+    /**
+     * 单品预下单
+     */
+    @ApiOperation(value="单品预下单")
+    @RequestMapping(value = "/oneProduct/preOrder", method = RequestMethod.POST)
+    public ResponseEntity<OrderFormDTO> createOneProductPreOrder(@RequestBody PreOrderParam param) {
+        return new ResponseEntity<>(orderFormService.createOneProductPreOrder(param), HttpStatus.OK);
+    }
+
+    /**
+     * 计算订单价格
+     */
+    @ApiOperation(value="计算订单价格")
+    @RequestMapping(value = "/calculateTotalPrice", method = RequestMethod.POST)
+    public ResponseEntity<Double> calculateTotalPrice(@RequestBody OrderFormDTO orderFormDTO) {
+        return new ResponseEntity<>(orderFormService.calculateTotalPrice(orderFormDTO), HttpStatus.OK);
     }
 
     /**
