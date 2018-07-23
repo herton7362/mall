@@ -106,4 +106,11 @@ public interface OrderFormService extends CrudService<OrderForm> {
      * @return 订单
      */
     OrderFormDTO createCartPreOrder(String cartId);
+
+    /**
+     * 下订单
+     * @param orderFormDTO 参数
+     * @return 订单
+     */
+    OrderForm makeOrder(OrderFormDTO orderFormDTO);
 }

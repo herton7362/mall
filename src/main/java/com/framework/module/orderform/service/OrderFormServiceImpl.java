@@ -28,6 +28,7 @@ import com.framework.module.record.service.OperationRecordService;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
 import com.kratos.common.PageResult;
+import com.kratos.dto.CascadePersistHelper;
 import com.kratos.exceptions.BusinessException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -131,14 +132,16 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
 
     @Override
     public OrderForm pay(OrderForm orderForm)  {
+        if(StringUtils.isBlank(orderForm.getId())) {
+            throw new BusinessException("订单id不能为空");
+        }
+        orderForm = findOne(orderForm.getId());
         if(orderForm == null) {
             throw new BusinessException("订单未找到");
         }
         if(OrderForm.OrderStatus.UN_PAY != orderForm.getStatus()) {
             throw new BusinessException("订单状态不正确");
         }
-        orderForm.getItems().forEach(item -> item.setOrderForm(orderForm));
-        validAccount(orderForm);
         orderForm.setStatus(OrderForm.OrderStatus.PAYED);
         orderForm.setPaymentStatus(OrderForm.PaymentStatus.PAYED);
         final OrderForm newOrderForm = orderFormRepository.save(orderForm);
@@ -333,6 +336,22 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         orderFormDTO.setItems(orderItemDTOS);
         orderFormDTO.setTotal(this.calculateTotalPrice(orderFormDTO));
         return orderFormDTO;
+    }
+
+    @Override
+    public OrderForm makeOrder(OrderFormDTO orderFormDTO) {
+        OrderForm orderForm = orderFormDTO.convert();
+        orderForm.setOrderNumber(getOutTradeNo());
+        orderForm.setPaymentStatus(OrderForm.PaymentStatus.PAYED);
+        orderFormRepository.save(orderForm);
+        orderFormDTO.setId(orderForm.getId());
+        CascadePersistHelper.saveChildren(orderFormDTO);
+        // 修改账户余额
+        if(OrderForm.OrderStatus.PAYED == orderForm.getStatus()) {
+            orderForm.setCash(this.calculateDiscountedPrice(orderFormDTO, this.calculateTotalPrice(orderFormDTO)));
+            consumeModifyMemberAccount(orderForm);
+        }
+        return orderForm;
     }
 
     @Override

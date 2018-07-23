@@ -1,7 +1,9 @@
 package com.framework.module.orderform.dto;
 
 import com.framework.module.orderform.domain.OrderForm;
+import com.framework.module.orderform.service.OrderItemService;
 import com.kratos.dto.BaseDTO;
+import com.kratos.dto.Children;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.stereotype.Component;
@@ -23,6 +25,7 @@ public class OrderFormDTO extends BaseDTO<OrderFormDTO, OrderForm> {
     private String memberCardId;
     @ApiModelProperty(value = "买家留言")
     private String remark;
+    @Children(service = OrderItemService.class)
     @ApiModelProperty("订单条目")
     private List<OrderItemDTO> items;
 

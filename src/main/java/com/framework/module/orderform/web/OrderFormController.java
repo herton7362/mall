@@ -87,6 +87,15 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
     }
 
     /**
+     * 下订单
+     */
+    @ApiOperation(value="下订单2.0.0")
+    @RequestMapping(value = "/makeOrder", method = RequestMethod.POST, headers = {"version=2.0.0"})
+    public ResponseEntity<OrderForm> makeOrderNew(@RequestBody OrderFormDTO orderFormDTO)  {
+        return new ResponseEntity<>(orderFormService.makeOrder(orderFormDTO), HttpStatus.OK);
+    }
+
+    /**
      * 支付
      */
     @ApiOperation(value="支付")
@@ -150,9 +159,9 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
     }
 
     /**
-     * 申请退货
+     * 处理退货
      */
-    @ApiOperation(value="申请退货")
+    @ApiOperation(value="处理退货")
     @RequestMapping(value = "/reject", method = RequestMethod.POST)
     public ResponseEntity<OrderForm> reject(@RequestBody RejectParam rejectParam)  {
         return new ResponseEntity<>(orderFormService.reject(rejectParam), HttpStatus.OK);

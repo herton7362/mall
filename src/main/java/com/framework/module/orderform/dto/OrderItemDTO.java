@@ -2,6 +2,7 @@ package com.framework.module.orderform.dto;
 
 import com.framework.module.orderform.domain.OrderItem;
 import com.kratos.dto.BaseDTO;
+import com.kratos.dto.Parent;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.stereotype.Component;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ApiModel("订单条目")
 public class OrderItemDTO extends BaseDTO<OrderItemDTO, OrderItem> {
+    @Parent
     @ApiModelProperty("订单 id")
     private String orderId;
     @ApiModelProperty("产品id")

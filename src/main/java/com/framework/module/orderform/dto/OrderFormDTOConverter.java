@@ -10,12 +10,12 @@ import org.springframework.stereotype.Component;
 public class OrderFormDTOConverter extends SimpleDTOConverter<OrderFormDTO, OrderForm> {
     @Override
     protected OrderForm doForward(OrderFormDTO orderFormDTO) {
-        OrderForm orderForm = new OrderForm();
+        OrderForm orderForm = super.doForward(orderFormDTO);
         Member member = MemberThread.getInstance().get();
         if(member == null) {
             throw new RuntimeException("未登录");
         }
-
-        return super.doForward(orderFormDTO);
+        orderForm.setMemberId(member.getId());
+        return orderForm;
     }
 }
