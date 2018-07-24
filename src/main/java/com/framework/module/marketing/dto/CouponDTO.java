@@ -13,6 +13,10 @@ public class CouponDTO extends BaseDTO<CouponDTO, Coupon> {
     private Double amount;
     @ApiModelProperty(required = true, value = "备注")
     private String remark;
+    @ApiModelProperty(required = true, value = "开始时间")
+    private Long startDate;
+    @ApiModelProperty(required = true, value = "结束时间")
+    private Long endDate;
 
     public String getName() {
         return name;
@@ -36,5 +40,21 @@ public class CouponDTO extends BaseDTO<CouponDTO, Coupon> {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public Long getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Long startDate) {
+        this.startDate = startDate;
+    }
+
+    public Long getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Long endDate) {
+        this.endDate = endDate;
     }
 }

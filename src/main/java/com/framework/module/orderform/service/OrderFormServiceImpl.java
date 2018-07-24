@@ -387,6 +387,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         }
         orderItemDTOS = new ArrayList<>();
         OrderItemDTO orderItemDTO = new OrderItemDTO()
+                .setPrice(product.getPrice())
                 .setCoverImageUrl(coverImageUrl)
                 .setProductName(product.getName())
                 .setCount(Double.valueOf(param.getCount()))
@@ -397,7 +398,8 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             orderItemDTO.setProductStandardNames(String.join(",", sku
                     .getProductStandardItems()
                     .stream()
-                    .map(ProductStandardItem::getName).collect(Collectors.toList())));
+                    .map(ProductStandardItem::getName).collect(Collectors.toList())))
+                        .setPrice(sku.getPrice());
         }
 
         orderItemDTOS.add(orderItemDTO);
