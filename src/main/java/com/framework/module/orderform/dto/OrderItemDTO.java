@@ -21,6 +21,12 @@ public class OrderItemDTO extends BaseDTO<OrderItemDTO, OrderItem> {
     private Double count;
     @ApiModelProperty("单价")
     private Double price;
+    @ApiModelProperty(value = "商品规格")
+    private String productStandardNames;
+    @ApiModelProperty(value = "商品封面地址")
+    private String coverImageUrl;
+    @ApiModelProperty(value = "商品名称")
+    private String productName;
 
     public String getOrderId() {
         return orderId;
@@ -64,6 +70,33 @@ public class OrderItemDTO extends BaseDTO<OrderItemDTO, OrderItem> {
 
     public OrderItemDTO setPrice(Double price) {
         this.price = price;
+        return this;
+    }
+
+    public String getProductStandardNames() {
+        return productStandardNames;
+    }
+
+    public OrderItemDTO setProductStandardNames(String productStandardNames) {
+        this.productStandardNames = productStandardNames;
+        return this;
+    }
+
+    public String getCoverImageUrl() {
+        return coverImageUrl;
+    }
+
+    public OrderItemDTO setCoverImageUrl(String coverImageUrl) {
+        this.coverImageUrl = coverImageUrl;
+        return this;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public OrderItemDTO setProductName(String productName) {
+        this.productName = productName;
         return this;
     }
 }

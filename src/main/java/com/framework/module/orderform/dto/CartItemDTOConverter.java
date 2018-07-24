@@ -2,6 +2,7 @@ package com.framework.module.orderform.dto;
 
 import com.framework.module.orderform.domain.CartItem;
 import com.framework.module.orderform.service.CartService;
+import com.framework.module.product.domain.ProductStandardItem;
 import com.framework.module.product.service.ProductService;
 import com.framework.module.product.service.SkuService;
 import com.kratos.dto.SimpleDTOConverter;
@@ -10,6 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+
+import java.util.stream.Collectors;
 
 @Component
 public class CartItemDTOConverter extends SimpleDTOConverter<CartItemDTO, CartItem> {
@@ -35,6 +39,33 @@ public class CartItemDTOConverter extends SimpleDTOConverter<CartItemDTO, CartIt
             LOG.error("dto 转换出错", e);
         }
         return cartItem;
+    }
+
+    @Override
+    protected CartItemDTO doBackward(CartItem item) {
+        CartItemDTO itemDTO = super.doBackward(item);
+        if(item.getProduct() != null) {
+            itemDTO.setProductId(item.getProduct().getId());
+            itemDTO.setProductName(item.getProduct().getName());
+            if(item.getProduct().getCoverImage() != null) {
+                itemDTO.setCoverImageUrl("/attachment/download/" + item.getProduct().getCoverImage().getId());
+            }
+        }
+        if (item.getSku() != null) {
+            itemDTO.setSkuId(item.getSku().getId());
+            itemDTO.setPrice(item.getSku().getPrice());
+            if(item.getSku().getCoverImage() != null) {
+                itemDTO.setCoverImageUrl("/attachment/download/" + item.getSku().getCoverImage().getId());
+            }
+            if (!CollectionUtils.isEmpty(item.getProduct().getProductProductStandards())) {
+                itemDTO.setProductStandardNames(String.join(",", item.getSku()
+                        .getProductStandardItems()
+                        .stream()
+                        .map(ProductStandardItem::getName).collect(Collectors.toList())));
+            }
+        }
+        itemDTO.setCartId(item.getCart().getId());
+        return itemDTO;
     }
 
     @Autowired

@@ -19,10 +19,7 @@ import com.framework.module.orderform.web.param.ApplyRejectParam;
 import com.framework.module.orderform.web.param.PreOrderParam;
 import com.framework.module.orderform.web.param.RejectParam;
 import com.framework.module.orderform.web.param.SendOutParam;
-import com.framework.module.product.domain.Product;
-import com.framework.module.product.domain.ProductRepository;
-import com.framework.module.product.domain.Sku;
-import com.framework.module.product.domain.SkuRepository;
+import com.framework.module.product.domain.*;
 import com.framework.module.record.domain.OperationRecord;
 import com.framework.module.record.service.OperationRecordService;
 import com.kratos.common.AbstractCrudService;
@@ -328,6 +325,8 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
                 .stream()
                 .filter(CartItemDTO::getChecked)
                 .map(cartItemDTO -> new OrderItemDTO()
+                        .setCoverImageUrl(cartItemDTO.getCoverImageUrl())
+                        .setProductStandardNames(cartItemDTO.getProductStandardNames())
                         .setCount(Double.valueOf(cartItemDTO.getCount()))
                         .setPrice(cartItemDTO.getPrice())
                         .setProductId(cartItemDTO.getProductId())
@@ -362,6 +361,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             throw new BusinessException("商品id不能为空");
         }
         Product product = productRepository.findOne(param.getProductId());
+        String coverImageUrl = null;
         if(product == null) {
             throw new BusinessException("商品未找到");
         }
@@ -371,19 +371,34 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         if(param.getCount() == null || param.getCount() <= 0) {
             throw new BusinessException("请提供商品数量");
         }
+        if(product.getCoverImage() != null)
+            coverImageUrl = product.getCoverImage().getId();
+        Sku sku;
         if(product.getSkus() != null && !product.getSkus().isEmpty() && StringUtils.isBlank(param.getSkuId())) {
             throw new BusinessException("请提供sku");
         } else {
-            Sku sku = skuRepository.findOne(param.getSkuId());
+            sku = skuRepository.findOne(param.getSkuId());
             if(sku == null) {
                 throw new BusinessException("sku未找到");
+            }
+            if(sku.getCoverImage() != null) {
+                coverImageUrl = sku.getCoverImage().getId();
             }
         }
         orderItemDTOS = new ArrayList<>();
         OrderItemDTO orderItemDTO = new OrderItemDTO()
+                .setCoverImageUrl(coverImageUrl)
+                .setProductName(product.getName())
                 .setCount(Double.valueOf(param.getCount()))
                 .setProductId(param.getProductId())
                 .setSkuId(param.getSkuId());
+
+        if(sku != null) {
+            orderItemDTO.setProductStandardNames(String.join(",", sku
+                    .getProductStandardItems()
+                    .stream()
+                    .map(ProductStandardItem::getName).collect(Collectors.toList())));
+        }
 
         orderItemDTOS.add(orderItemDTO);
         orderFormDTO.setItems(orderItemDTOS);

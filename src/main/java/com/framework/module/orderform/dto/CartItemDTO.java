@@ -1,14 +1,10 @@
 package com.framework.module.orderform.dto;
 
 import com.framework.module.orderform.domain.CartItem;
-import com.framework.module.product.domain.Sku;
 import com.kratos.dto.BaseDTO;
 import com.kratos.dto.Parent;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.stereotype.Component;
-
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
 
 @Component
 public class CartItemDTO extends BaseDTO<CartItemDTO, CartItem> {
