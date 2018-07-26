@@ -113,4 +113,14 @@ public interface OrderFormService extends CrudService<OrderForm> {
      * @return 订单
      */
     OrderFormDTO makeOrder(OrderFormDTO orderFormDTO);
+
+    /**
+     * 获得我的订单列表
+     * @param memberId 会员ID
+     * @param status 状态相关
+     * @param pageSize
+     * @param pageNum
+     * @return 订单列表相关
+     */
+    List<OrderFormDTO> myOrderList(String memberId, String status, Integer pageSize, Integer pageNum);
 }

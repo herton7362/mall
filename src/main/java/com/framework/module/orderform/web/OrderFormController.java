@@ -15,6 +15,7 @@ import com.kratos.exceptions.BusinessException;
 import com.kratos.kits.alipay.AliPayAPI;
 import com.kratos.kits.alipay.AliPayResult;
 import com.kratos.kits.wechat.WeChatAPI;
+import com.kratos.module.auth.UserThread;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +37,15 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
     private final OrderFormService orderFormService;
     private final WeChatAPI weChatAPI;
     private final AliPayAPI aliPayAPI;
+
     @Override
     protected CrudService<OrderForm> getService() {
         return orderFormService;
     }
 
-    public ResponseEntity<?> searchPagedList(@ModelAttribute PageParam pageParam, HttpServletRequest request)  {
+    public ResponseEntity<?> searchPagedList(@ModelAttribute PageParam pageParam, HttpServletRequest request) {
         Map<String, String[]> param = request.getParameterMap();
-        if(pageParam.isPageAble()) {
+        if (pageParam.isPageAble()) {
             PageResult<OrderFormResult> page = orderFormService.findAllTranslated(pageParam.getPageRequest(), param);
             return new ResponseEntity<>(page, HttpStatus.OK);
         }
@@ -54,7 +56,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
     /**
      * 购物车预下单
      */
-    @ApiOperation(value="购物车预下单")
+    @ApiOperation(value = "购物车预下单")
     @RequestMapping(value = "/cart/preOrder/{cartId}", method = RequestMethod.POST)
     public ResponseEntity<OrderFormDTO> cartPreOrder(@PathVariable String cartId) {
         return new ResponseEntity<>(orderFormService.createCartPreOrder(cartId), HttpStatus.OK);
@@ -63,7 +65,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
     /**
      * 单品预下单
      */
-    @ApiOperation(value="单品预下单")
+    @ApiOperation(value = "单品预下单")
     @RequestMapping(value = "/oneProduct/preOrder", method = RequestMethod.POST)
     public ResponseEntity<OrderFormDTO> createOneProductPreOrder(@RequestBody PreOrderParam param) {
         return new ResponseEntity<>(orderFormService.createOneProductPreOrder(param), HttpStatus.OK);
@@ -72,7 +74,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
     /**
      * 计算订单价格
      */
-    @ApiOperation(value="计算订单价格")
+    @ApiOperation(value = "计算订单价格")
     @RequestMapping(value = "/calculateTotalPrice", method = RequestMethod.POST)
     public ResponseEntity<Double> calculateTotalPrice(@RequestBody OrderFormDTO orderFormDTO) {
         return new ResponseEntity<>(orderFormService.calculateTotalPrice(orderFormDTO), HttpStatus.OK);
@@ -81,45 +83,45 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
     /**
      * 下订单
      */
-    @ApiOperation(value="下订单")
+    @ApiOperation(value = "下订单")
     @RequestMapping(value = "/makeOrder", method = RequestMethod.POST)
-    public ResponseEntity<OrderForm> makeOrder(@RequestBody OrderForm orderForm)  {
+    public ResponseEntity<OrderForm> makeOrder(@RequestBody OrderForm orderForm) {
         return new ResponseEntity<>(orderFormService.makeOrder(orderForm), HttpStatus.OK);
     }
 
     /**
      * 下订单
      */
-    @ApiOperation(value="下订单2.0.0")
+    @ApiOperation(value = "下订单2.0.0")
     @RequestMapping(value = "/makeOrder", method = RequestMethod.POST, headers = {"version=2.0.0"})
-    public ResponseEntity<OrderFormDTO> makeOrderNew(@RequestBody OrderFormDTO orderFormDTO)  {
+    public ResponseEntity<OrderFormDTO> makeOrderNew(@RequestBody OrderFormDTO orderFormDTO) {
         return new ResponseEntity<>(orderFormService.makeOrder(orderFormDTO), HttpStatus.OK);
     }
 
     /**
      * 支付
      */
-    @ApiOperation(value="支付")
+    @ApiOperation(value = "支付")
     @RequestMapping(value = "/pay", method = RequestMethod.POST)
-    public ResponseEntity<OrderForm> pay(@RequestBody OrderForm orderForm)  {
+    public ResponseEntity<OrderForm> pay(@RequestBody OrderForm orderForm) {
         return new ResponseEntity<>(orderFormService.pay(orderForm), HttpStatus.OK);
     }
 
     /**
      * 获取订单数量
      */
-    @ApiOperation(value="获取订单数量")
+    @ApiOperation(value = "获取订单数量")
     @RequestMapping(value = "/count/{memberId}", method = RequestMethod.GET)
-    public ResponseEntity<Map<String, Integer>> getOrderCounts(@PathVariable String memberId)  {
+    public ResponseEntity<Map<String, Integer>> getOrderCounts(@PathVariable String memberId) {
         return new ResponseEntity<>(orderFormService.getOrderCounts(memberId), HttpStatus.OK);
     }
 
     /**
      * 获取订单所有状态及对应编码
      */
-    @ApiOperation(value="获取订单所有状态及对应编码")
+    @ApiOperation(value = "获取订单所有状态及对应编码")
     @RequestMapping(value = "/status", method = RequestMethod.GET)
-    public ResponseEntity<List<Map<String, String>>> getOrderStatus()  {
+    public ResponseEntity<List<Map<String, String>>> getOrderStatus() {
         List<Map<String, String>> result = new ArrayList<>();
         Map<String, String> map;
         OrderForm.OrderStatus[] orderStatuses = OrderForm.OrderStatus.values();
@@ -135,45 +137,45 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
     /**
      * 发货
      */
-    @ApiOperation(value="发货")
+    @ApiOperation(value = "发货")
     @RequestMapping(value = "/sendOut", method = RequestMethod.POST)
-    public ResponseEntity<OrderForm> sendOut(@RequestBody SendOutParam sendOutParam)  {
+    public ResponseEntity<OrderForm> sendOut(@RequestBody SendOutParam sendOutParam) {
         return new ResponseEntity<>(orderFormService.saveShippingInfo(sendOutParam), HttpStatus.OK);
     }
 
     /**
      * 确认收货
      */
-    @ApiOperation(value="确认收货")
+    @ApiOperation(value = "确认收货")
     @RequestMapping(value = "/receive/{id}", method = RequestMethod.POST)
-    public ResponseEntity<OrderForm> receive(@PathVariable String id)  {
+    public ResponseEntity<OrderForm> receive(@PathVariable String id) {
         return new ResponseEntity<>(orderFormService.receive(id), HttpStatus.OK);
     }
 
     /**
      * 申请退货
      */
-    @ApiOperation(value="申请退货")
+    @ApiOperation(value = "申请退货")
     @RequestMapping(value = "/applyReject", method = RequestMethod.POST)
-    public ResponseEntity<OrderForm> applyReject(@RequestBody ApplyRejectParam applyRejectParam)  {
+    public ResponseEntity<OrderForm> applyReject(@RequestBody ApplyRejectParam applyRejectParam) {
         return new ResponseEntity<>(orderFormService.applyReject(applyRejectParam), HttpStatus.OK);
     }
 
     /**
      * 处理退货
      */
-    @ApiOperation(value="处理退货")
+    @ApiOperation(value = "处理退货")
     @RequestMapping(value = "/reject", method = RequestMethod.POST)
-    public ResponseEntity<OrderForm> reject(@RequestBody RejectParam rejectParam)  {
+    public ResponseEntity<OrderForm> reject(@RequestBody RejectParam rejectParam) {
         return new ResponseEntity<>(orderFormService.reject(rejectParam), HttpStatus.OK);
     }
 
     /**
      * 今日销售额
      */
-    @ApiOperation(value="今日销售额")
+    @ApiOperation(value = "今日销售额")
     @RequestMapping(value = "/todaySale", method = RequestMethod.GET)
-    public ResponseEntity<Double> getTodaySale()  {
+    public ResponseEntity<Double> getTodaySale() {
         Double result = orderFormService.getTodaySale();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -181,9 +183,9 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
     /**
      * 本月销售额
      */
-    @ApiOperation(value="本月销售额")
+    @ApiOperation(value = "本月销售额")
     @RequestMapping(value = "/monthSale", method = RequestMethod.GET)
-    public ResponseEntity<Double> getMonthSale()  {
+    public ResponseEntity<Double> getMonthSale() {
         Double result = orderFormService.getMonthSale();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -191,9 +193,9 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
     /**
      * 每日销售额
      */
-    @ApiOperation(value="每日销售额")
+    @ApiOperation(value = "每日销售额")
     @RequestMapping(value = "/everydaySale", method = RequestMethod.GET)
-    public ResponseEntity<List<Map<String, Object>>> getEverydaySale()  {
+    public ResponseEntity<List<Map<String, Object>>> getEverydaySale() {
         List<Map<String, Object>> result = orderFormService.getEverydaySale();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -201,33 +203,33 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
     /**
      * 微信获取预付订单
      */
-    @ApiOperation(value="获取预付订单")
+    @ApiOperation(value = "获取预付订单")
     @RequestMapping(value = "/wechat/unified", method = RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> unified(@RequestBody OrderForm orderForm, HttpServletRequest request) throws Exception  {
+    public ResponseEntity<Map<String, Object>> unified(@RequestBody OrderForm orderForm, HttpServletRequest request) throws Exception {
         Map<String, String[]> param = new HashMap<>();
         param.put("orderNumber", new String[]{orderForm.getOrderNumber()});
         List<OrderForm> orderForms = orderFormService.findAll(param);
-        if(orderForms == null || orderForms.isEmpty()) {
+        if (orderForms == null || orderForms.isEmpty()) {
             throw new BusinessException("订单未找到");
         }
-        return new ResponseEntity<>(weChatAPI.makeAppUnifiedOrder(orderForm.getOrderNumber(), request, ((Double)(orderForms.get(0).getCash()*100D)).intValue()), HttpStatus.OK);
+        return new ResponseEntity<>(weChatAPI.makeAppUnifiedOrder(orderForm.getOrderNumber(), request, ((Double) (orderForms.get(0).getCash() * 100D)).intValue()), HttpStatus.OK);
     }
 
     /**
      * 微信获取预付订单
      */
-    @ApiOperation(value="获取预付订单")
+    @ApiOperation(value = "获取预付订单")
     @RequestMapping(value = "/wechat/web/unified", method = RequestMethod.GET)
     public void webUnified(HttpServletRequest request,
-                                                          HttpServletResponse response) throws Exception  {
+                           HttpServletResponse response) throws Exception {
         Map<String, String[]> param = request.getParameterMap();
         Map<String, String[]> params = new HashMap<>();
         params.put("orderNumber", param.get("orderNumber"));
         List<OrderForm> orderForms = orderFormService.findAll(params);
-        if(orderForms == null || orderForms.isEmpty()) {
+        if (orderForms == null || orderForms.isEmpty()) {
             throw new BusinessException("订单未找到");
         }
-        Map<String, Object> map = weChatAPI.makeWebUnifiedOrder(param.get("orderNumber")[0], request, ((Double)(orderForms.get(0).getCash() *100D)).intValue());
+        Map<String, Object> map = weChatAPI.makeWebUnifiedOrder(param.get("orderNumber")[0], request, ((Double) (orderForms.get(0).getCash() * 100D)).intValue());
         System.out.println((String) map.get("mwebUrl"));
         response.addHeader("location", (String) map.get("mwebUrl"));
         response.setStatus(302);
@@ -236,13 +238,13 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
     /**
      * 支付宝获取预付订单
      */
-    @ApiOperation(value="获取预付订单")
+    @ApiOperation(value = "获取预付订单")
     @RequestMapping(value = "/ali/unified", method = RequestMethod.POST)
     public ResponseEntity<AliPayResult> unified(@RequestBody OrderForm orderForm) throws Exception {
         Map<String, String[]> param = new HashMap<>();
         param.put("orderNumber", new String[]{orderForm.getOrderNumber()});
         List<OrderForm> orderForms = orderFormService.findAll(param);
-        if(orderForms == null || orderForms.isEmpty()) {
+        if (orderForms == null || orderForms.isEmpty()) {
             throw new BusinessException("订单未找到");
         }
         return aliPayAPI.getAliPayOrderId(orderForm.getOrderNumber(), String.valueOf(orderForms.get(0).getCash()), "鼎骏商城");
@@ -251,21 +253,32 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
     /**
      * 支付宝获取预付订单
      */
-    @ApiOperation(value="获取预付订单")
+    @ApiOperation(value = "获取预付订单")
     @RequestMapping(value = "/ali/web/unified", method = RequestMethod.GET)
     public void aliWebUnified(HttpServletRequest request,
-                           HttpServletResponse response) throws Exception {
+                              HttpServletResponse response) throws Exception {
         Map<String, String[]> param = request.getParameterMap();
         response.setContentType("text/html;charset=UTF-8");
         Map<String, String[]> params = new HashMap<>();
         params.put("orderNumber", param.get("orderNumber"));
         List<OrderForm> orderForms = orderFormService.findAll(params);
-        if(orderForms == null || orderForms.isEmpty()) {
+        if (orderForms == null || orderForms.isEmpty()) {
             throw new BusinessException("订单未找到");
         }
         response.getWriter().write(aliPayAPI.getWebAliPayForm(param.get("orderNumber")[0], String.valueOf(orderForms.get(0).getCash()), "鼎骏商城"));//直接将完整的表单html输出到页面
         response.getWriter().flush();
         response.getWriter().close();
+    }
+
+    /**
+     * 查询我的订单信息
+     */
+    @ApiOperation(value = "查询我的订单信息")
+    @RequestMapping(value = "/myOrderList", method = RequestMethod.POST)
+    public ResponseEntity<List<OrderFormDTO>> myOrderList(@RequestParam(value = "status", required = false) String status, @RequestParam Integer pageSize, @RequestParam Integer pageNum) {
+        String memberId = UserThread.getInstance().get().getId();
+        List<OrderFormDTO> result = orderFormService.myOrderList(memberId, status, pageSize, pageNum);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @Autowired
