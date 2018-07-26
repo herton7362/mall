@@ -8,6 +8,9 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.util.List;
 
 @Component
@@ -29,6 +32,8 @@ public class OrderFormDTO extends BaseDTO<OrderFormDTO, OrderForm> {
     private String memberCardId;
     @ApiModelProperty(value = "买家留言")
     private String remark;
+    @ApiModelProperty(value = "订单状态")
+    private OrderForm.OrderStatus status;
     @Children(service = OrderItemService.class)
     @ApiModelProperty("订单条目")
     private List<OrderItemDTO> items;
@@ -103,5 +108,13 @@ public class OrderFormDTO extends BaseDTO<OrderFormDTO, OrderForm> {
 
     public void setItems(List<OrderItemDTO> items) {
         this.items = items;
+    }
+
+    public OrderForm.OrderStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(OrderForm.OrderStatus status) {
+        this.status = status;
     }
 }
