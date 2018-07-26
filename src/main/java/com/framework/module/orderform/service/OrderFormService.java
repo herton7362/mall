@@ -112,5 +112,5 @@ public interface OrderFormService extends CrudService<OrderForm> {
      * @param orderFormDTO 参数
      * @return 订单
      */
-    OrderForm makeOrder(OrderFormDTO orderFormDTO);
+    OrderFormDTO makeOrder(OrderFormDTO orderFormDTO);
 }

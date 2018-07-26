@@ -15,6 +15,10 @@ import java.util.List;
 public class OrderFormDTO extends BaseDTO<OrderFormDTO, OrderForm> {
     @ApiModelProperty("总价格")
     private Double total;
+    @ApiModelProperty(value = "订单号，系统自动生成")
+    private String orderNumber;
+    @ApiModelProperty(value = "会员收货地址")
+    private String deliverToAddressId;
     @ApiModelProperty(value = "储值支付")
     private Double balance;
     @ApiModelProperty(value = "积分支付")
@@ -35,6 +39,22 @@ public class OrderFormDTO extends BaseDTO<OrderFormDTO, OrderForm> {
 
     public void setTotal(Double total) {
         this.total = total;
+    }
+
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public String getDeliverToAddressId() {
+        return deliverToAddressId;
+    }
+
+    public void setDeliverToAddressId(String deliverToAddressId) {
+        this.deliverToAddressId = deliverToAddressId;
     }
 
     public Double getBalance() {

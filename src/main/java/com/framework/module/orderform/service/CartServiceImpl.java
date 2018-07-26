@@ -104,6 +104,9 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
         if(StringUtils.isBlank(cartDTO.getMemberId())) {
             throw new BusinessException("会员id不能为空");
         }
+        if(cartDTO.getItems() == null || cartDTO.getItems().isEmpty()) {
+            throw new BusinessException("购物车不能为空");
+        }
         List<Cart> carts = cartRepository.findAll((Root<Cart> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
             List<Predicate> predicate = new ArrayList<>();
             predicate.add(criteriaBuilder.equal(root.get("memberId"), cartDTO.getMemberId()));
@@ -125,7 +128,16 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
         if(carts != null && !carts.isEmpty()) {
             cart = carts.get(0);
             CartDTO newDTO = cartDTO.convertFor(cart);
-            newDTO.getItems().addAll(cartDTO.getItems());
+            List<CartItemDTO> oldCartItems = newDTO.getItems()
+                    .stream()
+                    .filter(item -> item.getProductId().equals(cartDTO.getItems().get(0).getProductId()))
+                    .collect(Collectors.toList());
+            if (oldCartItems != null && !oldCartItems.isEmpty()) {
+                CartItemDTO oldCartItem = oldCartItems.get(0);
+                oldCartItem.setCount(oldCartItem.getCount() + cartDTO.getItems().get(0).getCount());
+            } else {
+                newDTO.getItems().addAll(cartDTO.getItems());
+            }
             CascadePersistHelper.saveChildren(newDTO);
         } else {
             cart = super.save(cartDTO.convert());

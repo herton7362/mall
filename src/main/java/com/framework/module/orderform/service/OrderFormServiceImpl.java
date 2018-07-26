@@ -51,6 +51,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     private final SkuRepository skuRepository;
     private final CartService cartService;
     private final CartDTO cartDTO;
+    private final OrderItemService orderItemService;
 
     @Override
     protected PageRepository<OrderForm> getRepository() {
@@ -89,7 +90,8 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         Member oldMember = memberService.findOne(orderForm.getMemberId());
         Integer productPoints = 0;
         for (OrderItem orderItem : orderForm.getItems()) {
-            productPoints += orderItem.getProduct().getPoints();
+            if(orderItem.getProduct() != null && orderItem.getProduct().getPoints() != null)
+                productPoints += orderItem.getProduct().getPoints();
         }
         oldMember.setSalePoint(subtractNumber(oldMember.getSalePoint(), orderForm.getPoint()));
         oldMember.setPoint(increaseNumber(oldMember.getPoint(), productPoints));
@@ -338,10 +340,11 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     }
 
     @Override
-    public OrderForm makeOrder(OrderFormDTO orderFormDTO) {
+    public OrderFormDTO makeOrder(OrderFormDTO orderFormDTO) {
         OrderForm orderForm = orderFormDTO.convert();
         orderForm.setOrderNumber(getOutTradeNo());
         orderForm.setPaymentStatus(OrderForm.PaymentStatus.PAYED);
+        orderForm.setItems(null);
         orderFormRepository.save(orderForm);
         orderFormDTO.setId(orderForm.getId());
         CascadePersistHelper.saveChildren(orderFormDTO);
@@ -350,7 +353,9 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             orderForm.setCash(this.calculateDiscountedPrice(orderFormDTO, this.calculateTotalPrice(orderFormDTO)));
             consumeModifyMemberAccount(orderForm);
         }
-        return orderForm;
+
+        orderFormDTO.setOrderNumber(orderForm.getOrderNumber());
+        return orderFormDTO;
     }
 
     @Override
@@ -479,9 +484,12 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         }
 
         if(orderFormDTO.getPoint() != null) {
-            totalPrice = totalPrice - (orderFormDTO.getPoint() * 100);
+            totalPrice = totalPrice - (orderFormDTO.getPoint() / 100);
         }
 
+        if(totalPrice < 0) {
+            throw new BusinessException("订单金额不正确");
+        }
         return totalPrice;
     }
 
@@ -613,8 +621,8 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             MemberCardService memberCardService,
             SkuRepository skuRepository,
             CartService cartService,
-            CartDTO cartDTO
-    ) {
+            CartDTO cartDTO,
+            OrderItemService orderItemService) {
         this.orderFormRepository = orderFormRepository;
         this.memberService = memberService;
         this.operationRecordService = operationRecordService;
@@ -624,5 +632,6 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         this.skuRepository = skuRepository;
         this.cartService = cartService;
         this.cartDTO = cartDTO;
+        this.orderItemService = orderItemService;
     }
 }

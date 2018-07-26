@@ -17,6 +17,8 @@ public class CouponDTO extends BaseDTO<CouponDTO, Coupon> {
     private Long startDate;
     @ApiModelProperty(required = true, value = "结束时间")
     private Long endDate;
+    @ApiModelProperty(required = true, value = "使用条件：满 ? 元，无门槛请输入0")
+    private Double minAmount;
 
     public String getName() {
         return name;
@@ -56,5 +58,13 @@ public class CouponDTO extends BaseDTO<CouponDTO, Coupon> {
 
     public void setEndDate(Long endDate) {
         this.endDate = endDate;
+    }
+
+    public Double getMinAmount() {
+        return minAmount;
+    }
+
+    public void setMinAmount(Double minAmount) {
+        this.minAmount = minAmount;
     }
 }
