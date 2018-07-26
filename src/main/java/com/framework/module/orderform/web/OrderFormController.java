@@ -1,6 +1,7 @@
 package com.framework.module.orderform.web;
 
 import com.framework.module.orderform.domain.OrderForm;
+import com.framework.module.orderform.domain.OrderListReqParam;
 import com.framework.module.orderform.dto.OrderFormDTO;
 import com.framework.module.orderform.service.OrderFormService;
 import com.framework.module.orderform.web.param.ApplyRejectParam;
@@ -275,9 +276,9 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
      */
     @ApiOperation(value = "查询我的订单信息")
     @RequestMapping(value = "/myOrderList", method = RequestMethod.POST)
-    public ResponseEntity<List<OrderFormDTO>> myOrderList(@RequestParam(value = "status", required = false) String status, @RequestParam Integer pageSize, @RequestParam Integer pageNum) {
+    public ResponseEntity<List<OrderFormDTO>> myOrderList(@RequestBody OrderListReqParam orderListReqParam) {
         String memberId = UserThread.getInstance().get().getId();
-        List<OrderFormDTO> result = orderFormService.myOrderList(memberId, status, pageSize, pageNum);
+        List<OrderFormDTO> result = orderFormService.myOrderList(memberId, orderListReqParam.getStatus(), orderListReqParam.getPageSize(), orderListReqParam.getPageNum());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

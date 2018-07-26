@@ -13,6 +13,7 @@ import java.util.List;
 
 /**
  * 订单
+ *
  * @author tang he
  * @since 1.0.0
  */
@@ -46,7 +47,7 @@ public class OrderForm extends BaseEntity {
     @ApiModelProperty(value = "订单状态")
     @Column(length = 20)
     @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+    private OrderStatus status = OrderStatus.UN_PAY;
     @ApiModelProperty(value = "订单条目")
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "orderForm")
     private List<OrderItem> items;
@@ -258,7 +259,7 @@ public class OrderForm extends BaseEntity {
     }
 
     public void addItem(OrderItem item) {
-        if(items == null) {
+        if (items == null) {
             items = new ArrayList<>();
         }
         item.setOrderForm(this);
@@ -268,6 +269,7 @@ public class OrderForm extends BaseEntity {
     public enum PaymentStatus {
         UN_PAY("待支付"), PAYED("已支付");
         private String displayName;
+
         PaymentStatus(String displayName) {
             this.displayName = displayName;
         }
@@ -286,9 +288,11 @@ public class OrderForm extends BaseEntity {
         REJECTED("已退货"),
         CANCEL("已取消");
         private String displayName;
+
         OrderStatus(String displayName) {
             this.displayName = displayName;
         }
+
         public String getDisplayName() {
             return displayName;
         }
