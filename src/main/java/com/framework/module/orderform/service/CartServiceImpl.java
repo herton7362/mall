@@ -76,7 +76,7 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
 
     @Override
     public void deleteItem(String id) {
-        cartItemRepository.delete(id);
+        cartItemRepository.delete(cartItemRepository.findOne(id));
     }
 
     @Override
@@ -130,7 +130,13 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
             CartDTO newDTO = cartDTO.convertFor(cart);
             List<CartItemDTO> oldCartItems = newDTO.getItems()
                     .stream()
-                    .filter(item -> item.getProductId().equals(cartDTO.getItems().get(0).getProductId()))
+                    .filter(item -> {
+                        Boolean flag = item.getProductId().equals(cartDTO.getItems().get(0).getProductId());
+                        if(StringUtils.isNotBlank(item.getSkuId())) {
+                            flag = item.getSkuId().equals(cartDTO.getItems().get(0).getSkuId());
+                        }
+                        return flag;
+                    })
                     .collect(Collectors.toList());
             if (oldCartItems != null && !oldCartItems.isEmpty()) {
                 CartItemDTO oldCartItem = oldCartItems.get(0);
@@ -140,7 +146,9 @@ public class CartServiceImpl extends AbstractCrudService<Cart> implements CartSe
             }
             CascadePersistHelper.saveChildren(newDTO);
         } else {
-            cart = super.save(cartDTO.convert());
+            cart = cartDTO.convert();
+            cart.setItems(null);
+            cart = super.save(cart);
             cartDTO.setId(cart.getId());
             CascadePersistHelper.saveChildren(cartDTO);
         }

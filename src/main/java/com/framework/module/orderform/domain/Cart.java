@@ -22,7 +22,7 @@ public class Cart extends BaseEntity {
     @Column(length = 36)
     private String memberId;
     @ApiModelProperty(value = "购物车条目")
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cart")
+    @OneToMany(mappedBy = "cart")
     private List<CartItem> items;
 
     public String getMemberId() {

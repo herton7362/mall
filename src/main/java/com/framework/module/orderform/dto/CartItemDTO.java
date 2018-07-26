@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CartItemDTO extends BaseDTO<CartItemDTO, CartItem> {
-    @Parent
+    @Parent(fieldName = "cart.id")
     @ApiModelProperty(value = "购物车")
     private String cartId;
     @ApiModelProperty(value = "商品")
