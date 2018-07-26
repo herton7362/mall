@@ -20,7 +20,7 @@ public class CartItemDTO extends BaseDTO<CartItemDTO, CartItem> {
     @ApiModelProperty(value = "sku")
     private String skuId;
     @ApiModelProperty(value = "选中")
-    private Boolean checked;
+    private Boolean checked = true;
     @ApiModelProperty(value = "商品规格")
     private String productStandardNames;
     @ApiModelProperty(value = "商品价钱")
