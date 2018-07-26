@@ -30,6 +30,7 @@ import com.kratos.exceptions.BusinessException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -638,6 +639,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     }
 
     @Autowired
+    @Lazy
     public OrderFormServiceImpl(
             OrderFormRepository orderFormRepository,
             MemberService memberService,
