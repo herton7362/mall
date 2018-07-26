@@ -51,7 +51,6 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     private final SkuRepository skuRepository;
     private final CartService cartService;
     private final CartDTO cartDTO;
-    private final OrderItemService orderItemService;
 
     @Override
     protected PageRepository<OrderForm> getRepository() {
@@ -327,6 +326,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
                 .stream()
                 .filter(CartItemDTO::getChecked)
                 .map(cartItemDTO -> new OrderItemDTO()
+                        .setProductName(cartItemDTO.getProductName())
                         .setCoverImageUrl(cartItemDTO.getCoverImageUrl())
                         .setProductStandardNames(cartItemDTO.getProductStandardNames())
                         .setCount(Double.valueOf(cartItemDTO.getCount()))
@@ -621,8 +621,8 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             MemberCardService memberCardService,
             SkuRepository skuRepository,
             CartService cartService,
-            CartDTO cartDTO,
-            OrderItemService orderItemService) {
+            CartDTO cartDTO
+    ) {
         this.orderFormRepository = orderFormRepository;
         this.memberService = memberService;
         this.operationRecordService = operationRecordService;
@@ -632,6 +632,5 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         this.skuRepository = skuRepository;
         this.cartService = cartService;
         this.cartDTO = cartDTO;
-        this.orderItemService = orderItemService;
     }
 }
