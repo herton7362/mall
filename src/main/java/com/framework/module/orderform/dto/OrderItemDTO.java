@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ApiModel("订单条目")
 public class OrderItemDTO extends BaseDTO<OrderItemDTO, OrderItem> {
-    @Parent
+    @Parent(fieldName = "orderForm.id")
     @ApiModelProperty("订单 id")
     private String orderId;
     @ApiModelProperty("产品id")

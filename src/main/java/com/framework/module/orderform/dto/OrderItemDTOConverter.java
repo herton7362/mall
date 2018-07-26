@@ -1,6 +1,7 @@
 package com.framework.module.orderform.dto;
 
 import com.framework.module.orderform.domain.OrderItem;
+import com.framework.module.orderform.service.OrderFormService;
 import com.framework.module.product.domain.ProductStandardItem;
 import com.framework.module.product.service.ProductService;
 import com.framework.module.product.service.SkuService;
@@ -15,12 +16,14 @@ import java.util.stream.Collectors;
 public class OrderItemDTOConverter extends SimpleDTOConverter<OrderItemDTO, OrderItem> {
     private final ProductService productService;
     private final SkuService skuService;
+    private final OrderFormService orderFormService;
 
     @Override
     protected OrderItem doForward(OrderItemDTO orderItemDTO) {
         OrderItem orderItem = super.doForward(orderItemDTO);
         orderItem.setProduct(productService.findOne(orderItemDTO.getProductId()));
         orderItem.setSku(skuService.findOne(orderItemDTO.getSkuId()));
+        orderItem.setOrderForm(orderFormService.findOne(orderItemDTO.getOrderId()));
         return orderItem;
     }
 
@@ -58,8 +61,9 @@ public class OrderItemDTOConverter extends SimpleDTOConverter<OrderItemDTO, Orde
     }
 
     @Autowired
-    public OrderItemDTOConverter(ProductService productService, SkuService skuService) {
+    public OrderItemDTOConverter(ProductService productService, SkuService skuService, OrderFormService orderFormService) {
         this.productService = productService;
         this.skuService = skuService;
+        this.orderFormService = orderFormService;
     }
 }
