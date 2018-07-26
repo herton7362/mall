@@ -37,7 +37,6 @@ public class OrderFormDTOConverter extends SimpleDTOConverter<OrderFormDTO, Orde
     @Override
     protected OrderFormDTO doBackward(OrderForm orderForm) {
         OrderFormDTO orderFormDTO = super.doBackward(orderForm);
-        orderFormDTO.setCreatedDate(new Date(orderForm.getCreatedDate()));
         List<OrderItem> items = orderForm.getItems();
         orderFormDTO.setItems(orderItemDTO.convertFor(items));
         return orderFormDTO;
