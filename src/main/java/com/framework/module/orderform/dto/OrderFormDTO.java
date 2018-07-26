@@ -20,9 +20,9 @@ public class OrderFormDTO extends BaseDTO<OrderFormDTO, OrderForm> {
     @ApiModelProperty(value = "会员收货地址")
     private String deliverToAddressId;
     @ApiModelProperty(value = "储值支付")
-    private Double balance;
+    private Double balance = 0D;
     @ApiModelProperty(value = "积分支付")
-    private Integer point;
+    private Integer point = 0;
     @ApiModelProperty(value = "优惠券")
     private String couponId;
     @ApiModelProperty(value = "会员卡")

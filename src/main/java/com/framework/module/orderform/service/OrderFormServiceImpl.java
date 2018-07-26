@@ -345,6 +345,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         orderForm.setOrderNumber(getOutTradeNo());
         orderForm.setPaymentStatus(OrderForm.PaymentStatus.PAYED);
         orderForm.setItems(null);
+        orderForm.setCash(calculateDiscountedPrice(orderFormDTO, calculateTotalPrice(orderFormDTO)));
         orderFormRepository.save(orderForm);
         orderFormDTO.setId(orderForm.getId());
         CascadePersistHelper.saveChildren(orderFormDTO);
