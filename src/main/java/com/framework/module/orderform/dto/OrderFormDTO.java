@@ -1,5 +1,6 @@
 package com.framework.module.orderform.dto;
 
+import com.framework.module.member.domain.MemberAddress;
 import com.framework.module.orderform.domain.OrderForm;
 import com.framework.module.orderform.service.OrderItemService;
 import com.kratos.dto.BaseDTO;
@@ -8,9 +9,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 import java.util.List;
 
 @Component
@@ -22,6 +21,15 @@ public class OrderFormDTO extends BaseDTO<OrderFormDTO, OrderForm> {
     private String orderNumber;
     @ApiModelProperty(value = "会员收货地址")
     private String deliverToAddressId;
+    @ApiModelProperty(value = "会员收货地址")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private MemberAddress deliverToAddress;
+    @ApiModelProperty(value = "运单号")
+    private String shippingCode;
+    @ApiModelProperty(value = "发货日期")
+    private Long shippingDate;
+    @ApiModelProperty(value = "配送状态")
+    private String shippingStatus;
     @ApiModelProperty(value = "储值支付")
     private Double balance = 0D;
     @ApiModelProperty(value = "积分支付")
@@ -116,5 +124,37 @@ public class OrderFormDTO extends BaseDTO<OrderFormDTO, OrderForm> {
 
     public void setStatus(OrderForm.OrderStatus status) {
         this.status = status;
+    }
+
+    public MemberAddress getDeliverToAddress() {
+        return deliverToAddress;
+    }
+
+    public void setDeliverToAddress(MemberAddress deliverToAddress) {
+        this.deliverToAddress = deliverToAddress;
+    }
+
+    public String getShippingCode() {
+        return shippingCode;
+    }
+
+    public void setShippingCode(String shippingCode) {
+        this.shippingCode = shippingCode;
+    }
+
+    public Long getShippingDate() {
+        return shippingDate;
+    }
+
+    public void setShippingDate(Long shippingDate) {
+        this.shippingDate = shippingDate;
+    }
+
+    public String getShippingStatus() {
+        return shippingStatus;
+    }
+
+    public void setShippingStatus(String shippingStatus) {
+        this.shippingStatus = shippingStatus;
     }
 }
