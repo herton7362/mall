@@ -1,14 +1,12 @@
 package com.framework.module.member.domain;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kratos.entity.BaseUser;
-import com.kratos.module.attachment.domain.Attachment;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.persistence.*;
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 
 /**
  * 会员
@@ -46,8 +44,8 @@ public class Member extends BaseUser {
     @Column(length = 20)
     private String address;
     @ApiModelProperty(value = "头像")
-    @ManyToOne
-    private Attachment headPhoto;
+    @Column(length = 36)
+    private String headPhotoId;
 
     public Member() {
         setUserType(BaseUser.UserType.MEMBER.name());
@@ -133,11 +131,11 @@ public class Member extends BaseUser {
         this.address = address;
     }
 
-    public Attachment getHeadPhoto() {
-        return headPhoto;
+    public String getHeadPhotoId() {
+        return headPhotoId;
     }
 
-    public void setHeadPhoto(Attachment headPhoto) {
-        this.headPhoto = headPhoto;
+    public void setHeadPhotoId(String headPhotoId) {
+        this.headPhotoId = headPhotoId;
     }
 }
