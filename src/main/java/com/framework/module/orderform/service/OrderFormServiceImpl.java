@@ -391,7 +391,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             throw new BusinessException("商品id不能为空");
         }
         Product product = productRepository.findOne(param.getProductId());
-        String coverImageUrl = null;
+        String coverImageId = null;
         if (product == null) {
             throw new BusinessException("商品未找到");
         }
@@ -402,7 +402,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             throw new BusinessException("请提供商品数量");
         }
         if (product.getCoverImage() != null)
-            coverImageUrl = product.getCoverImage().getId();
+            coverImageId = product.getCoverImage().getId();
         Sku sku;
         if (product.getSkus() != null && !product.getSkus().isEmpty() && StringUtils.isBlank(param.getSkuId())) {
             throw new BusinessException("请提供sku");
@@ -412,13 +412,13 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
                 throw new BusinessException("sku未找到");
             }
             if (sku.getCoverImage() != null) {
-                coverImageUrl = sku.getCoverImage().getId();
+                coverImageId = sku.getCoverImage().getId();
             }
         }
         orderItemDTOS = new ArrayList<>();
         OrderItemDTO orderItemDTO = new OrderItemDTO()
                 .setPrice(product.getPrice())
-                .setCoverImageUrl(coverImageUrl)
+                .setCoverImageUrl("/attachment/download/" + coverImageId)
                 .setProductName(product.getName())
                 .setCount(Double.valueOf(param.getCount()))
                 .setProductId(param.getProductId())
