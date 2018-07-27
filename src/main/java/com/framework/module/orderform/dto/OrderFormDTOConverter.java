@@ -6,17 +6,18 @@ import com.framework.module.member.domain.MemberAddress;
 import com.framework.module.member.service.MemberAddressService;
 import com.framework.module.orderform.domain.OrderForm;
 import com.framework.module.orderform.domain.OrderItem;
+import com.framework.module.orderform.service.OrderFormService;
 import com.kratos.dto.SimpleDTOConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
 import java.util.List;
 
 @Component
 public class OrderFormDTOConverter extends SimpleDTOConverter<OrderFormDTO, OrderForm> {
     private final MemberAddressService memberAddressService;
     private final OrderItemDTO orderItemDTO;
+    private final OrderFormService orderFormService;
 
     @Override
     protected OrderForm doForward(OrderFormDTO orderFormDTO) {
@@ -39,12 +40,14 @@ public class OrderFormDTOConverter extends SimpleDTOConverter<OrderFormDTO, Orde
         OrderFormDTO orderFormDTO = super.doBackward(orderForm);
         List<OrderItem> items = orderForm.getItems();
         orderFormDTO.setItems(orderItemDTO.convertFor(items));
+        orderFormDTO.setTotal(orderFormService.calculateTotalPrice(orderFormDTO));
         return orderFormDTO;
     }
 
     @Autowired
-    public OrderFormDTOConverter(MemberAddressService memberAddressService, OrderItemDTO orderItemDTO) {
+    public OrderFormDTOConverter(MemberAddressService memberAddressService, OrderItemDTO orderItemDTO, OrderFormService orderFormService) {
         this.memberAddressService = memberAddressService;
         this.orderItemDTO = orderItemDTO;
+        this.orderFormService = orderFormService;
     }
 }
