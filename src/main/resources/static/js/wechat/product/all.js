@@ -116,7 +116,9 @@ require([
                     recommend: true
                 });
             } else if(keyword) {
-
+                this.loadProduct({
+                    name: keyword
+                });
             } else {
                 this.loadProductCategory(function(data) {
                     this.tabClick(id? id: data[0].id);

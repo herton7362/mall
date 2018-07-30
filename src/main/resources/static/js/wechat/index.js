@@ -154,6 +154,43 @@ require([
                         self.bannerImgs = data.content;
                     }
                 });
+            },
+            initSearchButton: function () {
+
+                $(function(){
+                    var $searchBar = $('#searchBar'),
+                        $searchText = $('#searchText'),
+                        $searchInput = $('#searchInput'),
+                        $searchClear = $('#searchClear'),
+                        $searchCancel = $('#searchCancel');
+
+                    function cancelSearch(){
+                        $searchBar.removeClass('weui-search-bar_focusing');
+                        $searchText.show();
+                    }
+
+                    $searchText.on('click', function(){
+                        $searchBar.addClass('weui-search-bar_focusing');
+                        $searchInput.focus();
+                    });
+                    $searchInput
+                        .on('blur', function () {
+                            if(!this.value.length) cancelSearch();
+                        })
+                        .on('keydown', function (event) {
+                            if(event.keyCode === 13) {
+                                window.location.href = utils.patchUrlPrefixUrl('/wechat/product/all?keyword=' + $(this).val());
+                            }
+                        })
+                    ;
+                    $searchClear.on('click', function(){
+                        $searchInput.focus();
+                    });
+                    $searchCancel.on('click', function(){
+                        cancelSearch();
+                        $searchInput.blur();
+                    });
+                });
             }
         },
         mounted: function () {
@@ -183,6 +220,7 @@ require([
             this.loadRecommend();
             this.loadCarouselImg();
             this.loadBannerImg();
+            this.initSearchButton()
         }
     });
 });
