@@ -44,8 +44,8 @@ public class ProductCategoryDTO {
 
     public void convertFromPo(ProductCategory productCategory) {
         BeanUtils.copyProperties(productCategory, this);
-        if(productCategory.getCoverImage() != null) {
-            setCoverImageUrl("/attachment/download/" + productCategory.getCoverImage().getId());
+        if (productCategory.getCoverImage() != null) {
+            setCoverImageUrl("/attachment/download/" + productCategory.getCoverImage().getId() + "." + productCategory.getCoverImage().getFormat());
         }
     }
 }
