@@ -58,4 +58,10 @@ public interface MemberService extends CrudService<Member> {
      * @return 会员等级
      */
     MemberLevel getMemberLevel(String memberId) throws Exception;
+
+    /**
+     * 修改密码
+     * @param member 会员参数
+     */
+    void editPwd(Member member);
 }

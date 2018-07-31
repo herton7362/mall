@@ -40,7 +40,7 @@ public class LoginServiceImpl extends AbstractLoginService {
             throw new BusinessException("当前号码未注册");
         }
         member.setPassword(new BCryptPasswordEncoder().encode(password));
-        memberService.save(member);
+        memberService.editPwd(member);
     }
 
     @Override

@@ -56,6 +56,7 @@ oauth2:
     useCouponUrl: ${oauth2.framework.domain}/api/coupon/use
     memberLevelUrl: ${oauth2.framework.domain}/api/member/level/%s
     memberCardDomainUri: ${oauth2.framework.domain}/api/memberCard
+    editPwdUri: ${oauth2.framework.domain}/api/member/editPwd
 ---
 spring:
   profiles: dev

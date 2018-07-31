@@ -7,9 +7,12 @@ import com.framework.module.member.web.DeductBalanceParam;
 import com.framework.module.member.web.FastIncreasePointParam;
 import com.framework.module.recharge.web.RechargeParam;
 import com.kratos.common.AbstractCrudClientService;
+import com.kratos.exceptions.BusinessException;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -92,6 +95,12 @@ public class MemberClientServiceImpl extends AbstractCrudClientService<Member> i
         ResponseEntity<MemberLevel> responseEntity = oAuth2RestTemplate.getForEntity(
                 String.format(oAuth2Properties.getMemberLevelUrl(), memberId),  MemberLevel.class);
         return responseEntity.getBody();
+    }
+
+    @Override
+    public void editPwd(Member member) {
+        oAuth2RestTemplate.postForEntity(
+                URI.create(oAuth2Properties.getEditPwdUri()), member, null);
     }
     @Autowired
     public MemberClientServiceImpl(
