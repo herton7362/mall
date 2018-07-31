@@ -2,6 +2,7 @@ package com.framework.module.product.web;
 
 import com.framework.module.product.domain.HomePageVo;
 import com.framework.module.product.domain.Product;
+import com.framework.module.product.domain.SearchProductReqParam;
 import com.framework.module.product.domain.Sku;
 import com.framework.module.product.dto.ProductDetailDTO;
 import com.framework.module.product.dto.ProductDTO;
@@ -23,6 +24,7 @@ import java.util.List;
 public class GuestProductController extends AbstractReadController<Product> {
     private final ProductService productService;
     private final ProductDetailDTO productDetailDTO;
+
     @Override
     protected CrudService<Product> getService() {
         return productService;
@@ -31,7 +33,7 @@ public class GuestProductController extends AbstractReadController<Product> {
     /**
      * 根据传入的 规格 条目id来匹配具体的sku
      */
-    @ApiOperation(value="根据传入的 规格 条目id来匹配具体的sku")
+    @ApiOperation(value = "根据传入的 规格 条目id来匹配具体的sku")
     @RequestMapping(value = "/{productId}/sku/{productStandardItemIds}", method = RequestMethod.GET)
     public ResponseEntity<Sku> getSkuByProductStandardItemIds(@PathVariable String productId,
                                                               @PathVariable String productStandardItemIds) throws Exception {
@@ -43,7 +45,7 @@ public class GuestProductController extends AbstractReadController<Product> {
     /**
      * 商品详情
      */
-    @ApiOperation(value="商品详情")
+    @ApiOperation(value = "商品详情")
     @RequestMapping(value = "/detail/{id}", method = RequestMethod.GET)
     public ResponseEntity<ProductDetailDTO> getDetail(@PathVariable String id) throws Exception {
         Product product = getService().findOne(id);
@@ -66,6 +68,15 @@ public class GuestProductController extends AbstractReadController<Product> {
     @RequestMapping(value = "/getProductsByCategoryId/{page}/{categoryId}", method = RequestMethod.GET)
     public ResponseEntity<List<ProductDTO>> getProductsByCategoryId(@PathVariable("page") Integer page, @PathVariable("categoryId") String categoryId) throws Exception {
         return new ResponseEntity<>(productService.getProductsByCategoryId(page, categoryId), HttpStatus.OK);
+    }
+
+    /**
+     * 搜索商品
+     */
+    @ApiOperation(value = "搜索商品")
+    @RequestMapping(value = "/searchProduct", method = RequestMethod.POST)
+    public ResponseEntity<List<ProductDTO>> searchProduct(@RequestBody SearchProductReqParam searchProductReqParam) throws Exception {
+        return new ResponseEntity<>(productService.searchProduct(searchProductReqParam), HttpStatus.OK);
     }
 
     @Autowired

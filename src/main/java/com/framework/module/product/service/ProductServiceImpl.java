@@ -108,7 +108,7 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
     }
 
     @Override
-    public Sku getSkuByProductStandardItemIds(String productId, String[] idArr) throws Exception {
+    public Sku getSkuByProductStandardItemIds(String productId, String[] idArr) {
         if (idArr == null || StringUtils.isBlank(idArr[0])) {
             throw new BusinessException("规格条目不能为空");
         }
@@ -149,7 +149,7 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
     }
 
     @Override
-    public HomePageVo homePage() throws Exception {
+    public HomePageVo homePage() {
         HomePageVo voHomePage = new HomePageVo();
         Map<String, String[]> param = new HashMap<>();
         String[] newest = {"true"};
@@ -175,7 +175,7 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
     }
 
     @Override
-    public List<ProductDTO> getProductsByCategoryId(Integer page, String categoryId) throws Exception {
+    public List<ProductDTO> getProductsByCategoryId(Integer page, String categoryId) {
         List<ProductDTO> resultArray = new ArrayList<>();
         Map<String, String[]> param = new HashMap<>();
         String[] categoryIdArray = {categoryId};
@@ -184,6 +184,28 @@ public class ProductServiceImpl extends AbstractCrudService<Product> implements 
         orders.add(new Sort.Order(Sort.Direction.ASC, "sortNumber"));
         orders.add(new Sort.Order(Sort.Direction.DESC, "updatedDate"));
         PageRequest pageRequest = new PageRequest(page - 1, 30, new Sort(orders));
+        PageResult<Product> productList = findAll(pageRequest, param);
+        if (productList == null || productList.getContent() == null) {
+            return null;
+        }
+        for (Product product : productList.getContent()) {
+            ProductDTO voProduct = new ProductDTO();
+            voProduct.convertFromPo(product);
+            resultArray.add(voProduct);
+        }
+        return resultArray;
+    }
+
+    @Override
+    public List<ProductDTO> searchProduct(SearchProductReqParam searchProductReqParam) {
+        List<ProductDTO> resultArray = new ArrayList<>();
+        Map<String, String[]> param = new HashMap<>();
+        String[] nameArray = {searchProductReqParam.getProductName()};
+        param.put("name", nameArray);
+        List<Sort.Order> orders = new ArrayList<>();
+        orders.add(new Sort.Order(Sort.Direction.ASC, "sortNumber"));
+        orders.add(new Sort.Order(Sort.Direction.DESC, "updatedDate"));
+        PageRequest pageRequest = new PageRequest(searchProductReqParam.getPageNum() - 1, searchProductReqParam.getPageSize(), new Sort(orders));
         PageResult<Product> productList = findAll(pageRequest, param);
         if (productList == null || productList.getContent() == null) {
             return null;

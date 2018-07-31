@@ -2,6 +2,7 @@ package com.framework.module.product.service;
 
 import com.framework.module.product.domain.HomePageVo;
 import com.framework.module.product.domain.Product;
+import com.framework.module.product.domain.SearchProductReqParam;
 import com.framework.module.product.domain.Sku;
 import com.framework.module.product.dto.ProductDTO;
 import com.kratos.common.CrudService;
@@ -50,4 +51,11 @@ public interface ProductService extends CrudService<Product> {
      * @return 产品信息
      */
     List<ProductDTO> getProductsByCategoryId(Integer page, String categoryId) throws Exception;
+
+    /**
+     * 搜索商品信息
+     * @param searchProductReqParam 商品参数
+     * @return 商品DTO
+     */
+    List<ProductDTO> searchProduct(SearchProductReqParam searchProductReqParam);
 }
