@@ -349,13 +349,13 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         orderForm.setOrderNumber(getOutTradeNo());
         orderForm.setPaymentStatus(OrderForm.PaymentStatus.PAYED);
         orderForm.setItems(null);
-        orderForm.setCash(calculateDiscountedPrice(orderFormDTO, calculateTotalPrice(orderFormDTO)));
+        orderForm.setCash(calculateTotalPrice(orderFormDTO));
         orderFormRepository.save(orderForm);
         orderFormDTO.setId(orderForm.getId());
         CascadePersistHelper.saveChildren(orderFormDTO);
         // 修改账户余额
         if (OrderForm.OrderStatus.PAYED == orderForm.getStatus()) {
-            orderForm.setCash(this.calculateDiscountedPrice(orderFormDTO, this.calculateTotalPrice(orderFormDTO)));
+            orderForm.setCash(calculateTotalPrice(orderFormDTO));
             consumeModifyMemberAccount(orderForm);
         }
 
@@ -460,7 +460,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
                 throw new BusinessException("商品未找到");
             }
             if (product.getLogicallyDeleted()) {
-                throw new BusinessException("商品已下架");
+                // throw new BusinessException("商品已下架");
             }
             if (item.getCount() == null || item.getCount() <= 0) {
                 throw new BusinessException("请提供商品数量");

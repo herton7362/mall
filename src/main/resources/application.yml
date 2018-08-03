@@ -77,3 +77,13 @@ spring:
 server:
   port: 8080
   context-path:
+---
+spring:
+  profiles: test
+  datasource:
+    url: jdbc:mysql://rm-2zexc221rpq83tolx.mysql.rds.aliyuncs.com:3306/mall-test?autoReconnect=true&useSSL=false
+    username: root
+    password: P@$$W0rd
+server:
+  port: 8765
+  context-path:
