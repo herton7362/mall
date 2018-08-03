@@ -25,6 +25,7 @@ import com.framework.module.record.service.OperationRecordService;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
 import com.kratos.common.PageResult;
+import com.kratos.common.utils.SpringUtils;
 import com.kratos.dto.CascadePersistHelper;
 import com.kratos.exceptions.BusinessException;
 import org.apache.commons.lang.StringUtils;
@@ -143,6 +144,11 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         }
         if (OrderForm.OrderStatus.UN_PAY != orderForm.getStatus()) {
             throw new BusinessException("订单状态不正确");
+        }
+        OrderFormDTO orderFormDTO = SpringUtils.getBean(OrderFormDTO.class);
+        Double total = calculateTotalPrice(orderFormDTO.convertFor(orderForm));
+        if(total != 0) {
+            throw new BusinessException("订单金额不正确");
         }
         orderForm.setStatus(OrderForm.OrderStatus.PAYED);
         orderForm.setPaymentStatus(OrderForm.PaymentStatus.PAYED);
