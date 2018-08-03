@@ -1,5 +1,6 @@
 package com.framework.module.orderform.dto;
 
+import com.framework.module.marketing.domain.Coupon;
 import com.framework.module.member.domain.MemberAddress;
 import com.framework.module.orderform.domain.OrderForm;
 import com.framework.module.orderform.service.OrderItemService;
@@ -36,6 +37,8 @@ public class OrderFormDTO extends BaseDTO<OrderFormDTO, OrderForm> {
     private Integer point = 0;
     @ApiModelProperty(value = "优惠券")
     private String couponId;
+    @ApiModelProperty(value = "优惠券对象")
+    private Coupon coupon;
     @ApiModelProperty(value = "会员卡")
     private String memberCardId;
     @ApiModelProperty(value = "买家留言")
@@ -156,5 +159,13 @@ public class OrderFormDTO extends BaseDTO<OrderFormDTO, OrderForm> {
 
     public void setShippingStatus(String shippingStatus) {
         this.shippingStatus = shippingStatus;
+    }
+
+    public Coupon getCoupon() {
+        return coupon;
+    }
+
+    public void setCoupon(Coupon coupon) {
+        this.coupon = coupon;
     }
 }
