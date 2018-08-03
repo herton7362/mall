@@ -45,6 +45,9 @@ public class OrderFormDTOConverter extends SimpleDTOConverter<OrderFormDTO, Orde
     @Override
     protected OrderFormDTO doBackward(OrderForm orderForm) {
         OrderFormDTO orderFormDTO = super.doBackward(orderForm);
+        if (orderFormDTO.getCoupon() != null) {
+            orderFormDTO.setCouponId(orderFormDTO.getCoupon().getId());
+        }
         List<OrderItem> items = orderForm.getItems();
         orderFormDTO.setItems(orderItemDTO.convertFor(items));
         orderFormDTO.setTotal(orderFormService.calculateTotalPrice(orderFormDTO));
