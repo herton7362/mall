@@ -1,12 +1,14 @@
 package com.framework.module.orderform.dto;
 
 import com.framework.module.auth.MemberThread;
+import com.framework.module.marketing.service.CouponService;
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.domain.MemberAddress;
 import com.framework.module.member.service.MemberAddressService;
 import com.framework.module.orderform.domain.OrderForm;
 import com.framework.module.orderform.domain.OrderItem;
 import com.framework.module.orderform.service.OrderFormService;
+import com.kratos.common.utils.StringUtils;
 import com.kratos.dto.SimpleDTOConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,6 +20,7 @@ public class OrderFormDTOConverter extends SimpleDTOConverter<OrderFormDTO, Orde
     private final MemberAddressService memberAddressService;
     private final OrderItemDTO orderItemDTO;
     private final OrderFormService orderFormService;
+    private final CouponService couponService;
 
     @Override
     protected OrderForm doForward(OrderFormDTO orderFormDTO) {
@@ -30,6 +33,10 @@ public class OrderFormDTOConverter extends SimpleDTOConverter<OrderFormDTO, Orde
         if (memberAddress == null) {
             throw new RuntimeException("收货地址未找到");
         }
+        if(StringUtils.isNotBlank(orderFormDTO.getCouponId())) {
+            orderForm.setCoupon(couponService.findOne(orderFormDTO.getCouponId()));
+        }
+
         orderForm.setDeliverToAddress(memberAddress);
         orderForm.setMemberId(member.getId());
         return orderForm;
@@ -45,9 +52,10 @@ public class OrderFormDTOConverter extends SimpleDTOConverter<OrderFormDTO, Orde
     }
 
     @Autowired
-    public OrderFormDTOConverter(MemberAddressService memberAddressService, OrderItemDTO orderItemDTO, OrderFormService orderFormService) {
+    public OrderFormDTOConverter(MemberAddressService memberAddressService, OrderItemDTO orderItemDTO, OrderFormService orderFormService, CouponService couponService) {
         this.memberAddressService = memberAddressService;
         this.orderItemDTO = orderItemDTO;
         this.orderFormService = orderFormService;
+        this.couponService = couponService;
     }
 }
