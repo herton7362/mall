@@ -4,7 +4,9 @@ import com.framework.module.auth.MemberThread;
 import com.framework.module.marketing.domain.Coupon;
 import com.framework.module.marketing.service.CouponService;
 import com.framework.module.member.domain.Member;
+import com.framework.module.member.domain.MemberCoupon;
 import com.framework.module.member.service.MemberCardService;
+import com.framework.module.member.service.MemberCouponService;
 import com.framework.module.member.service.MemberService;
 import com.framework.module.orderform.domain.Cart;
 import com.framework.module.orderform.domain.OrderForm;
@@ -55,6 +57,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     private final CartService cartService;
     private final CartDTO cartDTO;
     private final OrderFormDTO orderFormDTO;
+    private final MemberCouponService memberCouponService;
 
     @Override
     protected PageRepository<OrderForm> getRepository() {
@@ -357,6 +360,20 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         orderForm.setItems(null);
         orderForm.setCash(calculateTotalPrice(orderFormDTO));
         orderFormRepository.save(orderForm);
+
+        if(StringUtils.isNotBlank(orderFormDTO.getCouponId())) {
+            Map<String, String[]> params = new HashMap<>();
+            params.put("memberId", new String[]{orderForm.getMemberId()});
+            params.put("coupon.id", new String[]{orderFormDTO.getCouponId()});
+            List<MemberCoupon> memberCoupons = memberCouponService.findAll(params);
+            if(memberCoupons != null && !memberCoupons.isEmpty()) {
+                for (MemberCoupon memberCoupon : memberCoupons) {
+                    memberCoupon.setUsed(true);
+                    memberCouponService.save(memberCoupon);
+                }
+            }
+        }
+
         orderFormDTO.setId(orderForm.getId());
         CascadePersistHelper.saveChildren(orderFormDTO);
         // 修改账户余额
@@ -655,7 +672,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             MemberCardService memberCardService,
             SkuRepository skuRepository,
             CartService cartService,
-            CartDTO cartDTO, OrderFormDTO orderFormDTO) {
+            CartDTO cartDTO, OrderFormDTO orderFormDTO, MemberCouponService memberCouponService) {
         this.orderFormRepository = orderFormRepository;
         this.memberService = memberService;
         this.operationRecordService = operationRecordService;
@@ -666,5 +683,6 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         this.cartService = cartService;
         this.cartDTO = cartDTO;
         this.orderFormDTO = orderFormDTO;
+        this.memberCouponService = memberCouponService;
     }
 }
