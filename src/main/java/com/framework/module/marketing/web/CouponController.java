@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,6 @@ import java.util.Map;
 public class CouponController extends AbstractCrudController<Coupon> {
     private final CouponService couponService;
     private final MemberCouponService memberCouponService;
-    private final MemberService memberService;
     @Override
     protected CrudService<Coupon> getService() {
         return couponService;
@@ -58,7 +58,16 @@ public class CouponController extends AbstractCrudController<Coupon> {
     @ApiOperation(value="获取当前用户优惠券数量")
     @RequestMapping(value = "/count/{memberId}", method = RequestMethod.GET)
     public ResponseEntity<Integer> count(@PathVariable String memberId) throws Exception {
-        return new ResponseEntity<>(memberService.getAvailableCouponCount(memberId), HttpStatus.OK);
+        Map<String, String[]> params = new HashMap<>();
+        params.put("memberId", new String[]{memberId});
+        List<MemberCoupon> memberCoupons = memberCouponService.findAll(params);
+        Integer count = 0;
+        for (MemberCoupon memberCoupon : memberCoupons) {
+            if(!memberCoupon.getUsed() && (memberCoupon.getCoupon().getEndDate() > new Date().getTime())) {
+                count ++;
+            }
+        }
+        return new ResponseEntity<>(count, HttpStatus.OK);
     }
 
     /**
@@ -96,11 +105,9 @@ public class CouponController extends AbstractCrudController<Coupon> {
     @Autowired
     public CouponController(
             CouponService couponService,
-            MemberCouponService memberCouponService,
-            MemberService memberService
+            MemberCouponService memberCouponService
     ) {
         this.couponService = couponService;
         this.memberCouponService = memberCouponService;
-        this.memberService = memberService;
     }
 }
