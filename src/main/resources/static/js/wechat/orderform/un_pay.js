@@ -188,7 +188,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                                 bridge.callHandler('wechatpay', JSON.stringify(data), function responseCallback(responseData) {
                                     responseData = eval('('+responseData+')');
                                     if(responseData.result === 'ok') {
-                                        pay();
+                                        // pay();
                                     } else {
                                         messager.bubble("支付失败", 'error');
                                     }
@@ -235,7 +235,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                                 bridge.callHandler('alipay', JSON.stringify(data), function responseCallback(responseData) {
                                     responseData = eval('('+responseData+')');
                                     if(responseData.result === 'ok') {
-                                        pay();
+                                        // pay();
                                     } else {
                                         messager.bubble("支付失败", 'error');
                                     }
