@@ -482,9 +482,6 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             if (product == null) {
                 throw new BusinessException("商品未找到");
             }
-            if (product.getLogicallyDeleted()) {
-                // throw new BusinessException("商品已下架");
-            }
             if (item.getCount() == null || item.getCount() <= 0) {
                 throw new BusinessException("请提供商品数量");
             }
@@ -511,13 +508,6 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             Coupon coupon = couponService.findOne(orderFormDTO.getCouponId());
             if (coupon == null) {
                 throw new BusinessException("优惠券未找到或已经失效");
-            }
-            long now = new Date().getTime();
-            if (coupon.getStartDate() > now) {
-                throw new BusinessException("优惠券活动未开始");
-            }
-            if (now > coupon.getEndDate()) {
-                throw new BusinessException("优惠券活动已结束");
             }
             if (coupon.getMinAmount() > totalPrice) {
                 throw new BusinessException("订单金额不符合条件");
