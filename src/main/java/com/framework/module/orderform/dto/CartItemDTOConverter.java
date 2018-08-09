@@ -47,6 +47,7 @@ public class CartItemDTOConverter extends SimpleDTOConverter<CartItemDTO, CartIt
         if(item.getProduct() != null) {
             itemDTO.setProductId(item.getProduct().getId());
             itemDTO.setProductName(item.getProduct().getName());
+            itemDTO.setPrice(item.getProduct().getPrice());
             if(item.getProduct().getCoverImage() != null) {
                 itemDTO.setCoverImageUrl("/attachment/download/" + item.getProduct().getCoverImage().getId());
             }
