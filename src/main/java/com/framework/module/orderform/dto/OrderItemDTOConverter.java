@@ -5,6 +5,7 @@ import com.framework.module.orderform.service.OrderFormService;
 import com.framework.module.product.domain.ProductStandardItem;
 import com.framework.module.product.service.ProductService;
 import com.framework.module.product.service.SkuService;
+import com.kratos.common.utils.StringUtils;
 import com.kratos.dto.SimpleDTOConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,9 +22,15 @@ public class OrderItemDTOConverter extends SimpleDTOConverter<OrderItemDTO, Orde
     @Override
     protected OrderItem doForward(OrderItemDTO orderItemDTO) {
         OrderItem orderItem = super.doForward(orderItemDTO);
-        orderItem.setProduct(productService.findOne(orderItemDTO.getProductId()));
-        orderItem.setSku(skuService.findOne(orderItemDTO.getSkuId()));
-        orderItem.setOrderForm(orderFormService.findOne(orderItemDTO.getOrderId()));
+        if(StringUtils.isNotBlank(orderItemDTO.getProductId())) {
+            orderItem.setProduct(productService.findOne(orderItemDTO.getProductId()));
+        }
+        if(StringUtils.isNotBlank(orderItemDTO.getSkuId())) {
+            orderItem.setSku(skuService.findOne(orderItemDTO.getSkuId()));
+        }
+        if(StringUtils.isNotBlank(orderItemDTO.getOrderId())) {
+            orderItem.setOrderForm(orderFormService.findOne(orderItemDTO.getOrderId()));
+        }
         return orderItem;
     }
 

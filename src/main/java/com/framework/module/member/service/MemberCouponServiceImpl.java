@@ -55,7 +55,7 @@ public class MemberCouponServiceImpl extends AbstractCrudService<MemberCoupon> i
             if(product == null) {
                 throw new BusinessException("商品未找到");
             }
-            if(product.getSkus() != null && StringUtils.isBlank(param.getSkuId())) {
+            if(product.getSkus() != null && !product.getSkus().isEmpty() && StringUtils.isBlank(param.getSkuId())) {
                 throw new BusinessException("未指定具体商品规格");
             }
             if(param.getCount() == null || param.getCount() <= 0) {
