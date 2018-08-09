@@ -356,7 +356,8 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     public OrderFormDTO makeOrder(OrderFormDTO orderFormDTO) {
         OrderForm orderForm = orderFormDTO.convert();
         orderForm.setOrderNumber(getOutTradeNo());
-        orderForm.setPaymentStatus(OrderForm.PaymentStatus.PAYED);
+        orderForm.setPaymentStatus(OrderForm.PaymentStatus.UN_PAY);
+        orderForm.setStatus(OrderForm.OrderStatus.UN_PAY);
         orderForm.setItems(null);
         orderForm.setCash(calculateTotalPrice(orderFormDTO));
         orderFormRepository.save(orderForm);
@@ -426,10 +427,10 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         }
         if (product.getCoverImage() != null)
             coverImageId = product.getCoverImage().getId();
-        Sku sku;
+        Sku sku = null;
         if (product.getSkus() != null && !product.getSkus().isEmpty() && StringUtils.isBlank(param.getSkuId())) {
             throw new BusinessException("请提供sku");
-        } else {
+        } else if(StringUtils.isNotBlank(param.getSkuId())) {
             sku = skuRepository.findOne(param.getSkuId());
             if (sku == null) {
                 throw new BusinessException("sku未找到");
@@ -447,11 +448,13 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
                 .setProductId(param.getProductId())
                 .setSkuId(param.getSkuId());
 
-        orderItemDTO.setProductStandardNames(String.join(",", sku
-                .getProductStandardItems()
-                .stream()
-                .map(ProductStandardItem::getName).collect(Collectors.toList())))
-                .setPrice(sku.getPrice());
+        if(sku != null) {
+            orderItemDTO.setProductStandardNames(String.join(",", sku
+                    .getProductStandardItems()
+                    .stream()
+                    .map(ProductStandardItem::getName).collect(Collectors.toList())))
+                    .setPrice(sku.getPrice());
+        }
 
         orderItemDTOS.add(orderItemDTO);
         orderFormDTO.setItems(orderItemDTOS);
