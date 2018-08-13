@@ -116,7 +116,9 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         Member oldMember = memberService.findOne(orderForm.getMemberId());
         Integer productPoints = 0;
         for (OrderItem orderItem : orderForm.getItems()) {
-            productPoints += orderItem.getProduct().getPoints();
+            if(orderItem.getProduct().getPoints() != null) {
+                productPoints += orderItem.getProduct().getPoints();
+            }
         }
         oldMember.setSalePoint(increaseNumber(oldMember.getSalePoint(), orderForm.getReturnedPoint()));
         oldMember.setSalePoint(subtractNumber(oldMember.getSalePoint(), productPoints));
