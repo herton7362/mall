@@ -513,6 +513,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     }
 
     private Double calculateDiscountedPrice(OrderFormDTO orderFormDTO, Double totalPrice) {
+        BigDecimal result = new BigDecimal(totalPrice);
         if (StringUtils.isNotBlank(orderFormDTO.getCouponId())) {
             Coupon coupon = couponService.findOne(orderFormDTO.getCouponId());
             if (coupon == null) {
@@ -521,21 +522,21 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             if (coupon.getMinAmount() > totalPrice) {
                 throw new BusinessException("订单金额不符合条件");
             }
-            totalPrice = totalPrice - coupon.getAmount();
+            result = result.subtract(new BigDecimal(coupon.getAmount()));
         }
 
         if (orderFormDTO.getBalance() != null) {
-            totalPrice = totalPrice - orderFormDTO.getBalance();
+            result = result.subtract(new BigDecimal(orderFormDTO.getBalance()));
         }
 
         if (orderFormDTO.getPoint() != null) {
-            totalPrice = totalPrice - (orderFormDTO.getPoint() / 100);
+            result = result.subtract(new BigDecimal(orderFormDTO.getPoint()).divide(new BigDecimal(100),BigDecimal.ROUND_HALF_UP));
         }
 
-        if (totalPrice < 0) {
+        if (result.setScale(1,BigDecimal.ROUND_HALF_UP).doubleValue() < 0) {
             throw new BusinessException("订单金额不正确");
         }
-        return totalPrice;
+        return result.setScale(1,BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
     private List<OrderFormResult> translateResults(List<OrderForm> orderForms) {
