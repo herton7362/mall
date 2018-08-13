@@ -77,6 +77,8 @@ spring:
 server:
   port: 8080
   context-path:
+aliPay:
+  notifyUrl: http://www.dldjshop.com/ali/pay/notify
 ---
 spring:
   profiles: test
@@ -87,3 +89,5 @@ spring:
 server:
   port: 8765
   context-path:
+aliPay:
+  notifyUrl: http://39.107.230.58:8765/ali/pay/notify
