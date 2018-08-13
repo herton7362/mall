@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(value = "优惠券管理")
 @RestController
@@ -79,6 +80,12 @@ public class CouponController extends AbstractCrudController<Coupon> {
         Map<String, String[]> params = new HashMap<>();
         params.put("memberId", new String[]{memberId});
         List<MemberCoupon> memberCoupons = memberCouponService.findAll(params);
+        if(memberCoupons != null) {
+            memberCoupons = memberCoupons .stream()
+                    .filter(memberCoupon -> !memberCoupon.getUsed()
+                            && !memberCoupon.getCoupon().ifExpired())
+                    .collect(Collectors.toList());
+        }
         return new ResponseEntity<>(memberCoupons, HttpStatus.OK);
     }
 
