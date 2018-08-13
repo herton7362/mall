@@ -43,6 +43,8 @@ public class OrderFormDTO extends BaseDTO<OrderFormDTO, OrderForm> {
     private String memberCardId;
     @ApiModelProperty(value = "买家留言")
     private String remark;
+    @ApiModelProperty(value = "购物车id用逗号拼接")
+    private String cartItemIds;
     @ApiModelProperty(value = "订单状态")
     private OrderForm.OrderStatus status;
     @Children(service = OrderItemService.class)
@@ -111,6 +113,14 @@ public class OrderFormDTO extends BaseDTO<OrderFormDTO, OrderForm> {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public String getCartItemIds() {
+        return cartItemIds;
+    }
+
+    public void setCartItemIds(String cartItemIds) {
+        this.cartItemIds = cartItemIds;
     }
 
     public List<OrderItemDTO> getItems() {

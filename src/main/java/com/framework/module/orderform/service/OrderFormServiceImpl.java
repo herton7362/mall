@@ -384,6 +384,12 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         }
 
         orderFormDTO.setOrderNumber(orderForm.getOrderNumber());
+        if(StringUtils.isNotBlank(orderFormDTO.getCartItemIds())) {
+            String[] ids = orderFormDTO.getCartItemIds().split(",");
+            for (String s : ids) {
+                cartService.deleteItem(s);
+            }
+        }
         return orderFormDTO;
     }
 
