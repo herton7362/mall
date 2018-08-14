@@ -9,6 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Component
 @Transactional
 public class MemberAddressServiceImpl extends AbstractCrudService<MemberAddress> implements MemberAddressService {
@@ -34,6 +38,28 @@ public class MemberAddressServiceImpl extends AbstractCrudService<MemberAddress>
         memberAddress.setDefaultAddress(true);
         memberAddressRepository.clearDefaultAddress(memberAddress.getMemberId());
         memberAddressRepository.save(memberAddress);
+    }
+
+    @Override
+    public void delete(String id) {
+        MemberAddress memberAddress = findOne(id);
+        if(memberAddress != null && memberAddress.getDefaultAddress()) {
+            Map<String, String[]> param = new HashMap<>();
+            param.put("memberId", new String[]{ memberAddress.getMemberId() });
+            List<MemberAddress> memberAddresses = findAll(param);
+            // 删除一个收获地址，将其他第一个收货地址改为默认地址
+            if(memberAddresses.size() > 1) {
+                MemberAddress memberAddress1;
+                if(memberAddresses.get(0).getId().equals(id)) {
+                    memberAddress1 = memberAddresses.get(1);
+                } else {
+                    memberAddress1 = memberAddresses.get(0);
+                }
+                memberAddress1.setDefaultAddress(true);
+                memberAddressRepository.save(memberAddress1);
+            }
+        }
+        super.delete(id);
     }
 
     @Autowired
