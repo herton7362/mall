@@ -10,7 +10,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.*;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import java.util.List;
 
 @Component
@@ -47,6 +48,8 @@ public class OrderFormDTO extends BaseDTO<OrderFormDTO, OrderForm> {
     private String cartItemIds;
     @ApiModelProperty(value = "订单状态")
     private OrderForm.OrderStatus status;
+    @ApiModelProperty(value = "支付状态")
+    private OrderForm.PaymentStatus paymentStatus;
     @Children(service = OrderItemService.class)
     @ApiModelProperty("订单条目")
     private List<OrderItemDTO> items;
@@ -137,6 +140,14 @@ public class OrderFormDTO extends BaseDTO<OrderFormDTO, OrderForm> {
 
     public void setStatus(OrderForm.OrderStatus status) {
         this.status = status;
+    }
+
+    public OrderForm.PaymentStatus getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(OrderForm.PaymentStatus paymentStatus) {
+        this.paymentStatus = paymentStatus;
     }
 
     public MemberAddress getDeliverToAddress() {

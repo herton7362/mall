@@ -358,10 +358,20 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     public OrderFormDTO makeOrder(OrderFormDTO orderFormDTO) {
         OrderForm orderForm = orderFormDTO.convert();
         orderForm.setOrderNumber(getOutTradeNo());
-        orderForm.setPaymentStatus(OrderForm.PaymentStatus.UN_PAY);
-        orderForm.setStatus(OrderForm.OrderStatus.UN_PAY);
+        Double cash = calculateTotalPrice(orderFormDTO);
+        if(cash == 0) {
+            orderForm.setPaymentStatus(OrderForm.PaymentStatus.PAYED);
+            orderForm.setStatus(OrderForm.OrderStatus.PAYED);
+            orderFormDTO.setStatus(OrderForm.OrderStatus.PAYED);
+            orderFormDTO.setPaymentStatus(OrderForm.PaymentStatus.PAYED);
+        } else {
+            orderForm.setPaymentStatus(OrderForm.PaymentStatus.UN_PAY);
+            orderForm.setStatus(OrderForm.OrderStatus.UN_PAY);
+            orderFormDTO.setStatus(OrderForm.OrderStatus.UN_PAY);
+            orderFormDTO.setPaymentStatus(OrderForm.PaymentStatus.UN_PAY);
+        }
         orderForm.setItems(null);
-        orderForm.setCash(calculateTotalPrice(orderFormDTO));
+        orderForm.setCash(cash);
         orderFormRepository.save(orderForm);
 
         if(StringUtils.isNotBlank(orderFormDTO.getCouponId())) {
