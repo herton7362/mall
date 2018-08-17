@@ -67,6 +67,8 @@ spring:
 server:
   port: 8080
   context-path:
+aliPay:
+  notifyUrl: http://www.dldjshop.com/ali/pay/notify
 ---
 spring:
   profiles: production

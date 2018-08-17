@@ -392,7 +392,20 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         // 修改账户余额
         if (OrderForm.OrderStatus.PAYED == orderForm.getStatus()) {
             orderForm.setCash(calculateTotalPrice(orderFormDTO));
-            consumeModifyMemberAccount(orderForm);
+            OrderForm newOrder = new OrderForm();
+            newOrder.setPoint(orderForm.getPoint());
+            newOrder.setBalance(orderForm.getBalance());
+            newOrder.setCash(orderForm.getCash());
+            newOrder.setDiscount(orderForm.getDiscount());
+            newOrder.setMemberId(orderForm.getMemberId());
+            List<OrderItemDTO> orderItemDTOS = orderFormDTO.getItems();
+            List<OrderItem> items = new ArrayList<>();
+            orderItemDTOS.forEach(orderItemDTO -> {
+                orderItemDTO.setOrderId(orderForm.getId());
+                items.add(orderItemDTO.convert());
+            });
+            newOrder.setItems(items);
+            consumeModifyMemberAccount(newOrder);
         }
 
         orderFormDTO.setOrderNumber(orderForm.getOrderNumber());
